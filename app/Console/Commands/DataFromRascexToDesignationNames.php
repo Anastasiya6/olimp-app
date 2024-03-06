@@ -31,11 +31,11 @@ class DataFromRascexToDesignationNames extends Command
     {
         $start_time = now();
 
-        Designation1::truncate();
+        //Designation1::truncate();
 
         $this->fillDesignationFromRascexName();
 
-        $this->fillDesignationFromM6piName();
+       // $this->fillDesignationFromM6piName();
 
 
         //$this->fillSpecification();
@@ -46,123 +46,10 @@ class DataFromRascexToDesignationNames extends Command
         echo 'Команда успешно выполнена!';
 
     }
-
-    public function fillDesignationFromRascexNameTest(){
-
-        $table = new TableReader(
-            'c:\Mass\Rascex.dbf',
-            [
-                'encoding' => 'cp866'
-            ]
-        );
-
-        while ($record = $table->nextRecord()) {
-
-            $designation = Designation1::where('designation', $record->get('chto'))->first();
-
-            if (!empty($designation) ){
-                if(($designation->name == '' || $designation->route == '')
-                    &&
-                    ($record->get('naim') != '' || $record->get('tm') != '')
-                ) {
-
-                    echo $designation->designation . PHP_EOL;
-
-                    $designation->update([
-                        'name' => $designation->name ?? $record->get('naim'),
-                        'route' => $designation->route ?? $record->get('tm')
-                    ]);
-                }
-
-            } else {
-                Designation1::create([
-                    'designation' => $record->get('chto'),
-                    'name' => $record->get('naim'),
-                    'route' => $record->get('tm'),
-                ]);
-            }
-            echo $record->get('naim') . PHP_EOL;
-
-        }
-
-    }
-
-    public function fillDesignationFromM6piNameTest(){
-
-        $table = new TableReader(
-            'c:\Mass\M6pi.dbf',
-            [
-                'encoding' => 'cp866'
-            ]
-        );
-        while ($record = $table->nextRecord()) {
-
-            $designation = Designation1::where('designation', $record->get('nm'))->first();
-
-            if (!empty($designation) ){
-
-                    $designation->update([
-                        'name' => $record->get('naim'),
-                        'gost' => $record->get('gost'),
-                        'type_units' => $record->get('ediz'),
-                    ]);
-
-
-            } else {
-                Designation1::create([
-                    'designation' => $record->get('nm'),
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_units' => $record->get('ediz'),
-                    'type' => 1
-
-                ]);
-            }
-            echo $record->get('naim') . PHP_EOL;
-
-        }
-
-    }
-
-    public function fillDesignationFromM6piName(){
-
-        $table = new TableReader(
-            'c:\Mass\M6pi.dbf',
-            [
-                'encoding' => 'cp866'
-            ]
-        );
-        while ($record = $table->nextRecord()) {
-
-            $designation = Designation::where('designation', $record->get('nm'))->first();
-
-            if (!empty($designation) ){
-
-                $designation->update([
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_units' => $record->get('ediz'),
-                ]);
-
-
-            } else {
-                Designation::create([
-                    'designation' => $record->get('nm'),
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_units' => $record->get('ediz'),
-                    'type' => 1
-
-                ]);
-            }
-            echo $record->get('naim') . PHP_EOL;
-
-        }
-
-    }
-
     public function fillDesignationFromRascexName()
     {
+        echo 'here'.PHP_EOL;
+        exit;
         $table = new TableReader(
             'c:\Mass\Rascex.dbf',
             [
@@ -193,6 +80,44 @@ class DataFromRascexToDesignationNames extends Command
                     'designation' => $record->get('chto'),
                     'name' => $record->get('naim'),
                     'route' => $record->get('tm'),
+                ]);
+            }
+            echo $record->get('naim') . PHP_EOL;
+
+        }
+
+    }
+
+    public function fillDesignationFromM6piName()
+    {
+
+        $table = new TableReader(
+            'c:\Mass\M6pi.dbf',
+            [
+                'encoding' => 'cp866'
+            ]
+        );
+        while ($record = $table->nextRecord()) {
+
+            $designation = Designation::where('designation', $record->get('nm'))->first();
+
+            if (!empty($designation) ){
+
+                $designation->update([
+                    'name' => $record->get('naim'),
+                    'gost' => $record->get('gost'),
+                    'type_units' => $record->get('ediz'),
+                ]);
+
+
+            } else {
+                Designation::create([
+                    'designation' => $record->get('nm'),
+                    'name' => $record->get('naim'),
+                    'gost' => $record->get('gost'),
+                    'type_units' => $record->get('ediz'),
+                    'type' => 1
+
                 ]);
             }
             echo $record->get('naim') . PHP_EOL;

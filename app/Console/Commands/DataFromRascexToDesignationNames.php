@@ -48,8 +48,6 @@ class DataFromRascexToDesignationNames extends Command
     }
     public function fillDesignationFromRascexName()
     {
-        echo 'here'.PHP_EOL;
-        exit;
         $table = new TableReader(
             'c:\Mass\Rascex.dbf',
             [

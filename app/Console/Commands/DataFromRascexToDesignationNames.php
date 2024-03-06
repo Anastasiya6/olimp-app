@@ -165,16 +165,10 @@ class DataFromRascexToDesignationNames extends Command
                     'designation_entry_id' => $detailId,
                 ], [
                     'quantity' => $record->get('pe'),
-                    'category_code' => $record->get('e') !== '' ? $record->get('e') : 2,
-                ]);
-               /* Specification::firstOrCreate([
                     'designation' => $designation,
                     'detail' => $detail,
-                    'quantity' => $record->get('pe'),
                     'category_code' => $record->get('e') !== '' ? $record->get('e') : 2,
-                    'designation_id' => $designationId,
-                    'designation_entry_id' => $detailId,
-                ]);*/
+                ]);
             }
         }
     }

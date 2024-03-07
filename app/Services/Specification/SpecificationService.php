@@ -36,14 +36,18 @@ class SpecificationService
 
         if($designation1->id && $designation2->id){
 
-            Specification::firstOrCreate([
-                'designation' => $request->designation_designation,
-                'detail' => $request->designation_entry_designation,
-                'quantity' => $request->specification_quantity,
-                'category_code' => $request->specification_category_code,
-                'designation_id' => $designation2->id,
-                'designation_entry_id' => $designation1->id,
-            ]);
+            Specification::updateOrCreate(
+                [
+                    'designation_id' => $designation2->id,
+                    'designation_entry_id' => $designation1->id,
+                ],
+                [
+                    'designation' => $request->designation_designation,
+                    'detail' => $request->designation_entry_designation,
+                    'quantity' => $request->specification_quantity,
+                    'category_code' => $request->specification_category_code,
+                ]
+            );
         }
     }
 

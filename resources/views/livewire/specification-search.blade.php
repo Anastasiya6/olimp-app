@@ -28,16 +28,16 @@
             @foreach($specifications as $specification)
                 <tr class="bg-white">
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $specification->designationEntry->designation??'' }}
+                        <strong>{{ $specification->designationEntry->designation??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $specification->designations->designation??'' }}
+                        <strong>{{ $specification->designations->designation??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $specification->quantity??'' }}
+                        <strong>{{ $specification->quantity??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $specification->category_code??'' }}
+                        <strong>{{ $specification->category_code??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                         <a href="{{ route('specifications.edit', $specification) }}"

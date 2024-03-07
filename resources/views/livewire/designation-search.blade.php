@@ -26,13 +26,13 @@
             @foreach($designations as $designation)
                 <tr class="bg-white">
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $designation->designation??'' }}
+                        <strong>{{ $designation->designation??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $designation->name??'' }}
+                        <strong>{{ $designation->name??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ $designation->route??'' }}
+                        <strong>{{ $designation->route??'' }}</strong>
                     </td>
                     <td class="px-16 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                         <a href="{{ route('designations.edit', $designation) }}"

@@ -124,7 +124,8 @@ class DataFromRascexToDesignationNames extends Command
 
     }
 
-    public function fillSpecification(){
+    public function fillSpecification()
+    {
         $table = new TableReader(
             'c:\Mass\M0020.dbf',
             [
@@ -173,7 +174,8 @@ class DataFromRascexToDesignationNames extends Command
         }
     }
 
-    public function createDesignationName($designation,$name='',$route=''){
+    public function createDesignationName($designation,$name='',$route='')
+    {
         return
             Designation::create([
             'designation' => $designation,

@@ -20,7 +20,7 @@ class DesignationSearch extends Component
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';
-        $designations = Designation::where('name', 'like', $searchTerm)->orderBy('created_at','desc')
+        $designations = Designation::where('name', 'like', $searchTerm)->orderBy('updated_at','desc')
             ->paginate(50);
         return view('livewire.designation-search',compact('designations'));
     }

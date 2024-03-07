@@ -62,7 +62,7 @@ class ApplicationStatementService
                 'category_code' => $specification->category_code,
                 'designation_id' => $specification->designation_id,
                 'quantity' => $specification->quantity,
-                'quantity_total' => $specification->quantity * $quantity,
+                'quantity_total' => $specification->quantity,// * $quantity,
                 'order_number' => $order_number,
                 'tm' => $specification->route,
                 'tm1' => self::DEPARTMENT_RECEPIENT,

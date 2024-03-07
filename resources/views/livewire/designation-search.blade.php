@@ -25,13 +25,13 @@
 
             @foreach($designations as $designation)
                 <tr class="bg-white">
-                    <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         {{ $designation->designation??'' }}
                     </td>
-                    <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         {{ $designation->name??'' }}
                     </td>
-                    <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         {{ $designation->route??'' }}
                     </td>
                     <td class="px-16 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">

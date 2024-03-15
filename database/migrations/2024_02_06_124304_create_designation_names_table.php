@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('route')->nullable();
             $table->string('gost')->nullable();
-            $table->string('type_units')->nullable();
+            $table->string('type_unit')->nullable();
             $table->index('designation');
             $table->tinyInteger('type')->unsigned()->default(0);
 

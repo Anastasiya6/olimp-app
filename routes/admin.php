@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\DesignationController;
+use App\Http\Controllers\Admin\DesignationMaterialController;
 use App\Http\Controllers\Admin\IndexController;
+use App\Http\Controllers\Admin\MaterialController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,3 +28,5 @@ Route::resource('specifications', \App\Http\Controllers\Admin\SpecificationContr
 Route::resource('designations', DesignationController::class);
 Route::post('/update-names', [DesignationController::class, 'updateNames'])->name('designations.update-names');
 Route::get('/edit-names/{designations_array}',  [DesignationController::class, 'editNames'])->name('designations.edit-names');
+Route::resource('materials', MaterialController::class);
+Route::resource('designation-materials', DesignationMaterialController::class);

@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('materials', function (Blueprint $table) {
-            $table->id();
-            $table->string('code');
-            $table->string('name');
-            $table->string('gost');
-            $table->string('type_units');
-            $table->timestamps();
+        Schema::table('designations', function (Blueprint $table) {
+            $table->string('designation_from_rascex')->nullable()->after('designation');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('materials');
+        Schema::table('designations', function (Blueprint $table) {
+            //
+        });
     }
 };

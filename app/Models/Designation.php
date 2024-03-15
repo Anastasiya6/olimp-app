@@ -15,7 +15,9 @@ class Designation extends Model
         'route',
         'gost',
         'type_units',
-        'type'
+        'type',
+        'designation_number',
+        'designation_from_rascex'
     ];
 
     // Включите временные метки

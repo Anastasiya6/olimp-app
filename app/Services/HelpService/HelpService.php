@@ -97,7 +97,7 @@ class HelpService
                 $string = substr($string, 0, 7) . '-00' . substr($string, 7);
 
             }elseif(mb_strlen(substr($string, 7)) == 2){
-                $string = substr($string, 0, 7) . '-0' . substr($string, 7);
+                $string = substr($string, 0, 7) . '-' . substr($string, 7).'0';
 
             }else{
                 $string = substr($string, 0, 7) . '-' . substr($string, 7);

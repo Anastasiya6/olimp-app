@@ -172,15 +172,24 @@ class DataFromRascexToDesignationNames extends Command
             if ($designationId && $detailId) {
                 echo 'param';
                 echo $designationId.' '.$detailId;
-                $specification = Specification::updateOrCreate([
-                    'designation_id' => $designationId,
-                    'designation_entry_id' => $detailId,
-                ], [
-                    'quantity' => $record->get('pe'),
-                    'designation' => $designation,
-                    'detail' => $detail,
-                    'category_code' => $record->get('e') !== '' ? $record->get('e') : 2,
-                ]);
+                try {
+                    $specification = Specification::updateOrCreate([
+                        'designation_id' => $designationId,
+                        'designation_entry_id' => $detailId,
+                    ], [
+                        'quantity' => $record->get('pe'),
+                        'designation' => $record->get('ok'),
+                        'detail' => $record->get('od'),
+                        'category_code' => $record->get('e') !== '' ? $record->get('e') : 2,
+                    ]);
+                } catch (\Exception $e) {
+                    // Если произошла ошибка, записываем ее в лог
+                    Log::info('Ошибка при выполнении запроса к базе данных: ' . $e->getMessage());
+                    Log::info($designationId);
+                    Log::info($detailId);
+                    Log::info( $record->get('ok'));
+                    Log::info($record->get('od'));
+                }
             }
         }
     }

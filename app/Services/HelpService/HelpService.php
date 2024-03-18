@@ -38,11 +38,11 @@ class HelpService
         return $name;
     }
 
-    public static function transformNumber($string)
+    public static function transformNumber($string,$excel=0)
     {
         $begin_string = $string;
 
-        if (preg_match('/^.*-.{3}$/', $string)) {
+        if (preg_match('/^.*-.{3}/', $string)) {
             echo "Дефис и три цифры после него найдены.\n";
             return $begin_string;
         }
@@ -58,7 +58,11 @@ class HelpService
         $number = substr($string, strlen($prefix));
 
         if($prefix_length == 2 || $prefix_length == 3){
-            $string = $prefix.self::changeStringTwo($number);
+            if($excel == 1){
+                $string = $prefix.self::changeStringTwoExcel($number);
+            }else{
+                $string = $prefix.self::changeStringTwo($number);
+            }
         }elseif($prefix_length == 4){
             $string = $prefix.self::changeStringFour($number);
         }else{
@@ -83,6 +87,30 @@ class HelpService
 
             }elseif(mb_strlen(substr($string, 7)) == 2){
                 $string = substr($string, 0, 7) . '-' . substr($string, 7).'0';
+
+            }else{
+                $string = substr($string, 0, 7) . '-' . substr($string, 7);
+            }
+        }
+        return $string;
+
+    }
+
+    public static function changeStringTwoExcel($string)
+    {
+        // Если количество цифр меньше 7, добавляем нули в конец
+        if (strlen($string) < 7) {
+
+            $string = str_pad($string, 7, '0', STR_PAD_RIGHT);
+
+        }elseif (mb_strlen($string) > 7) {
+
+            // Если количество цифр больше 7, обрезаем до 7 и добавляем дефис
+            if(mb_strlen(substr($string, 7)) == 1 ){
+                $string = substr($string, 0, 7) . '-00' . substr($string, 7);
+
+            }elseif(mb_strlen(substr($string, 7)) == 2){
+                $string = substr($string, 0, 7) . '-0' . substr($string, 7);
 
             }else{
                 $string = substr($string, 0, 7) . '-' . substr($string, 7);

@@ -73,8 +73,8 @@ class DataFromRascexToDesignationNames extends Command
 
             }
 
-           /* $designation = Designation::where('designation', $find_designation)->first();
-            if(mb_strlen($prefix)==3){
+           $designation = Designation::where('designation', $find_designation)->first();
+           /* if(mb_strlen($prefix)==3){
                 $i++;
                 echo $prefix.PHP_EOL;
                 $designation->update([

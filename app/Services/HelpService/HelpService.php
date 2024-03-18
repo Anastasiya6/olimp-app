@@ -42,7 +42,7 @@ class HelpService
     {
         $begin_string = $string;
 
-        if (preg_match('/^.*-\d{3}$/', $string)) {
+        if (preg_match('/^.*-.{3}$/', $string)) {
             echo "Дефис и три цифры после него найдены.\n";
             return $begin_string;
         }

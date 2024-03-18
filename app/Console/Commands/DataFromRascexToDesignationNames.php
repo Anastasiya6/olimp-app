@@ -7,6 +7,7 @@ use App\Models\Designation1;
 use App\Models\Specification;
 use App\Services\HelpService\HelpService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use XBase\TableReader;
 
 class DataFromRascexToDesignationNames extends Command
@@ -62,12 +63,10 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
+            /*Пропускаем подобные этому КС77502194001, т.е. начиная с КР и далее цифры*/
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
 
-            // Извлечение префикса
-            $prefix = preg_replace('/[^А-Яа-я]/u', '', $find_designation);
-
-            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !(preg_match('/^КС\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
 
                 $find_designation = HelpService::transformNumber($find_designation);
 
@@ -92,12 +91,21 @@ class DataFromRascexToDesignationNames extends Command
 
             } else {
                 echo 'create'.PHP_EOL;
-                Designation::create([
-                    'designation' => $find_designation,
-                    'designation_from_rascex' => $record->get('chto'),
-                    'name' => $record->get('naim'),
-                    'route' => $record->get('tm'),
-                ]);
+                try {
+                    Designation::create([
+                        'designation' => $find_designation,
+                        'designation_from_rascex' => $record->get('chto'),
+                        'name' => $record->get('naim'),
+                        'route' => $record->get('tm'),
+                    ]);
+                } catch (\Exception $e) {
+                    // Если произошла ошибка, записываем ее в лог
+                    Log::info('Ошибка при выполнении запроса к базе данных: ' . $e->getMessage());
+                    Log::info($find_designation);
+                    Log::info( $record->get('chto'));
+                    Log::info($record->get('naim'));
+                    Log::info($record->get('tm'));
+                }
             }
             echo $record->get('naim') . PHP_EOL;
 
@@ -159,9 +167,10 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
+            /*Пропускаем подобные этому КС77502194001, т.е. начиная с КР и далее цифры*/
             /*Пропускаем если есть точка как например ААМВ464467001.1*/
 
-            if (!(preg_match('/^Н\d+$/', $find_designation_ok)) && !(preg_match('/^КР\d+/', $find_designation_ok))  && !str_contains($find_designation_ok, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation_ok)) && !(preg_match('/^КР\d+/', $find_designation_ok))  && !(preg_match('/^КС\d+/', $find_designation_ok)) && !str_contains($find_designation_ok, '.')) {
 
                 $find_designation_ok = $this->transformNumber($find_designation_ok);
 
@@ -169,8 +178,9 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
+            /*Пропускаем подобные этому КС77502194001, т.е. начиная с КР и далее цифры*/
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
-            if (!(preg_match('/^Н\d+$/', $find_designation_od)) && !(preg_match('/^КР\d+/', $find_designation_od))  && !str_contains($find_designation_od, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation_od)) && !(preg_match('/^КР\d+/', $find_designation_od)) && !(preg_match('/^КС\d+/', $find_designation_od))  && !str_contains($find_designation_od, '.')) {
 
                 $find_designation_od = $this->transformNumber($find_designation_od);
 

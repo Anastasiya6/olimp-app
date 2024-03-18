@@ -64,13 +64,27 @@ class DataFromRascexToDesignationNames extends Command
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
 
-            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
+            // Извлечение префикса
+            $prefix = preg_replace('/[^А-Яа-я]/u', '', $find_designation);
+
+            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.') && mb_strlen($prefix)!=3) {
 
                 $find_designation = HelpService::transformNumber($find_designation);
 
             }
 
-            $designation = Designation::where('designation', $find_designation)->first();
+           /* $designation = Designation::where('designation', $find_designation)->first();
+            if(mb_strlen($prefix)==3){
+                $i++;
+                echo $prefix.PHP_EOL;
+                $designation->update([
+                    'designation_from_rascex' => $record->get('chto'),
+                    'designation' => $record->get('chto'),
+                ]);
+                if($i>10)
+                    exit;
+            }
+            continue;*/
            // echo 'designation'.PHP_EOL;
            // echo print_r($designation,1);
             if (!empty($designation) ){
@@ -85,14 +99,6 @@ class DataFromRascexToDesignationNames extends Command
                         'name' => $designation->name ?? $record->get('naim'),
                         'designation_from_rascex' => $record->get('chto'),
                         'route' => $designation->route ?? $record->get('tm')
-                    ]);
-                }else{
-                    echo 'update_Des'.PHP_EOL;
-
-                    $designation->update([
-                        'designation_from_rascex' => $record->get('chto'),
-                        'designation' => $record->get('chto'),
-
                     ]);
                 }
 

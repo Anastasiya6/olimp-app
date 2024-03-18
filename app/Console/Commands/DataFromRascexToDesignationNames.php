@@ -67,26 +67,14 @@ class DataFromRascexToDesignationNames extends Command
             // Извлечение префикса
             $prefix = preg_replace('/[^А-Яа-я]/u', '', $find_designation);
 
-            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.') && mb_strlen($prefix)!=3) {
+            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
 
                 $find_designation = HelpService::transformNumber($find_designation);
 
             }
-
+           echo $find_designation.PHP_EOL;
            $designation = Designation::where('designation', $find_designation)->first();
-           /* if(mb_strlen($prefix)==3){
-                $i++;
-                echo $prefix.PHP_EOL;
-                $designation->update([
-                    'designation_from_rascex' => $record->get('chto'),
-                    'designation' => $record->get('chto'),
-                ]);
-                if($i>10)
-                    exit;
-            }
-            continue;*/
-           // echo 'designation'.PHP_EOL;
-           // echo print_r($designation,1);
+
             if (!empty($designation) ){
                 if(($designation->name == '' || $designation->route == '')
                     &&
@@ -171,7 +159,7 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
-            /* Пропускаем если есть точка как например ААМВ464467001.1*/
+            /*Пропускаем если есть точка как например ААМВ464467001.1*/
 
             if (!(preg_match('/^Н\d+$/', $find_designation_ok)) && !(preg_match('/^КР\d+/', $find_designation_ok))  && !str_contains($find_designation_ok, '.')) {
 

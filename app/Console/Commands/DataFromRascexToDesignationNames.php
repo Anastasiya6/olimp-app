@@ -131,7 +131,7 @@ class DataFromRascexToDesignationNames extends Command
 
             if (!(preg_match('/^Н\d+$/', $find_designation_ok)) && !(preg_match('/^КР\d+/', $find_designation_ok)) && !str_contains($find_designation_ok, '.')) {
 
-                $find_designation_ok = $this->transformNumber($find_designation_ok);
+                $find_designation_ok = HelpService::transformNumber($find_designation_ok);
 
             }
 
@@ -140,7 +140,7 @@ class DataFromRascexToDesignationNames extends Command
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
             if (!(preg_match('/^Н\d+$/', $find_designation_od)) && !(preg_match('/^КР\d+/', $find_designation_od))  && !str_contains($find_designation_od, '.')) {
 
-                $find_designation_od = $this->transformNumber($find_designation_od);
+                $find_designation_od = HelpService::transformNumber($find_designation_od);
 
             }
 

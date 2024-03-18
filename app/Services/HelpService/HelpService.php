@@ -40,8 +40,12 @@ class HelpService
 
     public static function transformNumber($string)
     {
-
         $begin_string = $string;
+
+        if (preg_match('/^.*-\d{3}$/', $string)) {
+            echo "Дефис и три цифры после него найдены.\n";
+            return $begin_string;
+        }
         $string = preg_replace('/[^А-Яа-я0-9]+/', '', $string);
 
         // Извлечение префикса

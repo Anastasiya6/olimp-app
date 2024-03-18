@@ -63,10 +63,9 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
-            /*Пропускаем подобные этому КС77502194001, т.е. начиная с КР и далее цифры*/
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
 
-            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !(preg_match('/^КС\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
 
                 $find_designation = HelpService::transformNumber($find_designation);
 
@@ -112,45 +111,6 @@ class DataFromRascexToDesignationNames extends Command
         }
 
     }
-    public function fillDesignationFromM6piName()
-    {
-
-        $table = new TableReader(
-            'c:\Mass\M6pi.dbf',
-            [
-                'encoding' => 'cp866'
-            ]
-        );
-        while ($record = $table->nextRecord()) {
-
-            $designation = Designation::where('designation', $record->get('nm'))->first();
-
-            if (!empty($designation) ){
-
-                $designation->update([
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_unit' => $record->get('ediz'),
-                    'type' => 1
-                ]);
-
-
-            } else {
-                Designation::create([
-                    'designation' => $record->get('nm'),
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_unit' => $record->get('ediz'),
-                    'type' => 1
-
-                ]);
-            }
-            echo $record->get('naim') . PHP_EOL;
-
-        }
-
-    }
-
     public function fillSpecification()
     {
         $table = new TableReader(
@@ -167,10 +127,9 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
-            /*Пропускаем подобные этому КС77502194001, т.е. начиная с КР и далее цифры*/
             /*Пропускаем если есть точка как например ААМВ464467001.1*/
 
-            if (!(preg_match('/^Н\d+$/', $find_designation_ok)) && !(preg_match('/^КР\d+/', $find_designation_ok))  && !(preg_match('/^КС\d+/', $find_designation_ok)) && !str_contains($find_designation_ok, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation_ok)) && !(preg_match('/^КР\d+/', $find_designation_ok)) && !str_contains($find_designation_ok, '.')) {
 
                 $find_designation_ok = $this->transformNumber($find_designation_ok);
 
@@ -178,9 +137,8 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
-            /*Пропускаем подобные этому КС77502194001, т.е. начиная с КР и далее цифры*/
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
-            if (!(preg_match('/^Н\d+$/', $find_designation_od)) && !(preg_match('/^КР\d+/', $find_designation_od)) && !(preg_match('/^КС\d+/', $find_designation_od))  && !str_contains($find_designation_od, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation_od)) && !(preg_match('/^КР\d+/', $find_designation_od))  && !str_contains($find_designation_od, '.')) {
 
                 $find_designation_od = $this->transformNumber($find_designation_od);
 
@@ -236,5 +194,43 @@ class DataFromRascexToDesignationNames extends Command
             'name' => $name,
             'route' => $route
         ])->id;
+    }
+    public function fillDesignationFromM6piName()
+    {
+
+        $table = new TableReader(
+            'c:\Mass\M6pi.dbf',
+            [
+                'encoding' => 'cp866'
+            ]
+        );
+        while ($record = $table->nextRecord()) {
+
+            $designation = Designation::where('designation', $record->get('nm'))->first();
+
+            if (!empty($designation) ){
+
+                $designation->update([
+                    'name' => $record->get('naim'),
+                    'gost' => $record->get('gost'),
+                    'type_unit' => $record->get('ediz'),
+                    'type' => 1
+                ]);
+
+
+            } else {
+                Designation::create([
+                    'designation' => $record->get('nm'),
+                    'name' => $record->get('naim'),
+                    'gost' => $record->get('gost'),
+                    'type_unit' => $record->get('ediz'),
+                    'type' => 1
+
+                ]);
+            }
+            echo $record->get('naim') . PHP_EOL;
+
+        }
+
     }
 }

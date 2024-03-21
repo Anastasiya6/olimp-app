@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DesignationMaterialController;
 use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\MaterialController;
+use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,3 +31,4 @@ Route::post('/update-names', [DesignationController::class, 'updateNames'])->nam
 Route::get('/edit-names/{designations_array}',  [DesignationController::class, 'editNames'])->name('designations.edit-names');
 Route::resource('materials', MaterialController::class);
 Route::resource('designation-materials', DesignationMaterialController::class);
+Route::resource('orders', OrderController::class);

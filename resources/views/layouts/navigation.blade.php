@@ -52,7 +52,9 @@
                         <x-dropdown-link :href="route('designations.index')">
                             {{ __('Вироби') }}
                         </x-dropdown-link>
-
+                        <x-dropdown-link :href="route('orders.index')">
+                            {{ __('Розузловування') }}
+                        </x-dropdown-link>
                         <!-- Authentication -->
                         {{--<form method="POST" action="{{ route('logout') }}">
                             @csrf

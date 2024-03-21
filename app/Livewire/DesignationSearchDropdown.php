@@ -50,11 +50,6 @@ class DesignationSearchDropdown extends Component
         $this->search = $name;
     }
 
-    public function clear()
-    {
-        $this->search = $this->selectedName;
-    }
-
     public function render()
     {
         return view('livewire.designation-search-dropdown');

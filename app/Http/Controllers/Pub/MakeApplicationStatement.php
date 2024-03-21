@@ -13,6 +13,6 @@ class MakeApplicationStatement extends Controller
 
         //session()->flash('success', 'Успешное выполнение операции');
 
-        return redirect()->route('home');
+        return redirect()->route('orders.index');
     }
 }

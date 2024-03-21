@@ -3,25 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MaterialCreateRequest;
-use App\Models\Material;
-use App\Models\TypeUnit;
-use App\Services\Material\MaterialService;
+use App\Models\Order;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
 
-class MaterialController extends Controller
+class OrderController extends Controller
 {
-    public $route = 'materials';
+    public $route = 'orders';
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('administrator::include.materials.index', [
-                    'route' => $this->route,
-                    'livewire_search' => 'material-search',
-                    'title' => 'Material']);
+        return view('administrator::include.orders.index', [
+            'items' => Order::paginate(25),
+            'route' => $this->route,
+            'title' => 'Заказы']);
     }
 
     /**
@@ -29,15 +27,14 @@ class MaterialController extends Controller
      */
     public function create()
     {
-        return view('administrator::include.materials.create',[
-            'units' => TypeUnit::all(),
+        return view('administrator::include.orders.create',[
             'route' => $this->route ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, MaterialService $service)
+    public function store(Request $request, OrderService $service)
     {
         $service->store($request);
 
@@ -55,33 +52,34 @@ class MaterialController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Material $material)
+    public function edit(Order $order)
     {
-        return view('administrator::include.materials.edit', [
-            'material' => $material,
-            'units' => TypeUnit::all(),
+        return view('administrator::include.orders.edit', [
+            'item' => $order,
+            'designation' => $order->designation->designation,
             'route' => $this->route
 
         ]);
-
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Material $material, MaterialService $service)
+    public function update(Request $request, Order $order, OrderService $service)
     {
         //dd($request);
-        $service->update($request, $material);
-
+        $service->update($request, $order);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Order $order)
     {
-        //
+        $order->delete();
+        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
+
     }
 }

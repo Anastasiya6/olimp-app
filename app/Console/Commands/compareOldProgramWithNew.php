@@ -69,6 +69,9 @@ class compareOldProgramWithNew extends Command
            foreach ($oldData as $key => $array1) {
               //  echo print_r($array1,1);
              //   echo print_r($newData[$key],1);
+              // echo print_r($array1,1);
+               //echo print_r($newData[$key],1);
+               //exit;
                $difference = array_diff($array1, $newData[$key]);
                $i++;
                if (!empty($difference)) {
@@ -81,7 +84,7 @@ class compareOldProgramWithNew extends Command
                }
 
 
-               if($i>1115){
+               if($i>15){
                   //exit;
                }
            }

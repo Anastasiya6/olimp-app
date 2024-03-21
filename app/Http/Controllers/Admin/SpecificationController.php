@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 
 class SpecificationController extends Controller
 {
+    public $route = 'specifications';
     /**
      * Display a listing of the resource.
      */
@@ -30,7 +31,9 @@ class SpecificationController extends Controller
     {
         $last = Specification::orderBy('id','desc')->with('designations')->first();
 
-        return view('administrator::include.specifications.create', ['lastDesignation' => $last]);
+        return view('administrator::include.specifications.create', [
+            'lastDesignation' => $last,
+            'route' => $this->route]);
     }
 
     /**
@@ -77,7 +80,6 @@ class SpecificationController extends Controller
     public function destroy(Specification $specification)
     {
         $specification->delete();
-        //dd($specification);
         return redirect()->route('specifications.index')->with('status', 'Дані успішно збережено');
 
     }

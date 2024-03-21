@@ -9,15 +9,17 @@ use Illuminate\Support\Facades\DB;
 
 class DesignationController extends Controller
 {
+    public $route = 'designations';
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $designations = Designation
-            ::orderBy('created_at','desc')
-            ->paginate(50);
-        return view('administrator::include.designations.index', ['designations' => $designations]);
+        return view('administrator::include.designations.index', [
+                'route' => 'designations',
+                'livewire_search' => 'designation-material-search',
+                'title' => 'Вироби']);
     }
 
     /**
@@ -26,7 +28,6 @@ class DesignationController extends Controller
     public function create()
     {
         return view('administrator::include.designations.create');
-
     }
 
     /**
@@ -41,7 +42,7 @@ class DesignationController extends Controller
             'route' => $request->route,
         ]);
 
-        return redirect()->route('designations.index')->with('status', 'Дані успішно збережено');
+        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
     }
 
@@ -71,7 +72,7 @@ class DesignationController extends Controller
         $designation->name = $request->name;
         $designation->route = $request->route;
         $designation->save();
-        return redirect()->route('designations.index')->with('status', 'Дані успішно збережено');
+        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
     }
 

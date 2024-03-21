@@ -40,11 +40,17 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('designations.index')">
-                            {{ __('Назви') }}
+                        <x-dropdown-link :href="route('designation-materials.index')">
+                            {{ __('Норми') }}
                         </x-dropdown-link>
                         <x-dropdown-link :href="route('specifications.index')">
                             {{ __('M0020') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('materials.index')">
+                            {{ __('Матеріали') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('designations.index')">
+                            {{ __('Вироби') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->

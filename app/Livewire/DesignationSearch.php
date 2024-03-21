@@ -12,16 +12,12 @@ class DesignationSearch extends Component
 
     public $searchTerm;
 
-    public function updatingSearchTerm()
-    {
-        $this->resetPage();
-    }
-
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';
-        $designations = Designation::where('name', 'like', $searchTerm)->orderBy('updated_at','desc')
+        $items = Designation::where('name', 'like', $searchTerm)->orderBy('updated_at','desc')
             ->paginate(50);
-        return view('livewire.designation-search',compact('designations'));
+        $route = 'designations';
+        return view('livewire.designation-search',compact('items','route'));
     }
 }

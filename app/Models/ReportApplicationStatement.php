@@ -17,10 +17,20 @@ class ReportApplicationStatement extends Model
         'quantity',
         'quantity_total',
         'order_number',
-       // 'tm',
-        //'tm1',
-        //'hcp'
+        'tm',
+        'tm1',
+        'hcp'
     ];
+
+    public function designationMaterial()
+    {
+        return $this->belongsTo(DesignationMaterial::class, 'designation_entry_id','designation_id');
+    }
+
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class, 'designation_entry_id');
+    }
 
     // Включите временные метки
     public $timestamps = true;

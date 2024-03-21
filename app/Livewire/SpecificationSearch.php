@@ -12,11 +12,6 @@ class SpecificationSearch extends Component
 
     public $searchTerm;
 
-    public function updatingSearchTerm()
-    {
-        $this->resetPage();
-    }
-
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';

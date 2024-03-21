@@ -28,7 +28,7 @@
                     <td>{{ $row->kuda }}</td>
                     <td>{{ $row->kols }}</td>
                     <td>{{ $row->kolzak }}</td>
-                    <td>{{ $row->hcp }}</td>
+                    <td>{{ $row->tm }}</td>
                 </tr>
             @endforeach
             </tbody>

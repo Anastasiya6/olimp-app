@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Naimiz extends Model
 {
     use HasFactory;
 
-    public function designation()
-    {
-        return $this->belongsTo(Designation::class);
-    }
+    protected $fillable = [
+        'ediz',
+        'naimiz'
+    ];
 }

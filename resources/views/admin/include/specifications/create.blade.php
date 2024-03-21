@@ -9,7 +9,7 @@
         <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200 max-w-lg w-full lg:max-w-xs">
-                    <form method="POST" action="{{ route('specifications.store') }}">
+                    <form method="POST" action="{{ route($route.'.store') }}">
                         @csrf
                         <div class="mb-6">
                             <label class="block">

@@ -34,9 +34,9 @@ class DataFromM6mtToMaterials extends Command
     {
         $start_time = now();
 
-        $this->fillTypeUitFromNaimiz();
-        //dd(print_r(Naimiz::all()->pluck('naimiz', 'ediz')->toArray(),1));
-        //$this->fillMaterialsFromM6mt();
+        //$this->fillTypeUitFromNaimiz();
+        echo print_r(TypeUnit::all()->pluck( 'id','code')->toArray(),1);
+        $this->fillMaterialsFromM6mt();
 
         echo 'Програма почалась '.$start_time.PHP_EOL;
         echo 'Програма закінчилась '.now().PHP_EOL;
@@ -55,51 +55,54 @@ class DataFromM6mtToMaterials extends Command
         while ($record = $table->nextRecord()) {
 
             TypeUnit::updateOrCreate([
-
-                'name' => $record->get('naimiz')
+                'code' => $record->get('ediz'),
+                'unit' => $record->get('naimiz'),
             ]);
             echo $record->get('naimiz') . PHP_EOL;
 
         }
     }
 
-
     public function fillMaterialsFromM6mt()
     {
-
+        Material::truncate();
         $table = new TableReader(
             'c:\Mass\M6mt.dbf',
             [
                 'encoding' => 'cp866'
             ]
         );
+
+        $typeUnits = TypeUnit::all()->pluck('id','code')->toArray();
+
         while ($record = $table->nextRecord()) {
-
-            $material = Material::where('code', $record->get('nm'))->first();
-
-            if (!empty($material)) {
-
-                $material->update([
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_units' => $record->get('ediz'),
-                ]);
-
-            } else {
-                $this->getTypeUnitId();
-                Material::create([
-                    'code' => $record->get('nm'),
-                    'name' => $record->get('naim'),
-                    'gost' => $record->get('gost'),
-                    'type_units' => $record->get('ediz'),
-                ]);
+            if($record->get('nm')=='')
+                continue;
+            echo $record->get('ediz').PHP_EOL;
+           // echo $typeUnits[$record->get('ediz')].PHP_EOL;
+            if($record->get('nm') == 'МТ043742001' || $record->get('nm') == 'МТ043764208') {
+                $type_unit_id = 4;
+            }elseif(isset($typeUnits[$record->get('ediz')]) && $record->get('ediz') != ''){
+                $type_unit_id = $typeUnits[$record->get('ediz')];
             }
+            try {
+                Material::updateOrCreate(
+                    [
+                        'code' => $record->get('nm'),
+                    ],
+                    [
+                        'name' => $record->get('naim'),
+                        'gost' => $record->get('gost'),
+                        'type_unit_id' => $type_unit_id,
+                    ]
+                );
+            } catch (\Exception $e) {
+                echo 'Нет такого индекса '.$record->get('ediz').' '.$e->getMessage();
+                continue; // Пропускаем текущую итерацию цикла
+            }
+
             echo $record->get('naim') . PHP_EOL;
 
         }
-    }
-    public function getTypeUnitId()
-    {
-
     }
 }

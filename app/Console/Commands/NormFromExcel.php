@@ -56,10 +56,14 @@ class NormFromExcel extends Command
 
             $begin_designation = $norm->designation_number;
             $begin_material = $norm->material;
-            if($norm->material=='' || $norm->norm==''){
+            if($norm->material=='' || $norm->norm=='' || $norm->designation_number==''){
                 continue;
             }
-            $find_designation = $norm->designation_number;
+           // $find_designation = $norm->designation_number;
+
+            $find_designation = $this->getClearName($norm->designation_number);
+            echo 'CLEAR NAME'.PHP_EOL;
+            echo $find_designation.PHP_EOL;
             //echo $norm->designation_number.PHP_EOL;
             $find_material = HelpService::getClearName($norm->material);
 
@@ -88,17 +92,17 @@ class NormFromExcel extends Command
             }else {
                 if (!isset($designation->id)) {
                     $designation = $this->createDesignation($find_designation,$norm->designation_name,$norm->designation_number);
-                    /*echo 'не найдена деталь' . PHP_EOL;
+                    echo 'не найдена деталь' . PHP_EOL;
                     $i++;
                     echo $begin_designation . PHP_EOL;
                     echo $find_designation . PHP_EOL;
-                    echo '-------------'. PHP_EOL;*/
+                    echo '-------------'. PHP_EOL;
                 }
 
             }
 
             $this->createDesignationMaterial($designation->id,$material->id,$begin_designation,$begin_material,$norm->norm);
-
+          //  exit;
         }
         echo 'i='.$i;
     }

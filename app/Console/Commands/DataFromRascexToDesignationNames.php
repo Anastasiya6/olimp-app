@@ -35,9 +35,9 @@ class DataFromRascexToDesignationNames extends Command
 
         //Designation1::truncate();
 
-        $this->fillDesignationFromRascexName();
+        //$this->fillDesignationFromRascexName();
 
-       // $this->fillDesignationFromM6piName();
+        $this->fillDesignationFromM6piName();
 
 
         //$this->fillSpecification();
@@ -215,11 +215,12 @@ class DataFromRascexToDesignationNames extends Command
         );
         while ($record = $table->nextRecord()) {
 
-            $designation = Designation::where('designation', $record->get('nm'))->first();
+            $designation = Designation::where('designation_from_rascex', $record->get('nm'))->first();
 
             if (!empty($designation) ){
 
                 $designation->update([
+                    'designation' => $record->get('nm'),
                     'name' => $record->get('naim'),
                     'gost' => $record->get('gost'),
                     'type_unit' => $record->get('ediz'),
@@ -230,6 +231,7 @@ class DataFromRascexToDesignationNames extends Command
             } else {
                 Designation::create([
                     'designation' => $record->get('nm'),
+                    'designation_from_rascex' => $record->get('nm'),
                     'name' => $record->get('naim'),
                     'gost' => $record->get('gost'),
                     'type_unit' => $record->get('ediz'),
@@ -238,7 +240,8 @@ class DataFromRascexToDesignationNames extends Command
                 ]);
             }
             echo $record->get('naim') . PHP_EOL;
-
+            //echo $designation->id;
+            //exit;
         }
 
     }

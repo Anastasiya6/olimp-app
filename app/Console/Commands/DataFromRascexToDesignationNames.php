@@ -208,14 +208,14 @@ class DataFromRascexToDesignationNames extends Command
     {
 
         $table = new TableReader(
-            'c:\Mass\M6pi.dbf',
+            'e:\d\Mass\M6pi.dbf',
             [
                 'encoding' => 'cp866'
             ]
         );
         while ($record = $table->nextRecord()) {
 
-            $designation = Designation::where('designation_from_rascex', $record->get('nm'))->first();
+            $designation = Designation::where('designation', $record->get('nm'))->first();
 
             if (!empty($designation) ){
 

@@ -28,7 +28,7 @@ class m6piDbf extends Command
     public function handle()
     {
         $table = new TableReader(
-            'c:\MASS\m6pi.dbf',
+            'e:\d\MASS\m6pi.dbf',
             [
                 'encoding' => 'cp866'
             ]

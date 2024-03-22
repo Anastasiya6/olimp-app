@@ -12,15 +12,21 @@ class SpecificationSearch extends Component
 
     public $searchTerm;
 
+    public $searchTermChto;
+
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';
+        $searchTermChto = '%' . $this->searchTermChto . '%';
         $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
-                                $query->where('designation', 'like', "%$searchTerm%");
-                            })
-                                ->orderByRaw("CAST(designation AS SIGNED)")
-                                //->orderBy('updated_at','desc')
-                                ->paginate(50);
+            $query->where('designation', 'like', $searchTerm);
+        })
+            ->whereHas('designationEntry', function ($query) use ($searchTermChto) {
+                $query->where('designation', 'like', $searchTermChto);
+            })
+            ->orderByRaw("CAST(designation AS SIGNED)")
+            ->paginate(50);
+
         return view('livewire.specification-search',compact('specifications'));
     }
 }

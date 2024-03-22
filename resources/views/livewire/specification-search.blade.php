@@ -1,6 +1,9 @@
 <div>
     <div class="py-4">
-        <input type="text" wire:model.live="searchTerm" placeholder="Пошук"/>
+        <input type="text" wire:model.live="searchTerm" placeholder="Пошук Куди"/>
+    </div>
+    <div class="py-4">
+        <input type="text" wire:model.live="searchTermChto" placeholder="Пошук Що"/>
     </div>
 
     <div class="min-w-full align-middle">

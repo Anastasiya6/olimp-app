@@ -6,32 +6,32 @@
     <div class="min-w-full align-middle">
         <table class="min-w-full border divide-y divide-gray-200">
             <thead>
-            <tr>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Що</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Куди</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кількість</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Шифр</span>
-                </th>
-                <th class="w-56 bg-gray-50 px-6 py-3 text-left">
-                </th>
-            </tr>
+                <tr>
+                    <th class="bg-gray-50 px-6 py-3 text-left">
+                        <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Куди</span>
+                    </th>
+                    <th class="bg-gray-50 px-6 py-3 text-left">
+                        <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Що</span>
+                    </th>
+                    <th class="bg-gray-50 px-6 py-3 text-left">
+                        <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кількість</span>
+                    </th>
+                    <th class="bg-gray-50 px-6 py-3 text-left">
+                        <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Шифр</span>
+                    </th>
+                    <th class="w-56 bg-gray-50 px-6 py-3 text-left">
+                    </th>
+                </tr>
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
             @foreach($specifications as $specification)
                 <tr class="bg-white">
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $specification->designationEntry->designation??'' }}</strong>
+                        <strong>{{ $specification->designations->designation??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $specification->designations->designation??'' }}</strong>
+                        <strong>{{ $specification->designationEntry->designation??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $specification->quantity??'' }}</strong>

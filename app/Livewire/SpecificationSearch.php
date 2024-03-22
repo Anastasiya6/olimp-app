@@ -18,7 +18,8 @@ class SpecificationSearch extends Component
         $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
                                 $query->where('designation', 'like', "%$searchTerm%");
                             })
-                                ->orderBy('updated_at','desc')
+                                ->orderByRaw("CAST(designation AS SIGNED)")
+                                //->orderBy('updated_at','desc')
                                 ->paginate(50);
         return view('livewire.specification-search',compact('specifications'));
     }

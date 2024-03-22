@@ -18,7 +18,7 @@ class DesignationController extends Controller
     {
         return view('administrator::include.designations.index', [
                 'route' => 'designations',
-                'livewire_search' => 'designation-material-search',
+                'livewire_search' => 'designation-search',
                 'title' => 'Вироби']);
     }
 

@@ -34,9 +34,6 @@
                         <x-dropdown-link :href="route('application.statement')">
                             {{ __('Відомість застосування') }}
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('make.application.statement')">
-                            {{ __('Зформувати відомість застосування') }}
-                        </x-dropdown-link>
 
                         <!-- Authentication -->
                         {{--<form method="POST" action="{{ route('logout') }}">

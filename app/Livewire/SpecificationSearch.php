@@ -31,18 +31,21 @@ class SpecificationSearch extends Component
 
             $specifications = Specification::with('designations','designationEntry')
                 ->orderBy('updated_at','desc')
-                ->paginate(50);
+                ->paginate(25);
 
         }else {
 
             $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
-                $query->where('designation', 'like', $searchTerm);
+                $query->where('designation', 'like', $searchTerm)
+                ->orderByRaw("CAST(designation AS SIGNED)");
+
             })
                 ->whereHas('designationEntry', function ($query) use ($searchTermChto) {
-                    $query->where('designation', 'like', $searchTermChto);
+                    $query->where('designation', 'like', $searchTermChto)
+                        ->orderByRaw("CAST(designation AS SIGNED)");
                 })
-                ->orderByRaw("CAST(designation AS SIGNED)")
-                ->paginate(50);
+
+                ->paginate(25);
         }
         return view('livewire.specification-search',compact('specifications'));
     }

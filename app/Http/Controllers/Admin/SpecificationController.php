@@ -20,7 +20,7 @@ class SpecificationController extends Controller
     {
         $specifications = Specification::with('designations','designationEntry')
                             ->orderBy('created_at','desc')
-                            ->paginate(50);
+                            ->paginate(25);
         return view('administrator::include.specifications.index', compact('specifications'));
     }
 

@@ -14,7 +14,7 @@ class Designation extends Model
         'name',
         'route',
         'gost',
-        'type_units',
+        'type_unit',
         'type',
         'designation_number',
         'designation_from_rascex'

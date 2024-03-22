@@ -14,6 +14,15 @@ class SpecificationSearch extends Component
 
     public $searchTermChto;
 
+    public function deleteSpecification($id)
+    {
+        $specification = Specification::findOrFail($id);
+        $specification->delete();
+
+        // Отправить сообщение об успешном удалении
+        session()->flash('message', 'Запись успешно удалена.');
+    }
+
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';

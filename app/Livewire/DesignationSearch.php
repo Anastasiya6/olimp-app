@@ -19,13 +19,8 @@ class DesignationSearch extends Component
         $searchTerm = '%' . $this->searchTerm . '%';
         $searchTermChto = '%' . $this->searchTermChto . '%';
 
-        if($searchTerm=='%%' || $searchTermChto='%%'){
+        if($searchTerm!='%%' || $searchTermChto!='%%'){
 
-            $items = Designation::where('type',0)
-                ->orderBy('updated_at','desc')
-                ->paginate(25);
-
-        }else {
             $items = Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
                 $query->
                 where('name', 'like', $searchTerm)
@@ -34,6 +29,12 @@ class DesignationSearch extends Component
                     ->orderByRaw("CAST(designation AS SIGNED)");
             })
                 ->paginate(50);
+
+
+        }else {
+            $items = Designation::where('type',0)
+                ->orderBy('updated_at','desc')
+                ->paginate(25);
         }
         $route = 'designations';
         return view('livewire.designation-search',compact('items','route'));

@@ -19,7 +19,7 @@ class Pi0Search extends Component
         $searchTerm = '%' . $this->searchTerm . '%';
         $searchTermChto = '%' . $this->searchTermChto . '%';
 
-        if($searchTerm=='%%' && $searchTermChto='%%'){
+        if($searchTerm=='%%' || $searchTermChto='%%'){
 
             $items = Designation::where('type',1)
                 ->orderBy('updated_at','desc')

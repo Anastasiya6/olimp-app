@@ -19,7 +19,7 @@ class DesignationSearch extends Component
         $searchTerm = '%' . $this->searchTerm . '%';
         $searchTermChto = '%' . $this->searchTermChto . '%';
 
-        if($searchTerm=='%%' && $searchTermChto='%%'){
+        if($searchTerm=='%%' || $searchTermChto='%%'){
 
             $items = Designation::where('type',0)
                 ->orderBy('updated_at','desc')

@@ -27,7 +27,8 @@ class DesignationController extends Controller
      */
     public function create()
     {
-        return view('administrator::include.designations.create');
+        return view('administrator::include.designations.create',[
+            'route' => $this->route ]);
     }
 
     /**
@@ -59,7 +60,9 @@ class DesignationController extends Controller
      */
     public function edit(Designation $designation)
     {
-        return view('administrator::include.designations.edit', compact('designation'));
+        return view('administrator::include.designations.edit',[
+            'item' => $designation,
+        ]);
 
     }
 

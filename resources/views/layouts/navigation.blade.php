@@ -52,6 +52,9 @@
                         <x-dropdown-link :href="route('designations.index')">
                             {{ __('Вироби') }}
                         </x-dropdown-link>
+                        <x-dropdown-link :href="route('pi0s.index')">
+                            {{ __('ПИ0') }}
+                        </x-dropdown-link>
                         <x-dropdown-link :href="route('orders.index')">
                             {{ __('Розузловування') }}
                         </x-dropdown-link>

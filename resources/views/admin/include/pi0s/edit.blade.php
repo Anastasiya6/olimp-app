@@ -9,7 +9,7 @@
         <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route('designations.update',$item->id) }}">
+                    <form method="POST" action="{{ route('pi0s.update',$item->id) }}">
                         @csrf
                         @method('put')
                         <div class="mb-6">
@@ -36,12 +36,27 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Маршрут</span>
-                                <input type="text" name="route"
-                                       class="block w-full mt-1 rounded-md"
-                                       placeholder="" value="{{old('route',$item->route)}}" />
+                                <span class="text-gray-700">Гост</span>
+                                <input type="text" name="gost" class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ old('gost', $item->gost) }}" />
                             </label>
-                            @error('route')
+                            @error('gost')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Виберіть одиницю виміру</span>
+                                <select name="designation_type_unit_id" class="block w-full mt-1 rounded-md">
+                                    @foreach($units as $unit)
+                                        <option value="{{ $unit->id }}"
+                                                @if($item->designation_type_unit_id == $unit->id) selected @endif 'selected' }}>
+                                        {{ $unit->unit }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+                            @error('designation_type_unit_id')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

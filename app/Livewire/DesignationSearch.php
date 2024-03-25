@@ -12,11 +12,19 @@ class DesignationSearch extends Component
 
     public $searchTerm;
 
+    public $searchTermChto;
+
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';
-        $items = Designation::where('name', 'like', $searchTerm)->orderBy('name')
+        $searchTermChto = '%' . $this->searchTermChto . '%';
+        $items = Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
+            $query->where('name', 'like', $searchTerm)
+                ->where('designation', 'like', $searchTermChto)
+            ->orderByRaw("CAST(designation AS SIGNED)");
+        })
             ->paginate(50);
+
         $route = 'designations';
         return view('livewire.designation-search',compact('items','route'));
     }

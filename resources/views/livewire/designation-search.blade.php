@@ -2,6 +2,9 @@
     <div class="py-4">
         <input type="text" wire:model.live="searchTerm" placeholder="Пошук по назві"/>
     </div>
+    <div class="py-4">
+        <input type="text" wire:model.live="searchTermChto" placeholder="Пошук по od"/>
+    </div>
 
     <div class="min-w-full align-middle">
         <table class="min-w-full border divide-y divide-gray-200">

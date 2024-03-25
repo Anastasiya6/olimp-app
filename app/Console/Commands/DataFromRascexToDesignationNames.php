@@ -37,10 +37,10 @@ class DataFromRascexToDesignationNames extends Command
 
         //$this->fillDesignationFromRascexName();
 
-        $this->fillDesignationFromM6piName();
+        //$this->fillDesignationFromM6piName();
 
 
-        //$this->fillSpecification();
+        $this->fillSpecification();
 
         echo 'Програма почалась '.$start_time.PHP_EOL;
         echo 'Програма закінчилась '.now().PHP_EOL;
@@ -114,13 +114,14 @@ class DataFromRascexToDesignationNames extends Command
     public function fillSpecification()
     {
         $table = new TableReader(
-            'c:\Mass\M0020.dbf',
+            'e:\d\Mass\M0020.dbf',
             [
                 'encoding' => 'cp866'
             ]
         );
         while ($record = $table->nextRecord()) {
-
+            if($record->get('ok') != 'ААМВ452849002')
+                continue;
             $find_designation_ok = $record->get('ok');
 
             $find_designation_od = $record->get('od');

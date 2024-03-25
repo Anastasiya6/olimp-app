@@ -17,8 +17,14 @@ class Designation extends Model
         'type_unit',
         'type',
         'designation_number',
-        'designation_from_rascex'
+        'designation_from_rascex',
+        'designation_type_unit_id'
     ];
+
+    public function unit()
+    {
+        return $this->belongsTo(DesignationTypeUnit::class, 'designation_type_unit_id');
+    }
 
     // Включите временные метки
     public $timestamps = true;

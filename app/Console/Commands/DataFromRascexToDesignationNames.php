@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 
 use App\Models\Designation;
 use App\Models\Designation1;
+use App\Models\DesignationTypeUnit;
+use App\Models\Naimiz;
 use App\Models\Specification;
+use App\Models\TypeUnit;
 use App\Services\HelpService\HelpService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -37,16 +40,29 @@ class DataFromRascexToDesignationNames extends Command
 
         //$this->fillDesignationFromRascexName();
 
-        //$this->fillDesignationFromM6piName();
+       //$this->fillSpecification();
 
+        //$this->typeUnit();
 
-        $this->fillSpecification();
+        $this->fillDesignationFromM6piName();
+
 
         echo 'Програма почалась '.$start_time.PHP_EOL;
         echo 'Програма закінчилась '.now().PHP_EOL;
 
         echo 'Команда успешно выполнена!';
 
+    }
+    public function typeUnit()
+    {
+        $naimizs = Naimiz::all();
+
+        foreach($naimizs as $naimiz){
+            echo  $naimiz->naimiz;
+            DesignationTypeUnit::create([
+                'unit' => $naimiz->naimiz,
+            ]);
+        }
     }
     public function fillDesignationFromRascexName()
     {
@@ -207,7 +223,13 @@ class DataFromRascexToDesignationNames extends Command
     }
     public function fillDesignationFromM6piName()
     {
+        $typeUnits = DesignationTypeUnit::all()->pluck('id','unit')->toArray();
+        $naimizs = Naimiz::all()->pluck('naimiz','ediz')->toArray();
 
+       // echo print_r($typeUnits,1);
+        //echo print_r($naimizs,1);
+
+        //exit;
         $table = new TableReader(
             'e:\d\Mass\M6pi.dbf',
             [
@@ -217,14 +239,19 @@ class DataFromRascexToDesignationNames extends Command
         while ($record = $table->nextRecord()) {
 
             $designation = Designation::where('designation', $record->get('nm'))->first();
-
+            echo print_r($designation,1);
+            //echo $naimizs;
+            $unit = NULL;
+            if($record->get('ediz')!=''){
+                $unit =  $naimizs[$record->get('ediz')]??NULL;
+            }
             if (!empty($designation) ){
 
                 $designation->update([
                     'designation' => $record->get('nm'),
                     'name' => $record->get('naim'),
                     'gost' => $record->get('gost'),
-                    'type_unit' => $record->get('ediz'),
+                    'designation_type_unit_id' =>$typeUnits[$unit]??NULL,
                     'type' => 1
                 ]);
 

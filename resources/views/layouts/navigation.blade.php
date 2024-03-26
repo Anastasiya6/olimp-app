@@ -40,22 +40,22 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('designation-materials.index')">
+                        <x-dropdown-link wire:navigate :href="route('designation-materials.index')">
                             {{ __('Норми') }}
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('specifications.index')">
+                        <x-dropdown-link wire:navigate :href="route('specifications.index')">
                             {{ __('M0020') }}
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('materials.index')">
+                        <x-dropdown-link wire:navigate :href="route('materials.index')">
                             {{ __('Матеріали') }}
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('designations.index')">
+                        <x-dropdown-link wire:navigate :href="route('designations.index')">
                             {{ __('Вироби') }}
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('pi0s.index')">
+                        <x-dropdown-link wire:navigate :href="route('pi0s.index')">
                             {{ __('ПИ0') }}
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('orders.index')">
+                        <x-dropdown-link wire:navigate :href="route('orders.index')">
                             {{ __('Розузловування') }}
                         </x-dropdown-link>
                         <!-- Authentication -->

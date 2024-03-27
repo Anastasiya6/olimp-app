@@ -5,7 +5,7 @@
             <div class="flex">
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
 
-                <a href="{{route('admin.home')}}" class="user__menu-admin" title="Administrator panel" target="_blank">
+                <a href="{{route('admin.home')}}" wire:navigate class="user__menu-admin" title="Administrator panel" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
                         <circle cx="10.5" cy="10.5" r="9.5" stroke="#00CD3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M15.7427 9.59779L14.0868 7.94188V6.02904C14.0868 5.68317 13.8065 5.40287 13.4601 5.40287C13.1146 5.40287 12.8343 5.68317 12.8343 6.02904V6.68939L11.6013 5.4564C10.9917 4.84714 9.93188 4.84822 9.32369 5.4575L5.18331 9.59779C4.9389 9.84269 4.9389 10.239 5.18331 10.4835C5.42784 10.7283 5.82488 10.7283 6.06931 10.4835L10.2093 6.34308C10.3442 6.20892 10.5819 6.20892 10.716 6.34268L14.8567 10.4835C14.9795 10.6059 15.1396 10.6668 15.2996 10.6668C15.46 10.6668 15.6203 10.6058 15.7427 10.4835C15.9872 10.239 15.9872 9.84271 15.7427 9.59779Z" fill="#00CD3C"/>
@@ -31,7 +31,7 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link :href="route('application.statement')">
+                        <x-dropdown-link :href="route('application.statement')" wire:navigate>
                             {{ __('Відомість застосування') }}
                         </x-dropdown-link>
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PI0Controller;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,3 +36,5 @@ Route::get('/edit-names/{designations_array}',  [DesignationController::class, '
 Route::resource('materials', MaterialController::class);
 Route::resource('designation-materials', DesignationMaterialController::class);
 Route::resource('orders', OrderController::class);
+
+Route::get('specification-material-norm-csv', [ReportController::class,'specificationNormMaterialCSV'])->name('download.csv');

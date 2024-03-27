@@ -9,7 +9,7 @@ use TCPDF;
 
 class ReportController extends Controller
 {
-    public function specificationNormMaterialCSV()
+    public function specificationNormMaterial()
     {
         $items = ReportApplicationStatement::has('designationMaterial.material')->with('designation')->get();
 
@@ -77,5 +77,75 @@ class ReportController extends Controller
         $pdf->Output('example.pdf', 'I');
 
 
+    }
+
+    public function DetailspecificationNormMaterial()
+    {
+        $items = ReportApplicationStatement::/*whereHas('designation', function ($query) {
+            $query->where('department_id', '08');
+        })
+            ->*/has('designationMaterial.material')
+            ->with('designation')
+            ->get();
+
+        $data = $items->sortBy('id')->map(function ($item) {
+            return [
+                'id' => $item->designationMaterial->material->id,
+                'material_name' => $item->designationMaterial->material->name,
+                'detail_name' => $item->designation->designation,
+                'quantity_total' => $item->quantity_total,
+                'unit' => $item->designationMaterial->material->unit->unit,
+                'norm' => $item->designationMaterial->norm,
+            ];
+        });
+
+        $previousMaterial = null;
+        $fileContent = '';
+        foreach ($data as $row) {
+            if ($row['material_name'] !== $previousMaterial) {
+                $fileContent .= $row['material_name'] . PHP_EOL;
+                $previousMaterial = $row['material_name'];
+            }
+
+            $fileContent .= str_repeat(' ', strlen($row['material_name'])) . sprintf("%-80s%-10s%-10s%-10s", $row['detail_name'], $row['quantity_total'], $row['norm'], $row['quantity_total']*$row['norm']) . PHP_EOL;
+
+        }
+$pdf = new TCPDF('L', 'mm', PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// Устанавливаем свойства PDF
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Your Name');
+$pdf->SetTitle('Report');
+$pdf->SetSubject('Report');
+$pdf->SetKeywords('Keywords');
+
+// Добавляем новую страницу
+$pdf->AddPage();
+
+// Устанавливаем шрифт и размер текста
+$pdf->SetFont('dejavusans', '', 10);
+
+// Заголовок таблицы
+$header = ['Material Name', 'Detail Name', 'Total Quantity', 'Unit', 'Norm'];
+
+// Ширина столбцов
+$columnWidths = [40, 50, 30, 20, 20];
+
+// Вывод заголовка таблицы
+foreach ($header as $key => $column) {
+    $pdf->Cell($columnWidths[$key], 10, $column, 1, 0, 'C');
+}
+$pdf->Ln();
+
+// Вывод данных таблицы
+foreach ($data as $row) {
+    foreach ($row as $key => $value) {
+        $pdf->Cell($columnWidths[$key], 10, $value, 1, 0, 'C');
+    }
+    $pdf->Ln();
+}
+
+// Выводим PDF в браузер
+$pdf->Output('example.pdf', 'I');
     }
 }

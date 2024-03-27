@@ -18,10 +18,14 @@
                         class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Разузловать
                     </a>
-                    <a href="{{ route('download.csv') }}" style="margin-left: 760px" target="_blank"
+                    <a href="{{ route('specification.material') }}" style="margin-left: 460px" target="_blank"
                        class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Нормы расхода
                     </a>
+                    {{--<a href="{{ route('detail.specification.material') }}" style="margin-left: 10px" target="_blank"
+                       class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                        Подетальные нормы расхода
+                    </a>--}}
 
                     <div class="min-w-full align-middle">
                         <table class="min-w-full border divide-y divide-gray-200">

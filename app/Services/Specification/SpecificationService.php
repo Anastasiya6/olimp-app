@@ -20,7 +20,12 @@ class SpecificationService
 
         if(!isset($designation1->id)){
 
-            $designation1 = $this->createDesignation($request->designation_entry_designation,$request->designation_entry_designation_name);
+            $designation1 = $this->createDesignation(
+                                                    $request->designation_entry_designation,
+                                                    $request->designation_entry_designation_name,
+                                                    $request->type,
+                                                    $request->designation_entry_route,
+                                                    $request->designation_entry_gost);
 
             $designationsArray[] = $designation1->id;
 
@@ -28,7 +33,11 @@ class SpecificationService
 
         if(!isset($designation2->id)){
 
-            $designation2 = $this->createDesignation($request->designation_designation,$request->designation_name);
+            $designation2 = $this->createDesignation(
+                                                    $request->designation_designation,
+                                                    $request->designation_name,
+                                                    $request->type,
+                                                    $request->designation_route);
 
             $designationsArray[] = $designation2->id;
 
@@ -51,12 +60,16 @@ class SpecificationService
         }
     }
 
-    private function createDesignation($designation,$name='')
+    private function createDesignation($designation,$name='',$type,$route='',$gost='')
     {
+
         return
             Designation::create([
                 'designation' => $designation,
-                'name' => $name
+                'name' => $name,
+                'route' => $route,
+                'gost' => $gost,
+                'type' => $type
             ]);
     }
 

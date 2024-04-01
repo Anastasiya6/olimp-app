@@ -21,9 +21,9 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>--}}
-                        @livewire('designation-new-search')
+                        @livewire('specification-designation-search')
 
-                        @livewire('search-dropdown')
+                        @livewire('specification-search-dropdown')
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Кількість</span>

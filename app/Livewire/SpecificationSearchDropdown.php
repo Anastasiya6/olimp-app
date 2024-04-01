@@ -6,7 +6,7 @@ use App\Models\Designation;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
-class SearchDropdown extends Component
+class SpecificationSearchDropdown extends Component
 {
     public $search = 'ААМВ';
 
@@ -17,6 +17,12 @@ class SearchDropdown extends Component
     public $selectedName = '';
 
     public $newDesignation = false;
+
+    public $newDesignationRoute = false;
+
+    public $newDesignationGost = false;
+
+    public $type = 0;
 
     public function mount()
     {
@@ -39,11 +45,25 @@ class SearchDropdown extends Component
 
         $this->searchResults = $designations;
         $this->newDesignation = false;
+        $this->newDesignationRoute = false;
+        $this->newDesignationGost = false;
 
         if(count($designations)==0){
 
             $this->selectedDesignation = $this->search;
+
             $this->newDesignation = true;
+
+            if (strpos($this->search, 'ПИ0') === 0) {
+
+                $this->newDesignationGost = true;
+
+                $this->type = 1;
+
+            } else {
+
+                $this->newDesignationRoute = true;
+            }
         }
     }
 
@@ -63,6 +83,6 @@ class SearchDropdown extends Component
 
     public function render()
     {
-        return view('livewire.search-dropdown');
+        return view('livewire.specification-search-dropdown');
     }
 }

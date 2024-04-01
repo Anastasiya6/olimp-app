@@ -7,7 +7,7 @@ use App\Models\Specification;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
-class DesignationNewSearch extends Component
+class SpecificationDesignationSearch extends Component
 {
     public $searchWhere = '';
 
@@ -44,6 +44,6 @@ class DesignationNewSearch extends Component
 
     public function render()
     {
-        return view('livewire.designation-new-search');
+        return view('livewire.specification-designation-search');
     }
 }

@@ -60,6 +60,31 @@
                     @enderror
                 </div>
             @endif
+            <input type="hidden" name="type" value="{{$type}}">
+            @if($newDesignationRoute)
+                <div class="mb-6">
+                    <label class="block">
+                        <span class="text-gray-700">Маршрут</span>
+                        <input type="text" name="designation_entry_route" class="block w-full mt-1 rounded-md" placeholder=""
+                               value="" />
+                    </label>
+                    @error('designation_entry_route')
+                    <div class="text-sm text-red-600">{{ $message }}</div>
+                    @enderror
+                </div>
+            @endif
+            @if($newDesignationGost)
+                <div class="mb-6">
+                    <label class="block">
+                        <span class="text-gray-700">ГОСТ</span>
+                        <input type="text" name="designation_entry_gost" class="block w-full mt-1 rounded-md" placeholder=""
+                               value="" />
+                    </label>
+                    @error('designation_entry_gost')
+                    <div class="text-sm text-red-600">{{ $message }}</div>
+                    @enderror
+                </div>
+            @endif
         </div>
     </div>
     <style type="text/css">

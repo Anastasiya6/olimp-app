@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Specification;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,6 +15,8 @@ class SpecificationSearch extends Component
 
     public $searchTermChto;
 
+    public $exactMatch = false;
+
     public function deleteSpecification($id)
     {
         $specification = Specification::findOrFail($id);
@@ -23,28 +26,44 @@ class SpecificationSearch extends Component
         session()->flash('message', 'Запись успешно удалена.');
     }
 
+    public function exactMatch()
+    {
+        $this->exactMatch = true;
+    }
+
+    public function updateSearch()
+    {
+        Log::info('updateSearch');
+        $this->resetPage();
+
+        $this->render();
+    }
+
     public function render()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
-        $searchTermChto = '%' . $this->searchTermChto . '%';
-        if($searchTerm=='%%' && $searchTermChto='%%'){
 
-            $specifications = Specification::with('designations','designationEntry')
-                ->orderBy('updated_at','desc')
+        if ($this->exactMatch) {
+            $searchTerm = '%' . $this->searchTerm;
+            $searchTermChto = '%' . $this->searchTermChto;
+
+        }else{
+            $searchTerm = '%' . $this->searchTerm . '%';
+            $searchTermChto = '%' . $this->searchTermChto . '%';
+        }
+
+        if ($searchTerm == '%%' && $searchTermChto == '%%') {
+            $specifications = Specification::with('designations', 'designationEntry')
+                ->orderBy('updated_at', 'desc')
                 ->paginate(25);
-
-        }else {
-
+        } else {
             $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
                 $query->where('designation', 'like', $searchTerm)
-                ->orderByRaw("CAST(designation AS SIGNED)");
-
+                    ->orderByRaw("CAST(designation AS SIGNED)");
             })
                 ->whereHas('designationEntry', function ($query) use ($searchTermChto) {
                     $query->where('designation', 'like', $searchTermChto)
                         ->orderByRaw("CAST(designation AS SIGNED)");
                 })
-
                 ->paginate(25);
         }
         return view('livewire.specification-search',compact('specifications'));

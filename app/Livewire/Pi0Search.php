@@ -21,19 +21,20 @@ class Pi0Search extends Component
 
         if($searchTerm!='%%' || $searchTermChto!='%%'){
 
-            $items = Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
+            $items = Designation::with('unit')->where(function ($query) use ($searchTerm, $searchTermChto) {
                 $query->
                 where('name', 'like', $searchTerm)
                     ->where('designation', 'like', $searchTermChto)
-                    ->where('type', 1)
-                    ->orderByRaw("CAST(designation AS SIGNED)");
+                    ->where('type', 1);
             })
+                ->orderBy("name")
                 ->paginate(50);
 
 
         }else {
             $items = Designation::where('type',1)
                 ->orderBy('updated_at','desc')
+                ->with('unit')
                 ->paginate(25);
         }
 

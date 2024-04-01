@@ -23,10 +23,10 @@
                 <div class="mb-6">
                     <label class="block">
                         <span class="text-gray-700">Куди, найменування</span>
-                        <input type="text" name="designation_entry_designation_name" class="block w-full mt-1 rounded-md" placeholder=""
+                        <input type="text" name="designation_name" class="block w-full mt-1 rounded-md" placeholder=""
                                value="" />
                     </label>
-                    @error('designation_entry_designation')
+                    @error('designation_name')
                     <div class="text-sm text-red-600">{{ $message }}</div>
                     @enderror
                 </div>

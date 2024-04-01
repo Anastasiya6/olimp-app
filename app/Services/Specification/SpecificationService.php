@@ -28,7 +28,7 @@ class SpecificationService
 
         if(!isset($designation2->id)){
 
-            $designation2 = $this->createDesignation($request->designation_designation);
+            $designation2 = $this->createDesignation($request->designation_designation,$request->designation_name);
 
             $designationsArray[] = $designation2->id;
 

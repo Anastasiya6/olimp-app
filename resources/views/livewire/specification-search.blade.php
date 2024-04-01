@@ -1,9 +1,13 @@
 <div>
     <div class="py-4">
-        <input type="text" wire:model.live="searchTerm" placeholder="Пошук Куди"/>
+        <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук Куди"/>
     </div>
     <div class="py-4">
-        <input type="text" wire:model.live="searchTermChto" placeholder="Пошук Що"/>
+        <input type="text" wire:model.live="searchTermChto" wire:keydown="updateSearch" placeholder="Пошук Що"/>
+    </div>
+    <div class="py-4">
+        <input type="checkbox" wire:model="exactMatch" id="exactMatchCheckbox" wire:change="updateSearch">
+        <label for="exactMatchCheckbox">Точне співпадіння</label>
     </div>
     <div>
         @if(session()->has('message'))

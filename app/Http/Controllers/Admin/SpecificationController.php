@@ -18,10 +18,7 @@ class SpecificationController extends Controller
      */
     public function index()
     {
-        $specifications = Specification::with('designations','designationEntry')
-                            ->orderBy('created_at','desc')
-                            ->paginate(25);
-        return view('administrator::include.specifications.index', compact('specifications'));
+        return view('administrator::include.specifications.index');
     }
 
     /**

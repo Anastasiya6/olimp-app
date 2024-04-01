@@ -31,7 +31,7 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link :href="route('application.statement')" wire:navigate>
+                        <x-dropdown-link :href="route('print.application.statement')" wire:navigate>
                             {{ __('Відомість застосування') }}
                         </x-dropdown-link>
 

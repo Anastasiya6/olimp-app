@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class SearchDropdown extends Component
 {
-    public $search = '';
+    public $search = 'ААМВ';
 
     public $searchResults = [];
 
@@ -18,6 +18,10 @@ class SearchDropdown extends Component
 
     public $newDesignation = false;
 
+    public function mount()
+    {
+        $this->search = 'ААМВ';
+    }
 
     public function searchResult()
     {

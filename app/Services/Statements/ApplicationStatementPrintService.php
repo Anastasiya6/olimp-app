@@ -77,5 +77,28 @@ class ApplicationStatementPrintService
                                 chto, kuda, designations1.name, designations2.route, order_number, category_code');*/
     }
 
+    public static function detailspecificationNormMaterial()
+    {
+        $items = ReportApplicationStatement::/*whereHas('designation', function ($query) {
+            $query->where('department_id', '08');
+        })
+            ->*/ has('designationMaterial.material')
+            ->with('designation','designationMaterial.material')
+            ->get();
+
+        $data = $items->sortBy('designationMaterial.material.id')->map(function ($item) {
+            return [
+                'id' => $item->designationMaterial->material->id,
+                'material_name' => $item->designationMaterial->material->name,
+                'detail_name' => $item->designation->designation,
+                'quantity_total' => $item->quantity_total,
+                'unit' => $item->designationMaterial->material->unit->unit,
+                'norm' => $item->designationMaterial->norm,
+            ];
+        });
+
+        return $data;
+    }
+
 }
 

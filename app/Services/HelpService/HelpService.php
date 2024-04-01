@@ -1,13 +1,6 @@
 <?php
 
 namespace App\Services\HelpService;
-use App\Models\Designation;
-use App\Models\Material;
-use App\Models\Specification;
-use App\Models\Ticker\PostStatus;
-use Illuminate\Http\Request;
-use App\Models\Publication\Publication;
-use Illuminate\Database\Eloquent\Builder;
 
 class HelpService
 {

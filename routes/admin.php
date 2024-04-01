@@ -37,5 +37,6 @@ Route::resource('materials', MaterialController::class);
 Route::resource('designation-materials', DesignationMaterialController::class);
 Route::resource('orders', OrderController::class);
 
+Route::get('application-statement', [\App\Http\Controllers\Admin\Report\ApplicationStatement::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm', [ReportController::class,'specificationNormMaterial'])->name('specification.material');
 Route::get('detail-specification-material-norm', [ReportController::class,'detailSpecificationNormMaterial'])->name('detail.specification.material');

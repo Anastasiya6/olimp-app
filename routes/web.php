@@ -36,5 +36,5 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/print-page', [PrintController::class, 'printPage'])->name('application.statement');
+Route::get('/print-page', [PrintController::class, 'printPage'])->name('print.application.statement');
 Route::get('/make-application-statement', [makeApplicationStatement::class, 'makeApplicationStatement'])->name('make.application.statement');

@@ -43,7 +43,6 @@ class SpecificationSearchDropdown extends Component
             ->orderBy('designation')
             ->take(6)->get();
 
-        $this->searchResults = $designations;
         $this->newDesignation = false;
         $this->newDesignationRoute = false;
         $this->newDesignationGost = false;
@@ -64,6 +63,16 @@ class SpecificationSearchDropdown extends Component
 
                 $this->newDesignationRoute = true;
             }
+        }elseif(count($designations)==1){
+
+            $this->searchResults = [];
+
+            $this->selectedDesignation = $this->search;
+
+        }else{
+
+            $this->searchResults = $designations;
+
         }
     }
 

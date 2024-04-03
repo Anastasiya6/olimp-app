@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Specification;
-use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -33,7 +32,6 @@ class SpecificationSearch extends Component
 
     public function updateSearch()
     {
-        Log::info('updateSearch');
         $this->resetPage();
 
         $this->render();

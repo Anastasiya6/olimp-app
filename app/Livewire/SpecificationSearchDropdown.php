@@ -3,12 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Designation;
+use App\Models\Specification;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class SpecificationSearchDropdown extends Component
 {
-    public $search = 'ААМВ';
+    public $search = '';
 
     public $searchResults = [];
 
@@ -26,7 +27,14 @@ class SpecificationSearchDropdown extends Component
 
     public function mount()
     {
-        $this->search = 'ААМВ';
+        $last = Specification::orderBy('updated_at','desc')->with('designations')->first();
+
+        $designation = $last->designationEntry->designation;
+
+        preg_match('/^[^\d]+/', $designation, $matches);
+
+        $this->search  = $matches[0];
+
     }
 
     public function searchResult()

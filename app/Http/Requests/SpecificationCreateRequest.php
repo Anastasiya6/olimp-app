@@ -22,7 +22,7 @@ class SpecificationCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'designation_entry_designation' => 'required',
+            'designation_entry_designation' => 'required|different:designation_designation',
             'designation_designation' => 'required',
             'specification_quantity' => 'required|integer',
 
@@ -35,7 +35,7 @@ class SpecificationCreateRequest extends FormRequest
             'designation_entry_designation.required' => 'Заповніть номер - Що',
             'designation_designation.required' => 'Заповніть номер - Куди',
             'specification_quantity.required' => 'Введіть кількість',
-
+            'designation_entry_designation.different' => 'Що не може бути таким же як Куди',
         ];
     }
 }

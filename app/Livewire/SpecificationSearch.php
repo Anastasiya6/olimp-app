@@ -39,7 +39,6 @@ class SpecificationSearch extends Component
 
     public function render()
     {
-
         if ($this->exactMatch) {
             $searchTerm = '%' . $this->searchTerm;
             $searchTermChto = '%' . $this->searchTermChto;

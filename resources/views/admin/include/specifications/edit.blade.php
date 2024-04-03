@@ -17,44 +17,44 @@
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Що</span>
-                                <input type="text" name="designationEntry"
-                                       class="block w-full mt-1 rounded-md" readonly
+                                <input type="text" name="designation_entry_designation"
+                                       class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('designation',$specification->designationEntry->designation)}}" />
                             </label>
-                            @error('designationEntry')
+                            @error('designation_entry_designation')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Куди</span>
-                                <input type="text" name="designation"
-                                       class="block w-full mt-1 rounded-md" readonly
+                                <input type="text" name="designation_designation"
+                                       class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('designation',$specification->designations->designation)}}" />
                             </label>
-                            @error('designation')
+                            @error('designation_designation')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Кількість</span>
-                                <input type="text" name="quantity"
+                                <input type="text" name="specification_quantity"
                                        class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('designation',$specification->quantity)}}" />
                             </label>
-                            @error('quantity')
+                            @error('specification_quantity')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Шифр</span>
-                                <input type="text" name="category_code"
+                                <input type="text" name="specification_category_code"
                                        class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('designation',$specification->category_code)}}" />
                             </label>
-                            @error('category_code')
+                            @error('specification_category_code')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

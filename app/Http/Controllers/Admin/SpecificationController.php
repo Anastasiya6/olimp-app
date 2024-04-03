@@ -63,10 +63,11 @@ class SpecificationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SpecificationRequest $request, Specification $specification)
+    public function update(SpecificationCreateRequest $request, Specification $specification,SpecificationService $service)
     {
-        $specification->quantity = $request->quantity;
-        $specification->save();
+       /* $specification->quantity = $request->quantity;
+        $specification->save();*/
+        $service->store($request);
         return redirect()->route('specifications.index')->with('status', 'Дані успішно збережено');
 
     }

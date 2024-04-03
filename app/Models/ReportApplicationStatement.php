@@ -27,11 +27,20 @@ class ReportApplicationStatement extends Model
         return $this->belongsTo(DesignationMaterial::class, 'designation_entry_id','designation_id');
     }
 
-    public function designation()
+    /**
+     * Определение отношения belongsTo к модели Designation (по полю designation_entry_id).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function designationEntry()
     {
         return $this->belongsTo(Designation::class, 'designation_entry_id');
     }
 
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class);
+    }
     // Включите временные метки
     public $timestamps = true;
 }

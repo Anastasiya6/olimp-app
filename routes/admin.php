@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PI0Controller;
+use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,3 +41,4 @@ Route::resource('orders', OrderController::class);
 Route::get('application-statement', [\App\Http\Controllers\Admin\Report\ApplicationStatement::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm', [ReportController::class,'specificationNormMaterial'])->name('specification.material');
 Route::get('detail-specification-material-norm', [ReportController::class,'detailSpecificationNormMaterial'])->name('detail.specification.material');
+Route::get('entry-detail', [EntryDetailController::class,'entryDetail'])->name('entry.detail');

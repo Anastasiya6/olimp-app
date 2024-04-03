@@ -32,6 +32,10 @@
                            class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                             Подетальні норми витрат
                         </a>
+                        <a href="{{ route('entry.detail') }}" target="_blank"
+                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                            Входження деталей
+                        </a>
                     </div>
                     <div class="min-w-full align-middle">
                         <table class="min-w-full border divide-y divide-gray-200">

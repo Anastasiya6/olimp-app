@@ -23,19 +23,6 @@ class DesignationMaterialController extends Controller
      */
     public function index()
     {
-        $items = ReportApplicationStatement::with(['designationMaterial.material', 'designation'])
-            ->get();
-        $i=0;
-        foreach($items as $item){
-
-            if($i>1) {
-              //  dd($item->designationMaterial->material->name,$item->designation->designation);
-                //dd($item->designation->designation);
-            }
-            $i++;
-        }
-        //dd( DesignationMaterial::toSql());
-        //dd(ReportApplicationStatement::with('designationMaterial')->toSql());
         $items = DesignationMaterial::with('material','designation')
             ->orderBy('created_at','desc')
             ->paginate(25);

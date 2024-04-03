@@ -83,14 +83,14 @@ class ApplicationStatementPrintService
             $query->where('department_id', '08');
         })
             ->*/ has('designationMaterial.material')
-            ->with('designation','designationMaterial.material')
+            ->with('designationEntry','designationMaterial.material')
             ->get();
 
         $data = $items->sortBy('designationMaterial.material.id')->map(function ($item) {
             return [
                 'id' => $item->designationMaterial->material->id,
                 'material_name' => $item->designationMaterial->material->name,
-                'detail_name' => $item->designation->designation,
+                'detail_name' => $item->designationEntry->designation,
                 'quantity_total' => $item->quantity_total,
                 'unit' => $item->designationMaterial->material->unit->unit,
                 'norm' => $item->designationMaterial->norm,

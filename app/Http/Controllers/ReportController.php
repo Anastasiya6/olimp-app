@@ -13,7 +13,7 @@ class ReportController extends Controller
 {
     public function specificationNormMaterial()
     {
-        $items = ReportApplicationStatement::has('designationMaterial.material')->with('designation')->get();
+        $items = ReportApplicationStatement::has('designationMaterial.material')->with('designationEntry')->get();
 
         $data = $items->map(function ($item) {
             return [
@@ -21,7 +21,7 @@ class ReportController extends Controller
                 'name' => $item->designationMaterial->material->name,
                 'unit' => $item->designationMaterial->material->unit->unit,
                 'norm' => $item->designationMaterial->norm,
-                'department' => substr($item->designation->route, 0, 2),
+                'department' => substr($item->designationEntry->route, 0, 2),
             ];
         });
 
@@ -132,28 +132,20 @@ class ReportController extends Controller
                 $sum_norm = 0;
 
                 if($pdf->getY() >= 185) {
-                    $this->getList($page,$pdf, $header1, $header2, $width);
+                    PDFService::getList($page,$pdf, $header1, $header2, $width);
                     $page++;
                 }
                 // Добавляем название материала
                 $pdf->Cell(100, 10, $row['material_name']);
                 $pdf->Ln();
                 if($pdf->getY() >= 185) {
-                    $this->getList($page,$pdf, $header1, $header2, $width);
+                    PDFService::getList($page,$pdf, $header1, $header2, $width);
                     $page++;
                 }
 
-                // Остальные ячейки для следующей строки
-                $pdf->Cell($width[0], 10, '');
-                $pdf->Cell($width[1], 10, $row['detail_name']);
-                $pdf->Cell($width[2], 10, $row['quantity_total']);
-                $pdf->Cell($width[3], 10, $row['unit']);
-                $pdf->Cell($width[4], 10, $row['norm']);
-                $pdf->Cell($width[5], 10, $row['norm']*$row['quantity_total']);
-                $pdf->Ln();
                 // Сбрасываем предыдущий материал
                 $previousMaterial = $row['id'];
-            } else {
+            }
                 // Если текущий материал такой же, как предыдущий, то добавляем только детали без названия материала
                 $pdf->Cell($width[0], 10, '');
                 $pdf->Cell($width[1], 10, $row['detail_name']);
@@ -162,20 +154,11 @@ class ReportController extends Controller
                 $pdf->Cell($width[4], 10, $row['norm']);
                 $pdf->Cell($width[5], 10, $row['norm']*$row['quantity_total']);
                 $pdf->Ln();
-            }
-            $sum_norm = $sum_norm + $row['norm']*$row['quantity_total'];
+
+                $sum_norm = $sum_norm + $row['norm']*$row['quantity_total'];
 
         }
         // Выводим PDF в браузер
         $pdf->Output('example.pdf', 'I');
     }
-
-    public function getList($page,$pdf, $header1, $header2, $width)
-    {
-        $pdf->Cell(0, 5, 'ЛИСТ '.$page, 0, 1, 'C');
-        $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
-        return $pdf;
-    }
-
-
 }

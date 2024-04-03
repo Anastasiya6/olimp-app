@@ -80,4 +80,11 @@ class PDFService
         }
         return $pdf;
     }
+
+    public static function getList($page,$pdf, $header1, $header2, $width)
+    {
+        $pdf->Cell(0, 5, 'ЛИСТ '.$page, 0, 1, 'C');
+        $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
+        return $pdf;
+    }
 }

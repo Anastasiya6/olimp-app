@@ -34,6 +34,7 @@ class ApplicationStatement extends Controller
         $pdf = PDFService::getPdf($header1,$header2,$width,'');
         $page = 2;
 
+        $previous_chto = '';
         // Добавление данных таблицы
         foreach ($data as $item) {
 
@@ -42,9 +43,18 @@ class ApplicationStatement extends Controller
                 $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
                 $page++;
             }
+            if($previous_chto == $item->chto){
+                $chto = '';
+                $chto_name = '';
+            }else{
+                $chto = $item->chto;
+                $chto_name = $item->chto_name;
+                $previous_chto = $item->chto;
+            }
+
             $pdf->Cell($width[0], 10, $item->zakaz);
-            $pdf->Cell($width[1], 10, $item->chto);
-            $pdf->Cell($width[2], 10, $item->chto_name);
+            $pdf->Cell($width[1], 10, $chto);
+            $pdf->Cell($width[2], 10, $chto_name);
             $pdf->Cell($width[3], 10, $item->kuda);
             $pdf->Cell($width[4], 10, $item->kols);
             $pdf->Cell($width[5], 10, $item->kolzak);

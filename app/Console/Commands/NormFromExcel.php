@@ -6,7 +6,6 @@ use App\Models\Designation;
 use App\Models\DesignationMaterial;
 use App\Models\Material;
 use App\Models\Norm71;
-use App\Models\ReportApplicationStatement;
 use App\Services\HelpService\HelpService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;

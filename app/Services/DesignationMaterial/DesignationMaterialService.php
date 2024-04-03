@@ -22,7 +22,7 @@ class DesignationMaterialService
     public function update(Request $request, DesignationMaterial $designationMaterial)
     {
         $designationMaterial->norm = $request->norm;
-
+        $designationMaterial->department_id = $request->department_id;
         $designationMaterial->save();
     }
 }

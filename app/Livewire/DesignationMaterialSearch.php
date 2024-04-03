@@ -9,6 +9,15 @@ class DesignationMaterialSearch extends Component
 {
     public $searchTerm;
 
+    public function deleteDesignationMaterial($id)
+    {
+        $designationMaterial = DesignationMaterial::findOrFail($id);
+        $designationMaterial->delete();
+
+        // Отправить сообщение об успешном удалении
+        session()->flash('message', 'Запис успішно видалено.');
+    }
+
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';

@@ -22,7 +22,7 @@ class SpecificationSearch extends Component
         $specification->delete();
 
         // Отправить сообщение об успешном удалении
-        session()->flash('message', 'Запись успешно удалена.');
+        session()->flash('message', 'Запис успішно видалено.');
     }
 
     public function exactMatch()

@@ -11,9 +11,6 @@ class EntryDetailService
 {
     public function entryDetail($designation)
     {
-
-        //$jobs = $this->getJobs();
-        //$this->output->progressStart($jobs->count());
         $search = Designation::where('designation', $designation)->first();
        // dd($search);
         $data =  ReportApplicationStatement::with('designation','designationEntry')->get();
@@ -45,6 +42,7 @@ class EntryDetailService
         ];
         $pdf = PDFService::getPdf($header1,$header2,$width,'');
         $page = 2;
+        //dd($data);
         foreach ($resGrouped as $designation => $group) {
             if($pdf->getY() >= 185) {
                 $pdf->Cell(0, 5, 'ЛИСТ '.$page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
@@ -72,46 +70,6 @@ class EntryDetailService
         }
         $pdf->Output('entry_detail.pdf', 'I');
 
-
-      /*  $previousMaterial = null;
-
-        foreach ($res as $row) {
-
-            if($pdf->getY() >= 185) {
-                $pdf->Cell(0, 5, 'ЛИСТ '.$page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
-                $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
-                $page++;
-            }
-            // Если текущий узел отличается от предыдущего, добавляем его в PDF
-            if ($row['designation'] !== $previousMaterial) {
-
-                if($pdf->getY() >= 185) {
-                    PDFService::getList($page,$pdf, $header1, $header2, $width);
-                    $page++;
-                }
-                // Добавляем название детали
-                $pdf->Cell(50, 10, $row['designation']);
-                $pdf->Cell(70, 10, $row['designation_name']);
-                $pdf->Ln();
-                if($pdf->getY() >= 185) {
-                    PDFService::getList($page,$pdf, $header1, $header2, $width);
-                    $page++;
-                }
-
-                // Сбрасываем предыдущий узел
-                $previousMaterial = $row['designation'];
-            }
-            // Если текущий узел такой же, как предыдущий, то добавляем только детали без названия узла
-            $pdf->Cell($width[0], 10, '');
-            $pdf->Cell($width[1], 10, '');
-            $pdf->Cell($width[2], 10, $row['designationEntry']);
-            $pdf->Cell($width[3], 10, $row['designationEntry_name']);
-            $pdf->Cell($width[4], 10, $row['quantity']);
-            $pdf->Ln();
-        }
-
-        // Выводим PDF в браузер
-        $pdf->Output('entry_detail.pdf', 'I');*/
     }
 
     function findDetailsInNode($searchID, $data, &$res, $type) {
@@ -123,21 +81,16 @@ class EntryDetailService
                     'id' => $row->id,
                     'designation' => $row->designation->designation,
                     'designation_name' => $row->designation->name,
-                    'designationEntry' => $row->designationEntry->designation,
-                    'designationEntry_name' => $row->designationEntry->name,
+                    'designationEntry' => $row->designationEntry->designation??"",
+                    'designationEntry_name' => $row->designationEntry->name??"",
                     'quantity' => $row->quantity,
                     'type' => $type,
                     'category_code' => $row->category_code
                 ]));
-                if($row['designation_id'] != $row['designation_entry_id']){
+                if($row['designation_id'] != $row['designation_entry_id'] &&  $row->designationEntry){
                     $this->findDetailsInNode($row['designation_entry_id'], $data,$res,$row->designationEntry->designation);
                 }
             }
         }
-    }
-
-    private function getJobs(): Collection
-    {
-        return Job::all();
     }
 }

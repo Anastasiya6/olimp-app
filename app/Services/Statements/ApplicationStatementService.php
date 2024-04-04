@@ -62,19 +62,22 @@ class ApplicationStatementService
 
             $hcp = SUBSTR($specification->designations->route,0,2);
             $tm = 0;
-            if ($specification->designationEntry->route == "" && $specification->designations->route != "") {
-                $tm = "99";
-            } elseif ($specification->designationEntry->id == $specification->designations->id && $specification->designationEntry->route == "" && $specification->designations->route == "") {
-                $tm = "99";
-            } elseif (substr($specification->designationEntry->route, 0, 2) == substr($specification->designations->route, 0, 2) && $specification->designationEntry->route != "") {
-                $tm = $specification->designationEntry->route;
-            } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
-                $tm = $specification->designationEntry->route;
-            } elseif (substr($specification->designations->route, 0, 2) != "") {
-                $tm = $specification->designationEntry->route . "-99";
-            } elseif (substr($specification->designations->route, 0, 2) == "") {
-                $tm = $specification->designationEntry->route;
-            }
+
+            if(isset($specification->designationEntry) && isset($specification->designations)) {
+               if ($specification->designationEntry->route == "" && $specification->designations->route != "") {
+                   $tm = "99";
+               } elseif ($specification->designationEntry->id == $specification->designations->id && $specification->designationEntry->route == "" && $specification->designations->route == "") {
+                   $tm = "99";
+               } elseif (substr($specification->designationEntry->route, 0, 2) == substr($specification->designations->route, 0, 2) && $specification->designationEntry->route != "") {
+                   $tm = $specification->designationEntry->route;
+               } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
+                   $tm = $specification->designationEntry->route;
+               } elseif (substr($specification->designations->route, 0, 2) != "") {
+                   $tm = $specification->designationEntry->route . "-99";
+               } elseif (substr($specification->designations->route, 0, 2) == "") {
+                   $tm = $specification->designationEntry->route;
+               }
+           }
             ReportApplicationStatement::updateOrCreate([
                 'designation_entry_id' => $specification->designation_entry_id,
                 'designation_id' => $specification->designation_id,

@@ -16,7 +16,12 @@ class DesignationSearch extends Component
 
     public function render()
     {
+        $this->searchTerm = str_replace('і', 'i', $this->searchTerm);
+
+        $this->earchTermChto = str_replace('і', 'i', $this->searchTermChto);
+
         $searchTerm = '%' . $this->searchTerm . '%';
+
         $searchTermChto = '%' . $this->searchTermChto . '%';
 
         if($searchTerm!='%%' || $searchTermChto!='%%'){

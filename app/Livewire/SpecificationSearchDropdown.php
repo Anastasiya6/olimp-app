@@ -57,6 +57,8 @@ class SpecificationSearchDropdown extends Component
 
         if(count($designations)==0){
 
+            $this->searchResults = [];
+
             $this->selectedDesignation = $this->search;
 
             $this->newDesignation = true;

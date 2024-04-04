@@ -36,7 +36,7 @@ class DesignationController extends Controller
      */
     public function store(Request $request)
     {
-        $designation = Designation::firstOrCreate([
+        $designation = Designation::updateOrCreate([
             'designation' => $request->designation,
         ], [
             'name' => $request->name,

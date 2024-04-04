@@ -28,7 +28,10 @@ class DesignationSearch extends Component
 
             $items = Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
                 $query->
-                where('name', 'like', $searchTerm)
+                where(function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', $searchTerm)
+                        ->orWhereNull('name');
+                })
                     ->where('designation', 'like', $searchTermChto)
                     ->where('type', 0)
                     ->orderByRaw("CAST(designation AS SIGNED)");

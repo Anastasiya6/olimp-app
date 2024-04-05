@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PI0Controller;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
+use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,3 +43,4 @@ Route::get('application-statement', [\App\Http\Controllers\Admin\Report\Applicat
 Route::get('specification-material-norm', [ReportController::class,'specificationNormMaterial'])->name('specification.material');
 Route::get('detail-specification-material-norm', [ReportController::class,'detailSpecificationNormMaterial'])->name('detail.specification.material');
 Route::get('entry-detail', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
+Route::get('not-norm-for-material', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');

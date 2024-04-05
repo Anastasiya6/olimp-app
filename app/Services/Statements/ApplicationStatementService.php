@@ -33,7 +33,9 @@ class ApplicationStatementService
                 'order_number' => $order->order_number,
                 'tm' => $order->designation->route . "-99",
                 'tm1' => 68,
-                'hcp' => 0
+                'hcp' => 0,
+                'order_designationEntry' => $this->getNumbers( $order->designation->designation),
+                'order_designation' => $this->getNumbers($order->designation->designation)
             ]);
         }
         //zad
@@ -51,8 +53,8 @@ class ApplicationStatementService
 
     public function disassembly($find_designation_id, $quantity, $order_number){
 
-        $specifications = Specification
-            ::where('designation_id', $find_designation_id)
+        $specifications = Specification::with('designations')
+            ->where('designation_id', $find_designation_id)
             //->where('category_code', '!=', '')
             ->orderBy('designation_id')
             ->orderBy('designation_entry_id')
@@ -77,7 +79,9 @@ class ApplicationStatementService
                } elseif (substr($specification->designations->route, 0, 2) == "") {
                    $tm = $specification->designationEntry->route;
                }
-           }
+
+            }
+
             ReportApplicationStatement::updateOrCreate([
                 'designation_entry_id' => $specification->designation_entry_id,
                 'designation_id' => $specification->designation_id,
@@ -88,26 +92,21 @@ class ApplicationStatementService
                 'quantity_total' => DB::raw('quantity_total + '.$specification->quantity * $quantity,),// * $quantity,
                 'tm' => $tm,
                 'tm1' => self::DEPARTMENT_RECEPIENT,
-                'hcp' => $hcp
+                'hcp' => $hcp,
+                'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
+                'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : ''
             ]);
-
-            /*ReportApplicationStatement::create([
-                'designation_entry_id' => $specification->designation_entry_id,
-                'category_code' => $specification->category_code,
-                'designation_id' => $specification->designation_id,
-                'quantity' => $specification->quantity,
-                'quantity_total' => $specification->quantity * $quantity,
-                'order_number' => $order_number,
-                'tm' => $specification->route,
-                'tm1' => self::DEPARTMENT_RECEPIENT,
-                'hcp' => SUBSTR($specification->route,1,2)
-            ]);*/
 
             if ($specification->category_code == 0 || $specification->category_code == 1) {
 
                 $this->disassembly($specification->designation_entry_id, $specification->quantity * $quantity, $order_number);
             }
         }
+    }
+    public function getNumbers($designation)
+    {
+        return preg_replace('/[^0-9]+/', '', $designation);
+
     }
 
 }

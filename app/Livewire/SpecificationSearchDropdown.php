@@ -52,10 +52,19 @@ class SpecificationSearchDropdown extends Component
             ->take(6)->get();
 
         $this->newDesignation = false;
+
         $this->newDesignationRoute = false;
+
         $this->newDesignationGost = false;
 
-        if(count($designations)==0){
+        $count = 1;
+
+        if($designations->count() == 1 && $designations[0]->designation !== $this->search){
+
+            $count = 0;
+        }
+
+        if(count($designations) == 0 || $count == 0){
 
             $this->searchResults = [];
 

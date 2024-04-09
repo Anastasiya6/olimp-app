@@ -53,6 +53,7 @@ class NormFromExcel extends Command
         $norms = Norm73::all();
         $count_material = 0;
         $count_detail = 0;
+        $count_designation_material = 0;
         foreach($norms as $norm){
 
             $begin_designation = $norm->designation_number;
@@ -96,11 +97,13 @@ class NormFromExcel extends Command
                 }
 
             }
+            $count_designation_material++;
             $this->createDesignationMaterial($designation->id,$material->id,$begin_designation,$begin_material,$norm->norm);
 
         }
         echo 'Материалов не найдено '.$count_material.PHP_EOL;
         echo 'Деталей не найдено '.$count_detail.PHP_EOL;
+        echo 'Норм добавлено или обновлено '.$count_designation_material.PHP_EOL;
     }
 
     public function createDesignation($designation_number,$designation_name,$designation_from_excel)

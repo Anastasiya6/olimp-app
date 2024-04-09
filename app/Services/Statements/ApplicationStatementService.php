@@ -35,7 +35,8 @@ class ApplicationStatementService
                 'tm1' => 68,
                 'hcp' => 0,
                 'order_designationEntry' => $this->getNumbers( $order->designation->designation),
-                'order_designation' => $this->getNumbers($order->designation->designation)
+                'order_designation' => $this->getNumbers($order->designation->designation),
+                'order_designationEntry_letters' => $this->getLetters($order->designation->designation)
             ]);
         }
         //zad
@@ -94,7 +95,9 @@ class ApplicationStatementService
                 'tm1' => self::DEPARTMENT_RECEPIENT,
                 'hcp' => $hcp,
                 'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
-                'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : ''
+                'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
+                'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
+
             ]);
 
             if ($specification->category_code == 0 || $specification->category_code == 1) {
@@ -106,6 +109,11 @@ class ApplicationStatementService
     public function getNumbers($designation)
     {
         return preg_replace('/[^0-9]+/', '', $designation);
+
+    }
+    public function getLetters($designation)
+    {
+        return preg_replace('/[^А-Яа-я]+/', '', $designation);
 
     }
 

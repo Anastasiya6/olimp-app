@@ -21,7 +21,8 @@ class ReportApplicationStatement extends Model
         'tm1',
         'hcp',
         'order_designation',
-        'order_designationEntry'
+        'order_designationEntry',
+        'order_designationEntry_letters'
     ];
 
     public function designationMaterial()

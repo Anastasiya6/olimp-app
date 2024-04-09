@@ -38,13 +38,13 @@ class DataFromRascexToDesignationNames extends Command
 
         //Designation1::truncate();
 
-        //$this->fillDesignationFromRascexName();
+        $this->fillDesignationFromRascexName();
 
        //$this->fillSpecification();
 
         //$this->typeUnit();
 
-        $this->fillDesignationFromM6piName();
+        //$this->fillDesignationFromM6piName();
 
 
         echo 'Програма почалась '.$start_time.PHP_EOL;
@@ -67,7 +67,7 @@ class DataFromRascexToDesignationNames extends Command
     public function fillDesignationFromRascexName()
     {
         $table = new TableReader(
-            'c:\Mass\Rascex.dbf',
+            'e:\050424\Mass\Rascex.dbf',
             [
                 'encoding' => 'cp866'
             ]
@@ -79,32 +79,60 @@ class DataFromRascexToDesignationNames extends Command
 
             /*Пропускаем подобные этому Н021018, т.е. начиная с Н и далее цифры*/
             /*Пропускаем подобные этому КР66000160143233, т.е. начиная с КР и далее цифры*/
+            /*Пропускаем подобные этому ПИ091334491853, т.е. начиная с ПИ и далее цифры*/
             /* Пропускаем если есть точка как например ААМВ464467001.1*/
 
-            if (!(preg_match('/^Н\d+$/', $find_designation)) && !(preg_match('/^КР\d+/', $find_designation)) && !str_contains($find_designation, '.')) {
+            if (!(preg_match('/^Н\d+$/', $find_designation)) &&
+                !(preg_match('/^КР\d+/', $find_designation)) &&
+                !(preg_match('/^ПИ\d+$/', $find_designation)) &&
+                !str_contains($find_designation, '.')) {
 
                 $find_designation = HelpService::transformNumber($find_designation);
 
             }
            echo $find_designation.PHP_EOL;
-           $designation = Designation::where('designation', $find_designation)->first();
+           $designation = Designation
+               ::where('designation', $find_designation)
+               ->orWhere('designation_from_rascex',$record->get('chto'))
+               ->first();
 
             if (!empty($designation) ){
-                if(($designation->name == '' || $designation->route == '')
-                    &&
-                    ($record->get('naim') != '' || $record->get('tm') != '')
+                /*if($designation->designation == 'ОП4852042-001' ){
+                    echo '1'.PHP_EOL;
+                }*/
+                if(($designation->name == '' && $record->get('naim') != '')
+                    ||
+                    ($designation->route == '' && $record->get('tm') != '')
                 ) {
-
+                    /*
+                    if($designation->designation == 'ОП4852042-001' ){
+                        echo '2'.PHP_EOL;
+                        echo print_r($designation,1);
+                    }*/
                     echo $designation->designation . PHP_EOL;
                     echo 'update'.PHP_EOL;
                     $designation->update([
-                        'name' => $designation->name ?? $record->get('naim'),
+                        'name' => $designation->name=='' ? $record->get('naim') : $designation->name,
                         'designation_from_rascex' => $record->get('chto'),
-                        'route' => $designation->route ?? $record->get('tm')
+                        'route' => $designation->route=='' ? $record->get('tm') : $designation->route
+                     ]);
+                }
+                if( ($designation->designation != $find_designation)){
+                    /*if($designation->designation == 'ОП4852042-001' ){
+                        echo '3'.PHP_EOL;
+                        echo $designation->designation .' '. $find_designation;
+                        echo print_r($designation,1);
+                    }*/
+                    echo $designation->designation.PHP_EOL;
+                    echo $find_designation;
+                    $designation->update([
+                        'designation' => $find_designation,
                     ]);
+                        exit;
                 }
 
             } else {
+
                 echo 'create'.PHP_EOL;
                 try {
                     Designation::create([
@@ -123,7 +151,8 @@ class DataFromRascexToDesignationNames extends Command
                 }
             }
             echo $record->get('naim') . PHP_EOL;
-
+          /*  if($designation->designation == 'ОП4852042-001' )
+               exit;*/
         }
 
     }
@@ -136,8 +165,8 @@ class DataFromRascexToDesignationNames extends Command
             ]
         );
         while ($record = $table->nextRecord()) {
-            if($record->get('ok') != 'ААМВ452849002')
-                continue;
+           /* if($record->get('ok') != 'ААМВ452849002')
+                continue;*/
             $find_designation_ok = $record->get('ok');
 
             $find_designation_od = $record->get('od');
@@ -164,8 +193,12 @@ class DataFromRascexToDesignationNames extends Command
             $designation = $find_designation_ok;
             $detail = $find_designation_od;
 
-            $designationId = Designation::where('designation', $designation)->value('id');
-            $detailId = Designation::where('designation', $detail)->value('id');
+            $designationId = Designation
+                ::where('designation', $designation)
+                ->orWhere('designation_from_rascex',$record->get('ok'))->value('id');
+            $detailId = Designation
+                ::where('designation', $detail)
+                ->orWhere('designation_from_rascex',$record->get('od'))->value('id');
 
             echo '$designationId';
             echo $designationId;

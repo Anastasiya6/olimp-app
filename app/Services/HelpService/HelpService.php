@@ -123,8 +123,13 @@ class HelpService
 
         }elseif (mb_strlen($string) > 9) {
 
-            // Если количество цифр больше 9, обрезаем до 9 и добавляем дефис и две последние цифры
-            $string = substr($string, 0, 9) . '-' . substr($string, 9);
+            if(mb_strlen(substr($string, 9)) == 1 ){
+                $string = substr($string, 0, 9) . '-' . substr($string, 9).'0';
+
+            }else{
+                $string = substr($string, 0, 9) . '-' . substr($string, 9);
+            }
+
         }
         return $string;
     }

@@ -7,12 +7,15 @@ use App\Models\DesignationMaterial;
 use App\Models\Material;
 use App\Models\Norm71;
 use App\Models\Norm73;
+use App\Models\TypeUnit;
 use App\Services\HelpService\HelpService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class NormFromExcel extends Command
 {
+    public $typeUnits;
+
     /**
      * The name and signature of the console command.
      *
@@ -50,12 +53,14 @@ class NormFromExcel extends Command
 
     public function addNorm()
     {
+        $i=0;
         $norms = Norm73::all();
         $count_material = 0;
         $count_detail = 0;
         $count_designation_material = 0;
+        $this->typeUnits = TypeUnit::all()->pluck('id','unit')->toArray();
         foreach($norms as $norm){
-
+            $i++;
             $begin_designation = $norm->designation_number;
             $begin_material = $norm->material;
             if($norm->material=='' || $norm->norm=='' || $norm->designation_number==''){
@@ -75,37 +80,59 @@ class NormFromExcel extends Command
             }
             //echo $find_material.PHP_EOL;
             $designation = Designation::where('designation',$find_designation)->first();
-
+            $find_material_without_space =  $find_material;
             $find_material = str_replace(' ', '', $find_material);
             $material = Material::whereRaw("REPLACE(name, ' ', '') = ?", [$find_material])->first();
-
+          //  $material = Material::where('name', $find_material)->first();
+            //if($i>10)
+                //exit;
             if(!isset($material->id)){
                 Log::info('Материал не найден');
                 Log::info($begin_material);
                 echo 'Материал не найден'.PHP_EOL;
                 echo $begin_material.PHP_EOL;
+                echo $find_material.PHP_EOL;
+                $unit = trim($norm->type_unit);
                 $count_material++;
-                continue;
-            }else {
-                if (!isset($designation->id)) {
-                    $designation = $this->createDesignation($find_designation,$norm->designation_name,$norm->designation_number);
-                    echo 'не найдена деталь' . PHP_EOL;
-                    $count_detail++;
-                    echo $begin_designation . PHP_EOL;
-                    echo $find_designation . PHP_EOL;
-                    echo '-------------'. PHP_EOL;
+                $answer = $this->ask('Можно ли добавлять эту запись в материалы? (y/n)');
+                if(strtolower($answer ) === 'y'){
+                    $material = $this->addmaterial($find_material_without_space,$unit);
+                }else{
+                    continue;
                 }
 
+                //
             }
+            if (!isset($designation->id)) {
+                $designation = $this->createDesignation($find_designation,$norm->designation_name,$norm->designation_number);
+                echo 'не найдена деталь' . PHP_EOL;
+                $count_detail++;
+                echo $begin_designation . PHP_EOL;
+                echo $find_designation . PHP_EOL;
+                echo '-------------'. PHP_EOL;
+            }
+
+
+
             $count_designation_material++;
             $this->createDesignationMaterial($designation->id,$material->id,$begin_designation,$begin_material,$norm->norm);
 
         }
+        Log::info('Деталей не найдено '.$count_detail);
+        Log::info('Материалов не найдено '.$count_material);
+        Log::info('Норм добавлено или обновлено '.$count_designation_material);
         echo 'Материалов не найдено '.$count_material.PHP_EOL;
         echo 'Деталей не найдено '.$count_detail.PHP_EOL;
         echo 'Норм добавлено или обновлено '.$count_designation_material.PHP_EOL;
     }
 
+    public function addmaterial($name,$unit ){
+        return Material::Create([
+            'name' => $name,
+            'type_unit_id' => $this->typeUnits[$unit]
+            ]
+        );
+    }
     public function createDesignation($designation_number,$designation_name,$designation_from_excel)
     {
         return Designation::create([
@@ -122,6 +149,8 @@ class NormFromExcel extends Command
             echo 'not numeric '.$norm.PHP_EOL;
             return;
         }
+        Log::info('$designationId '.$designationId);
+        Log::info('$materialId '.$materialId);
         DesignationMaterial::updateOrCreate(
             [
             'designation_id' => $designationId,
@@ -130,7 +159,8 @@ class NormFromExcel extends Command
             [
             'designation_from_excel' => $designation_from_excel,
             'material_from_excel' => $material_from_excel,
-            'norm' => $norm
+            'norm' => $norm,
+            'department_id' => 5
         ]);
     }
 

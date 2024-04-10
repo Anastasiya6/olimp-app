@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Models\Designation;
 use App\Models\DesignationMaterial;
 use App\Models\Material;
+use App\Models\Norm66;
+use App\Models\Norm67;
 use App\Models\Norm69;
 use App\Models\Norm71;
 use App\Models\Norm73;
@@ -55,7 +57,7 @@ class NormFromExcel extends Command
     public function addNorm()
     {
         $i=0;
-        $norms = Norm69::all();
+        $norms = Norm66::all();
         $count_material = 0;
         $count_detail = 0;
         $count_designation_material = 0;

@@ -11,11 +11,11 @@ class NotNormForMaterialService
 {
     public function notNormForMaterial()
     {
-        $items = ReportApplicationStatement::doesntHave('designationMaterial')
-             /*->whereHas('designationEntry', function ($query) {
-                $query->where('designation', 'NOT LIKE', 'КР%')
-                    ->where('designation', 'NOT LIKE', 'ПИ0%');
-            })*/
+        $items = ReportApplicationStatement
+            ::select('designation_entry_id','order_designationEntry')
+            ->groupBy('designation_entry_id','order_designationEntry')
+            ->doesntHave('designationMaterial')
+            ->where('category_code','!=','0')
             ->with(['designationEntry' => function ($query) {
                 $query
                     ->where('designation','NOT LIKE', 'КР%')
@@ -24,17 +24,8 @@ class NotNormForMaterialService
             }])
             ->orderBy('order_designationEntry')
             ->get();
-        //dd($items);
-        $width = array(50,70);
-        /* ->with(['designationEntry' => function ($query) {
-             $query
-                 ->orderByRaw('designation NOT LIKE "КР%" ASC')
-                 //->orderBy('designation')
-                // ->orderBy('name')
-                 ->where('designation','NOT LIKE', 'КР%')
-                 ->where('designation','NOT LIKE', 'ПИ0%');
 
-         }])*/
+        $width = array(50,70);
         $header1 = [ 'Номер вузла/деталі',
             "Назва деталі",
         ];

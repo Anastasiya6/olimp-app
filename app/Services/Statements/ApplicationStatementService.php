@@ -13,14 +13,15 @@ class ApplicationStatementService
 {
     const DEPARTMENT_RECEPIENT = '68';
 
-    public function make()
+    public function make($order_number)
     {
         $orders = Order
-            ::orderBy('designation_id')
+            ::where('order_number',$order_number)
+            ->orderBy('designation_id')
             ->orderBy('category_code')
             ->get();
 
-        ReportApplicationStatement::truncate();
+        ReportApplicationStatement::where('order_number', $order_number)->delete();
 
         foreach($orders as $order) {
             //главная сборка, ту что указываем в заказе, которую хотим раскручивать
@@ -40,7 +41,9 @@ class ApplicationStatementService
             ]);
         }
         //zad
-        $orders = Order::select('designation_id', 'category_code','order_number')
+        $orders = Order
+            ::where('order_number',$order_number)
+            ->select('designation_id', 'category_code','order_number')
             ->selectRaw('SUM(quantity) as total_quantity')
             ->groupBy('designation_id', 'category_code', 'order_number')
             ->get();

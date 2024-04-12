@@ -77,12 +77,12 @@ class ApplicationStatementPrintService
                                 chto, kuda, designations1.name, designations2.route, order_number, category_code');*/
     }
 
-    public static function detailspecificationNormMaterial()
+    public static function detailspecificationNormMaterial($department)
     {
-        $items = ReportApplicationStatement::/*whereHas('designation', function ($query) {
-            $query->where('department_id', '08');
+        $items = ReportApplicationStatement::whereHas('designation', function ($query) use ($department){
+            $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
         })
-            ->*/ has('designationMaterial.material')
+            ->has('designationMaterial.material')
             ->with('designationEntry','designationMaterial.material')
             ->get();
 

@@ -57,7 +57,7 @@ class NormFromExcel extends Command
     public function addNorm()
     {
         $i=0;
-        $norms = Norm66::all();
+        $norms = Norm67::all();
         $count_material = 0;
         $count_detail = 0;
         $count_designation_material = 0;

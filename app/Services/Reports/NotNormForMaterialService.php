@@ -9,15 +9,16 @@ use Ramsey\Collection\Collection;
 
 class NotNormForMaterialService
 {
-    public function notNormForMaterial()
+    public function notNormForMaterial($department)
     {
         $items = ReportApplicationStatement
             ::select('designation_entry_id','order_designationEntry')
             ->groupBy('designation_entry_id','order_designationEntry')
             ->doesntHave('designationMaterial')
             ->where('category_code','!=','0')
-            ->with(['designationEntry' => function ($query) {
+            ->with(['designationEntry' => function ($query) use($department) {
                 $query
+                    ->whereRaw("SUBSTRING(route, 1, 2) = '$department'")
                     ->where('designation','NOT LIKE', 'КР%')
                     ->where('designation','NOT LIKE', 'ПИ0%');
 

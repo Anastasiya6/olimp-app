@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Order;
+use App\Models\ReportApplicationStatement;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -16,9 +19,14 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return view('administrator::include.orders.index', [
+         return view('administrator::include.orders.index', [
             'items' => Order::paginate(25),
             'route' => $this->route,
+            'in_report' => ReportApplicationStatement
+                ::select('order_number',DB::raw('MIN(created_at) as min_created_at'))
+                ->groupBy('order_number')
+                ->pluck('min_created_at','order_number')
+                ->toArray(),
             'title' => 'Заказы']);
     }
 

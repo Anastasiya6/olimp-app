@@ -13,29 +13,11 @@
                        class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Створити
                     </a>
-                    @livewire('disassembly')
 
                     <div>
                         <a href="{{ route('application.statement') }}" target="_blank"
                            class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                             Відомість застосування
-                        </a>
-
-                        <a href="{{ route('specification.material') }}" style="margin-left: 460px" target="_blank"
-                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Норми витрат
-                        </a>
-                        <a href="{{ route('detail.specification.material') }}" target="_blank"
-                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Подетальні норми витрат
-                        </a>
-                        <a href="{{ route('entry.detail') }}" target="_blank"
-                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Комлектовочна відомість
-                        </a>
-                        <a href="{{ route('not.norm.material') }}" target="_blank"
-                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Нема норм матеріалів на деталі
                         </a>
                     </div>
                     <div class="min-w-full align-middle">
@@ -50,6 +32,12 @@
                                 </th>
                                 <th class="bg-gray-50 px-6 py-3 text-left">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кількість</span>
+                                </th>
+                                <th class="bg-gray-50 px-6 py-3 text-left">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Розузлован</span>
+                                </th>
+                                <th class="bg-gray-50 px-6 py-3 text-left">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"></span>
                                 </th>
                                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                                 </th>
@@ -68,6 +56,14 @@
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                                         <strong>{{ $item->quantity??'' }}</strong>
+                                    </td>
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                        @if(array_key_exists($item->order_number,$in_report))
+                                           {{\Carbon\Carbon::parse($in_report[$item->order_number])->format('d.m.Y')}}
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                        <livewire:disassembly :order_number="$item->order_number" />
                                     </td>
                                     <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                         <a href="{{ route($route.'.edit', $item) }}"

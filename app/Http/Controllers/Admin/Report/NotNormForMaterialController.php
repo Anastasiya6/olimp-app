@@ -7,8 +7,8 @@ use App\Services\Reports\NotNormForMaterialService;
 
 class NotNormForMaterialController extends Controller
 {
-    public function notNormForMaterial(NotNormForMaterialService $service)
+    public function notNormForMaterial($department,NotNormForMaterialService $service)
     {
-        $service->notNormForMaterial();
+        $service->notNormForMaterial($department);
     }
 }

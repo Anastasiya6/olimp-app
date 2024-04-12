@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use TCPDF;
 
-class ReportController extends Controller
+class ReportPDFController extends Controller
 {
     public function specificationNormMaterial()
     {
@@ -33,8 +33,9 @@ class ReportController extends Controller
                 'norm' => $items->sum('norm'), // Суммируем количество по всем элементам группы
             ];
         });
+        $groupedData = $groupedData->sortBy('name');
 
-        // Создаем новый экземпляр TCPDF
+            // Создаем новый экземпляр TCPDF
         $pdf = new TCPDF('L', 'mm', PDF_PAGE_FORMAT, 'A4', 'UTF-8', false);
 
         // Устанавливаем свойства PDF
@@ -82,9 +83,9 @@ class ReportController extends Controller
         $pdf->Output('example.pdf', 'I');
     }
 
-    public function detailSpecificationNormMaterial()
+    public function detailSpecificationNormMaterial($department)
     {
-        $data = ApplicationStatementPrintService::detailspecificationNormMaterial();
+        $data = ApplicationStatementPrintService::detailspecificationNormMaterial($department);
 
         $width = array(80,40,30,20,50,50);
         $header1 = ['Найменування матеріалу',
@@ -101,7 +102,7 @@ class ReportController extends Controller
             'на един',
             ''];
 
-        $pdf = PDFService::getPdf($header1,$header2,$width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАННІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ','ЦЕХ 25 ЗАКАЗ 28070');
+        $pdf = PDFService::getPdf($header1,$header2,$width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАННІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ','ЦЕХ '.$department.' ЗАКАЗ 28070');
         $page = 2;
 
         // Устанавливаем стиль линии

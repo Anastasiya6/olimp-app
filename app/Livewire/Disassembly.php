@@ -9,11 +9,18 @@ class Disassembly extends Component
 {
     public $isProcessing = false;
 
+    public $order_number;
+
+    public function mount($order_number)
+    {
+        $this->order_number = $order_number;
+    }
+
     public function generateReport(ApplicationStatementService $service)
     {
         $this->isProcessing = true;
 
-        $service->make();
+        $service->make($this->order_number);
 
         $this->isProcessing = false;
     }

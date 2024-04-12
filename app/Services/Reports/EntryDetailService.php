@@ -90,6 +90,7 @@ class EntryDetailService
             if ($row['designation_id'] == $searchID) {
                $res->push(collect([
                     'id' => $row->id,
+                    'designation_id' => $row->designation_id,
                     'designation' => $row->designation->designation,
                     'designation_name' => $row->designation->name,
                     'designationEntry' => $row->designationEntry->designation??"",
@@ -100,7 +101,9 @@ class EntryDetailService
                     'category_code' => $row->category_code
                 ]));
                 if($row['designation_id'] != $row['designation_entry_id'] &&  $row->designationEntry){
-                    $this->findDetailsInNode($row['designation_entry_id'], $data,$res,$row->designationEntry->designation);
+                    if($res->where('designation_id',$row['designation_entry_id'])->isEmpty()){
+                        $this->findDetailsInNode($row['designation_entry_id'], $data,$res,$row->designationEntry->designation);
+                    }
                 }
             }
         }

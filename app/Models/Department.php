@@ -9,5 +9,7 @@ class Department extends Model
 {
     use HasFactory;
 
+    CONST DEFAULT_DEPARTMENT = 25;
+
     public $timestamps = true;
 }

@@ -58,6 +58,9 @@
                         <x-dropdown-link wire:navigate :href="route('orders.index')">
                             {{ __('Розузловування') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('reports.index')">
+                            {{ __('Звіти') }}
+                        </x-dropdown-link>
                         <!-- Authentication -->
                         {{--<form method="POST" action="{{ route('logout') }}">
                             @csrf

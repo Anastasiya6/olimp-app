@@ -9,6 +9,7 @@ use App\Models\Norm66;
 use App\Models\Norm67;
 use App\Models\Norm69;
 use App\Models\Norm71;
+use App\Models\Norm71Second;
 use App\Models\Norm73;
 use App\Models\TypeUnit;
 use App\Services\HelpService\HelpService;
@@ -57,7 +58,7 @@ class NormFromExcel extends Command
     public function addNorm()
     {
         $i=0;
-        $norms = Norm67::all();
+        $norms = Norm71Second::all();
         $count_material = 0;
         $count_detail = 0;
         $count_designation_material = 0;

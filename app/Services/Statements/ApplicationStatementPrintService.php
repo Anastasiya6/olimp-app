@@ -77,28 +77,5 @@ class ApplicationStatementPrintService
                                 chto, kuda, designations1.name, designations2.route, order_number, category_code');*/
     }
 
-    public static function detailspecificationNormMaterial($department)
-    {
-        $items = ReportApplicationStatement::whereHas('designation', function ($query) use ($department){
-            $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
-        })
-            ->has('designationMaterial.material')
-            ->with('designationEntry','designationMaterial.material')
-            ->get();
-
-        $data = $items->sortBy('designationMaterial.material.id')->map(function ($item) {
-            return [
-                'id' => $item->designationMaterial->material->id,
-                'material_name' => $item->designationMaterial->material->name,
-                'detail_name' => $item->designationEntry->designation,
-                'quantity_total' => $item->quantity_total,
-                'unit' => $item->designationMaterial->material->unit->unit,
-                'norm' => $item->designationMaterial->norm,
-            ];
-        });
-
-        return $data;
-    }
-
 }
 

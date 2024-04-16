@@ -1,9 +1,9 @@
 <div>
     <div class="py-4">
-        <input type="text" wire:model.debounce.300ms="searchTerm" wire:keydown="updateSearch" placeholder="Пошук Куди"/>
+        <input type="text" wire:model="searchTerm" wire:keydown="updateSearch" placeholder="Пошук Куди"/>
     </div>
     <div class="py-4">
-        <input type="text" wire:model.debounce.300ms="searchTermChto" wire:keydown="updateSearch" placeholder="Пошук Що"/>
+        <input type="text" wire:model="searchTermChto" wire:keydown="updateSearch" placeholder="Пошук Що"/>
     </div>
     <div class="py-4">
         <input type="checkbox" wire:model="exactMatch" id="exactMatchCheckbox" wire:change="updateSearch">

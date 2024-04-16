@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class SpecificationService
 {
-
     public function store(Request $request)
     {
         $designationsArray = array();

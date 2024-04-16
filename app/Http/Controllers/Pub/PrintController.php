@@ -15,12 +15,6 @@ class PrintController extends Controller
     {
         $queryResult =  ApplicationStatementPrintService::queryAppStatement(1);
 
-       // dd($queryResult);
-      /*  $pdf = new Mpdf();
-
-        $pdf->WriteHTML('<h1>Hello, world!</h1>');
-
-        $pdf->Output('output.pdf', 'I');*/
         return view('public::include.print.statement')->with('data', $queryResult);
     }
 }

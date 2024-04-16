@@ -6,10 +6,11 @@ use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PI0Controller;
+use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
+use App\Http\Controllers\Admin\Report\SpecificationNormController;
 use App\Http\Controllers\Admin\ReportController;
-use App\Http\Controllers\ReportPDFController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,7 +43,7 @@ Route::resource('orders', OrderController::class);
 Route::resource('reports', ReportController::class);
 
 Route::get('application-statement', [\App\Http\Controllers\Admin\Report\ApplicationStatement::class,'applicationStatement'])->name('application.statement');
-Route::get('specification-material-norm', [ReportPDFController::class,'specificationNormMaterial'])->name('specification.material');
-Route::get('detail-specification-material-norm/{department}', [ReportPDFController::class,'detailSpecificationNormMaterial'])->name('detail.specification.material');
-Route::get('entry-detail', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
-Route::get('not-norm-for-material/{department}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
+Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
+Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
+Route::get('entry-detail/{department}/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
+Route::get('not-norm-for-material/{department}/{order_number}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');

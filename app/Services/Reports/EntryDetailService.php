@@ -4,17 +4,16 @@ namespace App\Services\Reports;
 use App\Models\Designation;
 use App\Models\ReportApplicationStatement;
 use App\Services\HelpService\PDFService;
-use Illuminate\Contracts\Queue\Job;
-use Ramsey\Collection\Collection;
 
 class EntryDetailService
 {
-    public function entryDetail($designation)
+    public function entryDetail($designation,$department,$order_number)
     {
         $search = Designation::where('designation', $designation)->first();
        // dd($search);
         $data =  ReportApplicationStatement
-            ::with('designation','designationEntry','designationMaterial.material')
+            ::where('order_number',$order_number)
+            ->with('designation','designationEntry','designationMaterial.material')
             ->get();
 
         $res = collect();
@@ -28,13 +27,21 @@ class EntryDetailService
         ]);
         $resGrouped = $res->groupBy('designation');
         //dd($res);
-        $width = array(40,30,50,80,60,7);
+
+        $this->getPdf($resGrouped,$order_number);
+
+    }
+
+    public function getPdf($resGrouped,$order_number)
+    {
+        $width = array(40,30,50,70,60,20,7);
 
         $header1 = [ 'Номер вузла',
             "Назва деталі",
             'Номер вузла',
             'Назва деталі',
             'Матеріал',
+            'Норма',
             'К-ть'
         ];
         $header2 = [ '(КУДИ)',
@@ -42,10 +49,13 @@ class EntryDetailService
             '(ЩО)',
             '(ЩО)',
             '',
+            '',
             ''
         ];
-        $pdf = PDFService::getPdf($header1,$header2,$width,'');
+        $pdf = PDFService::getPdf($header1,$header2,$width,'Комплектовочна відомість','Заказ №'.$order_number);
         $page = 2;
+        $height = 10;
+        $max_height = 10;
         //dd($data);
         foreach ($resGrouped as $designation => $group) {
 
@@ -55,13 +65,13 @@ class EntryDetailService
                 $page++;
             }
             // Добавление названия детали
-            $pdf->Cell($width[0], 10, $designation); // Название детали
+            $pdf->MultiCell($width[0], $height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
 
             // Добавление деталей
             foreach ($group as $key=>$row) {
 
                 if($key == 0){
-                    $pdf->Cell($width[1], 10, $row['designation_name']); // Название детали
+                    $pdf->MultiCell($width[1], $height, $row['designation_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
                     $pdf->Ln();
                 }
                 if($pdf->getY() >= 185) {
@@ -69,20 +79,20 @@ class EntryDetailService
                     $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
                     $page++;
                 }
-                $pdf->Cell($width[0], 10, '');
-                $pdf->Cell($width[1], 10, '');
-                $pdf->Cell($width[2], 10, $row['designationEntry']);
-                $pdf->Cell($width[3], 10, $row['designationEntry_name']);
-                $pdf->Cell($width[4], 10, $row['material']);
-                $pdf->Cell($width[5], 10, $row['quantity']);
+
+                $pdf->MultiCell($width[0], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[1], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[2], $height, $row['designationEntry'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[3], $height, $row['designationEntry_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[4], $height, $row['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[5], $height, $row['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[6], $height, $row['quantity'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
                 $pdf->Ln();
             }
         }
 
-        $pdf->Output('entry_detail.pdf', 'I');
-
+        $pdf->Output('entry_detail_order_'.$order_number.'.pdf', 'I');
     }
-
     function findDetailsInNode($searchID, $data, &$res, $type) {
 
         // Ищем все designation_entry_id связанные с текущим designation_id
@@ -96,6 +106,7 @@ class EntryDetailService
                     'designationEntry' => $row->designationEntry->designation??"",
                     'designationEntry_name' => $row->designationEntry->name??"",
                     'material' => $row->designationMaterial->material->name??"",
+                    'norm' => $row->designationMaterial->norm??"",
                     'quantity' => $row->quantity,
                     'type' => $type,
                     'category_code' => $row->category_code

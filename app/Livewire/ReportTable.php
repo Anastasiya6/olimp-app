@@ -10,6 +10,9 @@ class ReportTable extends Component
 {
     public $selectedDepartment;
 
+    public $orderNumber;
+
+
     public function mount()
     {
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;

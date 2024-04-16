@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PI0Controller;
+use App\Http\Controllers\Admin\Report\ApplicationStatement;
 use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
@@ -42,8 +43,8 @@ Route::resource('designation-materials', DesignationMaterialController::class);
 Route::resource('orders', OrderController::class);
 Route::resource('reports', ReportController::class);
 
-Route::get('application-statement', [\App\Http\Controllers\Admin\Report\ApplicationStatement::class,'applicationStatement'])->name('application.statement');
+Route::get('application-statement/{order_number}', [ApplicationStatement::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
 Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
-Route::get('entry-detail/{department}/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
+Route::get('entry-detail/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
 Route::get('not-norm-for-material/{department}/{order_number}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');

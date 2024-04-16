@@ -7,10 +7,10 @@ use App\Services\HelpService\PDFService;
 
 class EntryDetailService
 {
-    public function entryDetail($designation,$department,$order_number)
+    public function entryDetail($designation,$order_number)
     {
         $search = Designation::where('designation', $designation)->first();
-       // dd($search);
+
         $data =  ReportApplicationStatement
             ::where('order_number',$order_number)
             ->with('designation','designationEntry','designationMaterial.material')
@@ -26,10 +26,10 @@ class EntryDetailService
             ['category_code', 'asc'],
         ]);
         $resGrouped = $res->groupBy('designation');
-        //dd($res);
 
-        $this->getPdf($resGrouped,$order_number);
+        $pdf_path = $this->getPdf($resGrouped,$order_number);
 
+        return $pdf_path;
     }
 
     public function getPdf($resGrouped,$order_number)
@@ -65,13 +65,13 @@ class EntryDetailService
                 $page++;
             }
             // Добавление названия детали
-            $pdf->MultiCell($width[0], $height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+            $pdf->MultiCell($width[0], $height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
 
             // Добавление деталей
             foreach ($group as $key=>$row) {
 
                 if($key == 0){
-                    $pdf->MultiCell($width[1], $height, $row['designation_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                    $pdf->MultiCell($width[1], $height, $row['designation_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
                     $pdf->Ln();
                 }
                 if($pdf->getY() >= 185) {
@@ -80,18 +80,20 @@ class EntryDetailService
                     $page++;
                 }
 
-                $pdf->MultiCell($width[0], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
-                $pdf->MultiCell($width[1], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
-                $pdf->MultiCell($width[2], $height, $row['designationEntry'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
-                $pdf->MultiCell($width[3], $height, $row['designationEntry_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
-                $pdf->MultiCell($width[4], $height, $row['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
-                $pdf->MultiCell($width[5], $height, $row['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
-                $pdf->MultiCell($width[6], $height, $row['quantity'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
+                $pdf->MultiCell($width[0], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                $pdf->MultiCell($width[1], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                $pdf->MultiCell($width[2], $height, $row['designationEntry'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                $pdf->MultiCell($width[3], $height, $row['designationEntry_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                $pdf->MultiCell($width[4], $height, $row['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                $pdf->MultiCell($width[5], $height, $row['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                $pdf->MultiCell($width[6], $height, $row['quantity'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
                 $pdf->Ln();
             }
         }
+        $pdf_path = storage_path('app/public/entry_detail_order_'.$order_number.'.pdf');
+        $pdf->Output($pdf_path, 'F');
+        $pdf->Output($pdf_path, 'I');
 
-        $pdf->Output('entry_detail_order_'.$order_number.'.pdf', 'I');
     }
     function findDetailsInNode($searchID, $data, &$res, $type) {
 

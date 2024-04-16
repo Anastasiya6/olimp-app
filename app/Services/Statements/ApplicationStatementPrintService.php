@@ -12,16 +12,21 @@ use Illuminate\Support\Facades\DB;
 class ApplicationStatementPrintService
 {
 
-    static public function queryAppStatement($filter = 0)
+    static public function queryAppStatement($filter = 0,$order_number=0)
     {
-        $where = '';
         $add_order = '';
+
+        if($order_number == 0){
+            $where = 'WHERE order_number>'.$order_number;
+        }else{
+            $where = 'WHERE order_number='.$order_number;
+        }
         if($filter == 1) {
             $add_order = 'designations1.designation LIKE "КР%" ASC,';
-            $where =  'WHERE
+            $where = $where.' AND
                                 designations1.designation NOT LIKE "ПИ0%"';
-
         }
+
         return DB::select('
                             SELECT
                                 designations1.designation AS chto,

@@ -8,11 +8,11 @@ use App\Services\Reports\EntryDetailService;
 
 class EntryDetailController extends Controller
 {
-    public function entryDetail($department,$order_number,EntryDetailService $service)
+    public function entryDetail($order_number,EntryDetailService $service)
     {
         $order = Order::where('order_number',$order_number)->first();
         if($order){
-            $service->entryDetail($order->designation->designation,$department,$order_number);
+            $service->entryDetail($order->designation->designation,$order_number);
         }
 
     }

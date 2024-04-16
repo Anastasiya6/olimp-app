@@ -14,12 +14,6 @@
                         Створити
                     </a>
 
-                    <div>
-                        <a href="{{ route('application.statement') }}" target="_blank"
-                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Відомість застосування
-                        </a>
-                    </div>
                     <div class="min-w-full align-middle">
                         <table class="min-w-full border divide-y divide-gray-200">
                             <thead>
@@ -64,6 +58,11 @@
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                                         <livewire:disassembly :order_number="$item->order_number" />
+                                    </td>
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                        <a href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                                            Відомість застосування
+                                        </a>
                                     </td>
                                     <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                         <a href="{{ route($route.'.edit', $item) }}"

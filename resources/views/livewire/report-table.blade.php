@@ -69,9 +69,16 @@
                         Pdf
                     </a>
                 </td>
+
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('entry.detail', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
-                        Pdf
+                    @if(Illuminate\Support\Facades\Storage::exists('public/entry_detail_order_' . $item->order_number . '.pdf'))
+                        <a href="{{asset('storage/entry_detail_order_' . $item->order_number . '.pdf')}}" class="underline-link" target="_blank">
+                            Заказ № {{$item->order_number}}
+                        </a>
+                    @endif
+                    </br></br>
+                    <a href="{{ route('entry.detail', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                        Сформувати звіт
                     </a>
                 </td>
             </tr>

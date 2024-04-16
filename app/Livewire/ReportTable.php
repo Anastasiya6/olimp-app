@@ -4,20 +4,42 @@ namespace App\Livewire;
 
 use App\Models\Department;
 use App\Models\Order;
+use App\Services\Reports\EntryDetailService;
 use Livewire\Component;
 
 class ReportTable extends Component
 {
     public $selectedDepartment;
 
-    public $orderNumber;
+    public $order_number;
 
+    public $isProcessing = false;
 
     public function mount()
     {
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
     }
+    public function generateReport($order_number,EntryDetailService $service)
+    {
+        $this->order_number = $order_number;
+        dd( $this->order_number );
+        $order = Order::where('order_number',$order_number)->first();
 
+        if($order){
+
+            $this->isProcessing = true;
+
+            $pdf_path = $service->entryDetail($order->designation->designation,$order_number);
+
+            $this->isProcessing = false;
+
+            return response()->download($pdf_path, 'entry_detail_order_'.$this->order_number.'.pdf', [
+                'Content-Type' => 'application/pdf',
+            ]);
+        }
+        //$pdf->Output('entry_detail.pdf', 'I');
+
+    }
     public function render()
     {
         $items = Order::whereIn('order_number', function($query) {

@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 
 class ApplicationStatement extends Controller
 {
-    public function applicationStatement()
+    public function applicationStatement($order_number)
     {
-        $data =  ApplicationStatementPrintService::queryAppStatement(1);
+        $data =  ApplicationStatementPrintService::queryAppStatement(1,$order_number);
 
         $width = array(25,50,100,40,20,20,30);
 

@@ -21,7 +21,7 @@
                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Подетально-специфіковані норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відутні норми матеріалів</span>
+                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відсутні норми матеріалів</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Комлектовочна відомість</span>
@@ -44,7 +44,7 @@
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <strong>{{ $item->quantity??'' }}</strong>
                 </td>
-                <td style="width:270px" class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                <td class="py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <select wire:model.change="selectedDepartment" name="designation_type_unit_id" class="block w-full mt-1 rounded-md">
                         @foreach($departments as $department)
                             <option value="{{ $department->number }}"
@@ -55,22 +55,22 @@
                     </select>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('specification.material') }}" class="underline-link" target="_blank">
+                    <a href="{{ route('specification.material', ['order_number' => $item->order_number ]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('detail.specification.material', ['department' => $selectedDepartment]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('detail.specification.material', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('not.norm.material', ['department' => $selectedDepartment]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('not.norm.material', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('entry.detail') }}" class="underline-link" target="_blank">
+                    <a href="{{ route('entry.detail', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>

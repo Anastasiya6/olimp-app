@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Изменить тип колонки на nullable
         Schema::table('designations', function (Blueprint $table) {
-            $table->bigInteger('designation_type_unit_id')->unsigned()->nullable()->after('gost');
-            $table->foreign('designation_type_unit_id')->references('id')->on('designation_type_units');
+            $table->bigInteger('type_unit_id')->nullable()->change();
         });
-    }
+     }
 
     /**
      * Reverse the migrations.

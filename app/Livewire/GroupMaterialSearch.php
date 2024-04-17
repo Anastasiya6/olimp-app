@@ -12,6 +12,15 @@ class GroupMaterialSearch extends Component
 
     public $searchTerm;
 
+    public function deleteGroupMaterial($id)
+    {
+        $groupMaterial = GroupMaterial::findOrFail($id);
+        $groupMaterial->delete();
+
+        // Отправить сообщение об успешном удалении
+        session()->flash('message', 'Запис успішно видалено.');
+    }
+
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';

@@ -96,6 +96,7 @@ class DesignationMaterialController extends Controller
     public function destroy(DesignationMaterial $designationMaterial)
     {
         $designationMaterial->delete();
+
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
     }
 }

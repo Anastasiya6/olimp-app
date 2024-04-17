@@ -73,8 +73,10 @@ class GroupMaterialController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(GroupMaterial $groupMaterial)
     {
-        //
+        $groupMaterial->delete();
+
+        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
     }
 }

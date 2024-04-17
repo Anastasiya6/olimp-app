@@ -18,7 +18,6 @@ class Designation extends Model
         'type',
         'designation_number',
         'designation_from_rascex',
-        'designation_type_unit_id',
         'designation_from_excel',
         'type_unit_id'
     ];

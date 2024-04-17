@@ -44,13 +44,13 @@
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Виберіть одиницю виміру</span>
-                                <select name="designation_type_unit_id" class="block w-full mt-1 rounded-md">
+                                <select name="type_unit_id" class="block w-full mt-1 rounded-md">
                                     @foreach($units as $unit)
                                         <option value="{{ $unit->id }}">{{ $unit->unit }}</option>
                                     @endforeach
                                 </select>
                             </label>
-                            @error('designation_type_unit_id')
+                            @error('type_unit_id')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

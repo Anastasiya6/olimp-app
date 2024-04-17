@@ -11,10 +11,10 @@
                 <div class="p-6 bg-white border-b border-gray-200 max-w-lg w-full lg:max-w-xs">
                     <form method="POST" action="{{ route($route.'.store') }}">
                         @csrf
+                        @livewire('designation-search-dropdown')
 
                         @livewire('material-search-dropdown')
 
-                        @livewire('designation-search-dropdown')
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Норма</span>
@@ -30,7 +30,9 @@
                                 <span class="text-gray-700">Виберіть цех</span>
                                 <select name="department_id" class="block w-full mt-1 rounded-md">
                                     @foreach($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->number }}</option>
+                                        <option value="{{ $department->id }}"  @if($department->number==$default_department) selected @endif>
+                                            {{ $department->number }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </label>

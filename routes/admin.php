@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DesignationMaterialController;
+use App\Http\Controllers\Admin\GroupMaterialController;
 use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
@@ -36,12 +37,12 @@ Route::resource('specifications', \App\Http\Controllers\Admin\SpecificationContr
 Route::resource('designations', DesignationController::class);
 Route::resource('pi0s', PI0Controller::class);
 
-Route::post('/update-names', [DesignationController::class, 'updateNames'])->name('designations.update-names');
-Route::get('/edit-names/{designations_array}',  [DesignationController::class, 'editNames'])->name('designations.edit-names');
+
 Route::resource('materials', MaterialController::class);
 Route::resource('designation-materials', DesignationMaterialController::class);
 Route::resource('orders', OrderController::class);
 Route::resource('reports', ReportController::class);
+Route::resource('group-materials', GroupMaterialController::class);
 
 Route::get('application-statement/{order_number}', [ApplicationStatement::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');

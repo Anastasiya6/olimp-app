@@ -18,7 +18,7 @@
                             <label class="block">
                                 <span class="text-gray-700">Що</span>
                                 <input type="text" name="designation_entry_designation"
-                                       class="block w-full mt-1 rounded-md"
+                                       class="block w-full mt-1 rounded-md" readonly
                                        placeholder="" value="{{old('designation',$specification->designationEntry->designation)}}" />
                             </label>
                             @error('designation_entry_designation')
@@ -29,7 +29,7 @@
                             <label class="block">
                                 <span class="text-gray-700">Куди</span>
                                 <input type="text" name="designation_designation"
-                                       class="block w-full mt-1 rounded-md"
+                                       class="block w-full mt-1 rounded-md" readonly
                                        placeholder="" value="{{old('designation',$specification->designations->designation)}}" />
                             </label>
                             @error('designation_designation')

@@ -28,7 +28,6 @@ class SpecificationController extends Controller
     public function create()
     {
         //$last = Specification::orderBy('id','desc')->with('designations')->first();
-
         return view('administrator::include.specifications.create', [
            // 'lastDesignation' => $last,
             'units' => TypeUnit::all(),
@@ -69,8 +68,6 @@ class SpecificationController extends Controller
      */
     public function update(SpecificationCreateRequest $request, Specification $specification,SpecificationService $service)
     {
-       /* $specification->quantity = $request->quantity;
-        $specification->save();*/
         $service->store($request);
         return redirect()->route('specifications.index')->with('status', 'Дані успішно збережено');
 

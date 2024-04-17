@@ -49,6 +49,9 @@
                         <x-dropdown-link wire:navigate :href="route('materials.index')">
                             {{ __('Матеріали') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('group-materials.index')">
+                            {{ __('Матеріалокомплекти') }}
+                        </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('designations.index')">
                             {{ __('Вироби') }}
                         </x-dropdown-link>

@@ -58,7 +58,7 @@ class SpecificationService
         }
     }
 
-    private function createDesignation($designation,$name='',$type,$route='',$gost='',$type_unit_id='')
+    private function createDesignation($designation,$name='',$type,$route='',$gost='',$type_unit_id=NULL)
     {
 
         return

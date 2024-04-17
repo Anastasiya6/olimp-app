@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('designation_type_units', function (Blueprint $table) {
+        Schema::create('group_materials', function (Blueprint $table) {
             $table->id();
-            $table->string('unit');
+            $table->unsignedBigInteger('material_id');
+            $table->foreign('material_id')->references('id')->on('materials');
+
+            $table->unsignedBigInteger('material_entry_id');
+            $table->foreign('material_entry_id')->references('id')->on('materials');
+
             $table->timestamps();
         });
     }
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('designation_type_units');
+        Schema::dropIfExists('group_materials');
     }
 };

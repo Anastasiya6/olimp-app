@@ -59,6 +59,19 @@
                     <div class="text-sm text-red-600">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-6">
+                    <label class="block">
+                        <span class="text-gray-700">Виберіть одиницю виміру</span>
+                        <select name="type_unit_id" class="block w-full mt-1 rounded-md">
+                            @foreach($units as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->unit }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                    @error('type_unit_id')
+                    <div class="text-sm text-red-600">{{ $message }}</div>
+                    @enderror
+                </div>
             @endif
             <input type="hidden" name="type" value="{{$type}}">
             @if($newDesignationRoute)

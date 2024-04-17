@@ -19,12 +19,13 @@ class Designation extends Model
         'designation_number',
         'designation_from_rascex',
         'designation_type_unit_id',
-        'designation_from_excel'
+        'designation_from_excel',
+        'type_unit_id'
     ];
 
     public function unit()
     {
-        return $this->belongsTo(DesignationTypeUnit::class, 'designation_type_unit_id');
+        return $this->belongsTo(TypeUnit::class, 'type_unit_id');
     }
 
     // Включите временные метки

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Designation;
-use App\Models\DesignationTypeUnit;
+use App\Models\TypeUnit;
 use Illuminate\Http\Request;
 
 class PI0Controller extends Controller
@@ -27,7 +27,7 @@ class PI0Controller extends Controller
     public function create(Request $request)
     {
         return view('administrator::include.pi0s.create',[
-            'units' => DesignationTypeUnit::all(),
+            'units' => TypeUnit::all(),
             'route' => $this->route ]);
 
     }
@@ -43,7 +43,7 @@ class PI0Controller extends Controller
             'name' => $request->name,
             'gost' => $request->gost,
             'type' => 1,
-            'designation_type_unit_id' => $request->designation_type_unit_id,
+            'type_unit_id' => $request->type_unit_id,
         ]);
 
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
@@ -66,7 +66,7 @@ class PI0Controller extends Controller
         return view('administrator::include.pi0s.edit',[
             'item' => $pi0,
             'route' => $this->route,
-            'units' => DesignationTypeUnit::all()
+            'units' => TypeUnit::all()
         ]);
     }
 
@@ -78,7 +78,7 @@ class PI0Controller extends Controller
         $pi0->designation = $request->designation;
         $pi0->name = $request->name;
         $pi0->gost = $request->gost;
-        $pi0->designation_type_unit_id = $request->designation_type_unit_id;
+        $pi0->type_unit_id = $request->type_unit_id;
         $pi0->save();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 

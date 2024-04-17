@@ -7,6 +7,7 @@ use App\Http\Requests\SpecificationCreateRequest;
 use App\Http\Requests\SpecificationRequest;
 use App\Models\Designation;
 use App\Models\Specification;
+use App\Models\TypeUnit;
 use App\Services\Specification\SpecificationService;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,7 @@ class SpecificationController extends Controller
 
         return view('administrator::include.specifications.create', [
            // 'lastDesignation' => $last,
+            'units' => TypeUnit::all(),
             'route' => $this->route]);
     }
 
@@ -57,7 +59,9 @@ class SpecificationController extends Controller
      */
     public function edit(Specification $specification)
     {
-        return view('administrator::include.specifications.edit', compact('specification'));
+        $units = TypeUnit::all();
+
+        return view('administrator::include.specifications.edit', compact('specification','units'));
     }
 
     /**

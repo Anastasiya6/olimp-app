@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Designation;
 use App\Models\Specification;
+use App\Models\TypeUnit;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -111,6 +112,8 @@ class SpecificationSearchDropdown extends Component
 
     public function render()
     {
-        return view('livewire.specification-search-dropdown');
+        $units = TypeUnit::all();
+
+        return view('livewire.specification-search-dropdown',compact('units'));
     }
 }

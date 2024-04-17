@@ -3,10 +3,7 @@
 namespace App\Services\Specification;
 use App\Models\Designation;
 use App\Models\Specification;
-use App\Models\Ticker\PostStatus;
 use Illuminate\Http\Request;
-use App\Models\Publication\Publication;
-use Illuminate\Database\Eloquent\Builder;
 
 class SpecificationService
 {
@@ -24,7 +21,8 @@ class SpecificationService
                                                     $request->designation_entry_designation_name,
                                                     $request->type,
                                                     $request->designation_entry_route,
-                                                    $request->designation_entry_gost);
+                                                    $request->designation_entry_gost,
+                                                    $request->type_unit_id);
 
             $designationsArray[] = $designation1->id;
 
@@ -36,7 +34,8 @@ class SpecificationService
                                                     $request->designation_designation,
                                                     $request->designation_name,
                                                     $request->type,
-                                                    $request->designation_route);
+                                                    $request->designation_route,
+                                                    $request->type_unit_id);
 
             $designationsArray[] = $designation2->id;
 
@@ -59,7 +58,7 @@ class SpecificationService
         }
     }
 
-    private function createDesignation($designation,$name='',$type,$route='',$gost='')
+    private function createDesignation($designation,$name='',$type,$route='',$gost='',$type_unit_id='')
     {
 
         return
@@ -68,7 +67,8 @@ class SpecificationService
                 'name' => $name,
                 'route' => $route,
                 'gost' => $gost,
-                'type' => $type
+                'type' => $type,
+                'type_unit_id' => $type_unit_id
             ]);
     }
 

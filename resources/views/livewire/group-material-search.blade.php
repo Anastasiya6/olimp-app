@@ -2,6 +2,12 @@
     <div class="py-4">
         <input type="text" wire:model.live="searchTerm" placeholder="Пошук по назві"/>
     </div>
+    <div>
+        @if(session()->has('message'))
+            <div>{{ session('message') }}</div>
+        @endif
+
+    </div>
 
     <div class="min-w-full align-middle">
         <table class="min-w-full border divide-y divide-gray-200">
@@ -34,18 +40,18 @@
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->norm??'' }}</strong>
                     </td>
-                    <td class="px-16 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                    <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                         <a href="{{ route($route.'.edit', $item) }}"
                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                             Edit
                         </a>
-                        {{--<form action="{{ route('designations.destroy', $designation) }}" method="POST" onsubmit="return confirm('Ви впевнені, що хочете видалити запис?')" style="display: inline-block;">
+                        <form action="{{ route($route.'.destroy', $item) }}" method="POST" onsubmit="return confirm('Ви впевнені, що хочете видалити запис?')" style="display: inline-block;">
                             @csrf
                             @method('DELETE')
                             <x-danger-button>
-                                Видалити
+                                Delete
                             </x-danger-button>
-                        </form>--}}
+                        </form>
                     </td>
                 </tr>
             @endforeach

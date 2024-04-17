@@ -35,7 +35,7 @@
         </div>
 
         @if($selectedMaterialId)
-            <input type="hidden" name="material_entry_id" value="{{ $selectedMaterialId }}">
+            <input type="hidden" name="material_id" value="{{ $selectedMaterialId }}">
         @endif
         <div>
             <div class="mb-6">

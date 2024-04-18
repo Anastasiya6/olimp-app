@@ -14,6 +14,13 @@ class Pi0Search extends Component
 
     public $searchTermChto;
 
+    public function updateSearch()
+    {
+        $this->resetPage();
+
+        $this->render();
+    }
+
     public function render()
     {
         $this->searchTerm = str_replace('і', 'i', $this->searchTerm);

@@ -1,9 +1,9 @@
 <div>
     <div class="py-4">
-        <input type="text" wire:model.live="searchTerm" placeholder="Пошук по назві"/>
+        <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по назві"/>
     </div>
     <div class="py-4">
-        <input type="text" wire:model.live="searchTermChto" placeholder="Пошук по od"/>
+        <input type="text" wire:model.live="searchTermChto" wire:keydown="updateSearch" placeholder="Пошук по od"/>
     </div>
 
     <div class="min-w-full align-middle">

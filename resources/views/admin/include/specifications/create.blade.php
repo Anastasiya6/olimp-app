@@ -11,7 +11,7 @@
                 <div class="p-6 bg-white border-b border-gray-200 max-w-lg w-full lg:max-w-xs">
                     <form method="POST" action="{{ route($route.'.store') }}">
                         @csrf
-                        {{--<div class="mb-6">
+                        <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Куди</span>
                                 <input type="text"  name="designation_designation" class="block w-full mt-1 rounded-md" placeholder=""
@@ -20,8 +20,7 @@
                             @error('designation_designation')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
-                        </div>--}}
-                        @livewire('specification-designation-search')
+                        </div>
 
                         @livewire('specification-search-dropdown')
                         <div class="mb-6">

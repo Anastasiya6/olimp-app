@@ -33,7 +33,7 @@ class SpecificationService
             $designation2 = $this->createDesignation(
                                                     $request->designation_designation,
                                                     $request->designation_name,
-                                                    $request->type,
+                                                    0,
                                                     $request->designation_route,
                                                     $request->type_unit_id);
 

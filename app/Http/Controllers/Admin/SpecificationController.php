@@ -27,9 +27,9 @@ class SpecificationController extends Controller
      */
     public function create()
     {
-        //$last = Specification::orderBy('id','desc')->with('designations')->first();
+        $last = Specification::orderBy('id','desc')->with('designations')->first();
         return view('administrator::include.specifications.create', [
-           // 'lastDesignation' => $last,
+            'lastDesignation' => $last,
             'units' => TypeUnit::all(),
             'route' => $this->route]);
     }

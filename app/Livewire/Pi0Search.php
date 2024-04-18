@@ -14,6 +14,22 @@ class Pi0Search extends Component
 
     public $searchTermChto;
 
+    public $sortField;
+
+    public $sortAsc = false;
+
+    protected $queryString = ['searchTerm','searchTermChto','sortAsc','sortField'];
+
+    public function sortBy($field)
+    {
+        if($this->sortField === $field){
+            $this->sortAsc = !$this->sortAsc;
+        }else{
+            $this->sortAsc = true;
+        }
+        $this->sortField = $field;
+    }
+
     public function updateSearch()
     {
         $this->resetPage();
@@ -31,7 +47,14 @@ class Pi0Search extends Component
 
         $searchTermChto = '%' . $this->searchTermChto . '%';
 
+
         if($searchTerm!='%%' || $searchTermChto!='%%'){
+
+            if($this->sortField){
+                $orderBy = $this->sortField;
+            }else{
+                $orderBy = 'name';
+            }
 
             $items = Designation::with('unit')->where(function ($query) use ($searchTerm, $searchTermChto) {
                 $query->
@@ -39,13 +62,18 @@ class Pi0Search extends Component
                     ->where('designation', 'like', $searchTermChto)
                     ->where('type', 1);
             })
-                ->orderBy("name")
+                ->orderBy($orderBy,$this->sortAsc ? 'asc' : 'desc')
                 ->paginate(50);
 
 
         }else {
+            if($this->sortField){
+                $orderBy = $this->sortField;
+            }else{
+                $orderBy = 'updated_at';
+            }
             $items = Designation::where('type',1)
-                ->orderBy('updated_at','desc')
+                ->orderBy($orderBy,$this->sortAsc ? 'asc' : 'desc')
                 ->with('unit')
                 ->paginate(25);
         }

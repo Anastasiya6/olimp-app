@@ -39,9 +39,9 @@ class Pi0Search extends Component
 
     public function render()
     {
-        $this->searchTerm = str_replace('і', 'i', $this->searchTerm);
+        $this->searchTerm = $this->replace_i_with_і($this->searchTerm);
 
-        $this->earchTermChto = str_replace('і', 'i', $this->searchTermChto);
+        $this->searchTermChto = $this->replace_i_with_і($this->earchTermChto);
 
         $searchTerm = '%' . $this->searchTerm . '%';
 
@@ -80,5 +80,15 @@ class Pi0Search extends Component
 
         $route = 'pi0s';
         return view('livewire.pi0-search',compact('items','route'));
+    }
+
+    function replace_i_with_і($text) {
+        // Проверяем, есть ли в тексте буква "i" в русском тексте
+        if (preg_match('/[А-Яа-я]*[iI][А-Яа-я]*/u', $text)) {
+            // Если есть, заменяем "i" на "і"
+            $text = str_replace('i', 'і', $text);
+            $text = str_replace('I', 'І', $text);
+        }
+        return $text;
     }
 }

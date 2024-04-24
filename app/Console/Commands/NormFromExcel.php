@@ -155,6 +155,14 @@ class NormFromExcel extends Command
         }
         Log::info('$designationId '.$designationId);
         Log::info('$materialId '.$materialId);
+        // Поиск существующей записи по designation_id
+        $existingEntry = DesignationMaterial::where('designation_id', $designationId)->first();
+
+        // Проверка существующего материала
+        if ($existingEntry && $existingEntry->material_id !== $materialId) {
+            // Удаление старой записи, если material_id не совпадает
+            $existingEntry->delete();
+        }
         DesignationMaterial::updateOrCreate(
             [
             'designation_id' => $designationId,

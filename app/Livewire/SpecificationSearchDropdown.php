@@ -34,8 +34,11 @@ class SpecificationSearchDropdown extends Component
 
         preg_match('/^[^\d]+/', $designation, $matches);
 
-        $this->search  = $matches[0];
+        if(isset($matches[0])){
 
+            $this->search  = $matches[0];
+
+        }
     }
 
     public function searchResult()

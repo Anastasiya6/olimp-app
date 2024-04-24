@@ -20,11 +20,13 @@ class DetailSpecificationNormService
     {
         $items = ReportApplicationStatement
             ::where('order_number',$order_number)
-            ->whereHas('designation', function ($query) use ($department){
+            /*->whereHas('designation', function ($query) use ($department){
             $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
-        })
+        })*/
             ->has('designationMaterial.material')
             ->with('designationEntry','designationMaterial.material')
+            ->orderBy('order_designationEntry_letters')
+            ->orderBy('order_designationEntry')
             ->get();
 
         $data = $items->sortBy('designationMaterial.material.id')->map(function ($item) {
@@ -38,7 +40,21 @@ class DetailSpecificationNormService
             ];
         });
 
-        return $data;
+        $groupedData = $data->groupBy('id')->map(function ($group) {
+            // Внутри каждой группы по материалу, группируем по detail_name
+            return $group->groupBy('detail_name')->map(function ($details) {
+                return [
+                    'id' => $details->first()['id'], // ID материала из первого элемента
+                    'material_name' => $details->first()['material_name'], // Имя материала из первого элемента
+                    'detail_name' => $details->first()['detail_name'], // Наименование детали
+                    'quantity_total' => $details->sum('quantity_total'), // Сумма quantity_total
+                    'unit' => $details->first()['unit'], // Единица измерения из первого элемента
+                    'norm' => $details->first()['norm'], // Сумма норм для группы
+                ];
+            });
+        });
+     
+        return $groupedData;
     }
 
     public function getPdf($data,$department,$order_number)
@@ -71,50 +87,37 @@ class DetailSpecificationNormService
         $first = 1;
         // Переменная для хранения предыдущего материала
         $previousMaterial = null;
+        //dd($data);
         foreach ($data as $row) {
-
+                
             if($pdf->getY() >= 185) {
                 $pdf->Cell(0, 5, 'ЛИСТ '.$page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
                 $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
                 $page++;
             }
-            // Если текущий материал отличается от предыдущего, добавляем его в PDF
-            if ($row['id'] !== $previousMaterial) {
 
-                if($first > 1){
-                    $pdf->Cell(270, 10, 'Разом по матер. '.$sum_norm,0,1,'R');
+            $key = 0;
+            foreach($row as $detail){
+                if($key == 0){
+                    $pdf->Cell(100, 10, $detail['material_name']);
                     $pdf->Ln();
                 }
-                $first++;
-                $sum_norm = 0;
-
-                if($pdf->getY() >= 185) {
-                    PDFService::getList($page,$pdf, $header1, $header2, $width);
-                    $page++;
-                }
-                // Добавляем название материала
-                $pdf->Cell(100, 10, $row['material_name']);
+                $key++;
+                $pdf->Cell($width[0], 10, '');
+                $pdf->Cell($width[1], 10, $detail['detail_name']);
+                $pdf->Cell($width[2], 10, $detail['quantity_total']);
+                $pdf->Cell($width[3], 10, $detail['unit']);
+                $pdf->Cell($width[4], 10, $detail['norm']);
+                $pdf->Cell($width[5], 10, $detail['norm']*$detail['quantity_total']);
                 $pdf->Ln();
-                if($pdf->getY() >= 185) {
-                    PDFService::getList($page,$pdf, $header1, $header2, $width);
-                    $page++;
-                }
-
-                // Сбрасываем предыдущий материал
-                $previousMaterial = $row['id'];
-            }
-            // Если текущий материал такой же, как предыдущий, то добавляем только детали без названия материала
-            $pdf->Cell($width[0], 10, '');
-            $pdf->Cell($width[1], 10, $row['detail_name']);
-            $pdf->Cell($width[2], 10, $row['quantity_total']);
-            $pdf->Cell($width[3], 10, $row['unit']);
-            $pdf->Cell($width[4], 10, $row['norm']);
-            $pdf->Cell($width[5], 10, $row['norm']*$row['quantity_total']);
+                $sum_norm = $sum_norm + $detail['norm']*$detail['quantity_total'];
+           }
+            $pdf->Cell(270, 10, 'Разом по матер. '.$sum_norm,0,1,'R');
             $pdf->Ln();
-
-            $sum_norm = $sum_norm + $row['norm']*$row['quantity_total'];
-
+            $sum_norm = 0;
+            
         }
+     
         // Выводим PDF в браузер
         $pdf->Output('example.pdf', 'I');
     }

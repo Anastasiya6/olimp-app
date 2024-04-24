@@ -12,7 +12,7 @@ class SpecificationNormService
         $items = ReportApplicationStatement
             ::where('order_number',$order_number)
             ->has('designationMaterial.material')
-            ->with('designationEntry')
+            ->with('designationEntry','designationMaterial')
             ->get();
 
         $data = $items->map(function ($item) {
@@ -20,7 +20,7 @@ class SpecificationNormService
                 'id' => $item->designationMaterial->material->id,
                 'name' => $item->designationMaterial->material->name,
                 'unit' => $item->designationMaterial->material->unit->unit,
-                'norm' => $item->designationMaterial->norm,
+                'norm' => $item->designationMaterial->norm * $item->quantity_total,
                 'department' => substr($item->designationEntry->route, 0, 2),
             ];
         });

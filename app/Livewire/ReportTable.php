@@ -13,12 +13,33 @@ class ReportTable extends Component
 
     public $order_number;
 
+    public $designation_number;
+
     public $isProcessing = false;
 
     public function mount()
     {
+        $this->designation_number = 'ААМВ';
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
+
     }
+
+    public function generateReportEntryDetailSpecification()
+    {
+        if (empty($this->designation_number)) {
+            session()->flash('error', 'Будь ласка, введіть номер вузла.');
+           // $this->dispatch('alertRemove'); // Дополнительно: если используете JavaScript для алертов
+            $this->dispatch('message', [
+                'text' => 'Please Login To Continue',
+                'type' => 'danger',
+                'status' => 401
+            ]);
+            return;
+        }
+
+        return redirect()->route('entry.detail.designation', ['designation_number' => $this->designation_number]);
+    }
+
     public function generateReport($order_number,EntryDetailService $service)
     {
         $this->order_number = $order_number;

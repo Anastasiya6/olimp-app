@@ -1,30 +1,37 @@
 <div class="min-w-full align-middle">
+
     <table class="min-w-full border divide-y divide-gray-200">
         <thead>
         <tr>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Заказ №</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Заказ №</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Виріб</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Виріб</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кількість</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 whitespace-no-wrap">Кіл-ть</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Цех</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Цех</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Специфіковані норми витрат</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Відомість застосування</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Подетально-специфіковані норми витрат</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Специфіковані норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відсутні норми матеріалів</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Подетально-специфіковані норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Комлектовочна відомість</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Відсутні норми матеріалів</span>
+            </th>
+            <th class="bg-gray-50 px-6 py-3 text-left">
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектовочна відомість</span>
+            </th>
+            <th class="bg-gray-50 px-6 py-3 text-left">
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектовочна відомість на деталь</span>
             </th>
             <th class="w-56 bg-gray-50 px-6 py-3 text-left">
             </th>
@@ -55,6 +62,11 @@
                     </select>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                    <a href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                        Pdf
+                    </a>
+                </td>
+                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                     <a href="{{ route('specification.material', ['order_number' => $item->order_number ]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
@@ -80,6 +92,22 @@
                     <a href="{{ route('entry.detail', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Сформувати звіт
                     </a>
+                </td>
+                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                    <div>
+                        @if(session()->has('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="py-4">
+                        <input type="text" wire:model="designation_number" placeholder="Вузол"/>
+                    </div>
+
+                    <button wire:click="generateReportEntryDetailSpecification" class="underline-link">
+                        Сформувати звіт
+                    </button>
                 </td>
             </tr>
         @endforeach

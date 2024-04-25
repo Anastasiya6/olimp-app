@@ -17,6 +17,9 @@ class Specification extends Model
         'designation_id',
         'designation_entry_id'
     ];
+
+    // Включите временные метки
+    public $timestamps = true;
     /**
      * Определение отношения belongsTo к модели Designation (по полю designation_id).
      *
@@ -37,6 +40,4 @@ class Specification extends Model
         return $this->belongsTo(Designation::class, 'designation_entry_id');
     }
 
-    // Включите временные метки
-    public $timestamps = true;
 }

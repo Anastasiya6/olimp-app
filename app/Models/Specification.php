@@ -39,5 +39,9 @@ class Specification extends Model
     {
         return $this->belongsTo(Designation::class, 'designation_entry_id');
     }
+    public function designationMaterial()
+    {
+        return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_entry_id');
+    }
 
 }

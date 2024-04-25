@@ -16,22 +16,22 @@
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Цех</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Відомість застосування</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Відомість застосування</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Специфіковані норми витрат</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Специфіковані норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Подетально-специфіковані норми витрат</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Подетально-специфіковані норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Відсутні норми матеріалів</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Відсутні норми матеріалів</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектовочна відомість</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Комлектовочна відомість</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектовочна відомість на деталь</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Комлектовочна відомість на деталь</span>
             </th>
             <th class="w-56 bg-gray-50 px-6 py-3 text-left">
             </th>
@@ -116,4 +116,12 @@
     <div class="py-4">
         {{ $items->appends(request()->input())->links() }}
     </div>
+    <style>
+        .vertical-text {
+            writing-mode: vertical-lr; /* Пишет текст сверху вниз */
+            transform: rotate(180deg); /* Переворачивает текст так, чтобы он шел снизу вверх */
+            text-align: center;
+            white-space: nowrap; /* Обеспечивает, что текст не переносится на новую строку */
+        }
+    </style>
 </div>

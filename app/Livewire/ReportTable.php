@@ -19,14 +19,13 @@ class ReportTable extends Component
 
     public function mount()
     {
-        $this->designation_number = 'ААМВ';
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
 
     }
 
     public function generateReportEntryDetailSpecification()
     {
-        if (empty($this->designation_number)) {
+       if (empty($this->designation_number)) {
             session()->flash('error', 'Будь ласка, введіть номер вузла.');
            // $this->dispatch('alertRemove'); // Дополнительно: если используете JavaScript для алертов
             $this->dispatch('message', [
@@ -36,7 +35,6 @@ class ReportTable extends Component
             ]);
             return;
         }
-
         return redirect()->route('entry.detail.designation', ['designation_number' => $this->designation_number]);
     }
 

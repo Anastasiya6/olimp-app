@@ -9,12 +9,6 @@
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white p-6">
 
-                   {{-- <div>
-                        <a href="{{ route('application.statement') }}" target="_blank"
-                           class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Відомість застосування
-                        </a>
-                    </div>--}}
                     <livewire:report-table/>
                 </div>
             </div>

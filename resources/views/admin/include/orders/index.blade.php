@@ -34,7 +34,10 @@
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Розузловати</span>
                                 </th>
                                 <th class="bg-gray-50 px-6 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відомість застосування</span>
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відомість застосув.</span>
+                                </th>
+                                <th class="bg-gray-50 px-6 py-3 text-center">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відомість застосув. (Покупні)</span>
                                 </th>
                                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                                 </th>
@@ -61,7 +64,12 @@
                                         <livewire:disassembly :order_number="$item->order_number" />
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" target="_blank">
+                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 1, 'order_number' => $item->order_number]) }}" target="_blank">
+                                            Pdf
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 2, 'order_number' => $item->order_number]) }}" target="_blank">
                                             Pdf
                                         </a>
                                     </td>

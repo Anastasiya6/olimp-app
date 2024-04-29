@@ -62,7 +62,7 @@
                     </select>
                 </td>--}}
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('application.statement', [ 'filter' => 1, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>

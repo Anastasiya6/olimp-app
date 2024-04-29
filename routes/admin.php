@@ -47,7 +47,7 @@ Route::resource('reports', ReportController::class);
 Route::resource('group-materials', GroupMaterialController::class);
 Route::resource('designation-trees', DesignationTreeController::class);
 
-Route::get('application-statement/{order_number}', [ApplicationStatement::class,'applicationStatement'])->name('application.statement');
+Route::get('application-statement/{filter}/{order_number}', [ApplicationStatement::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
 Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
 Route::get('entry-detail/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');

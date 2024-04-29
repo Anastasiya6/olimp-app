@@ -23,6 +23,8 @@ class Disassembly extends Component
         $service->make($this->order_number);
 
         $this->isProcessing = false;
+
+        $this->dispatch('reportGenerated',$this->order_number,now()->toDateTimeString());
     }
 
     public function render()

@@ -25,6 +25,9 @@ class ApplicationStatementPrintService
             $add_order = 'designations1.designation LIKE "КР%" ASC,';
             $where = $where.' AND
                                 designations1.designation NOT LIKE "ПИ0%"';
+        }elseif($filter == 2){
+            $where = $where.' AND
+                                designations1.designation LIKE "ПИ0%"';
         }
 
         return DB::select('

@@ -12,26 +12,26 @@
             <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500 whitespace-no-wrap">Кіл-ть</span>
             </th>
-            <th class="bg-gray-50 px-6 py-3 text-left">
+            {{--<th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Цех</span>
+            </th>--}}
+            <th class="bg-gray-50 px-6 py-3 text-left">
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Відомість застос.</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Відомість застосування</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Специфік. норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Специфіковані норми витрат</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Подетально-специфік. норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Подетально-специфіковані норми витрат</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Відсутні норми матер-в</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Відсутні норми матеріалів</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектов. відомість</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Комлектовочна відомість</span>
-            </th>
-            <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500 vertical-text">Комлектовочна відомість на деталь</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектов. відомість на деталь</span>
             </th>
             <th class="w-56 bg-gray-50 px-6 py-3 text-left">
             </th>
@@ -51,7 +51,7 @@
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <strong>{{ $item->quantity??'' }}</strong>
                 </td>
-                <td class="py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                {{--<td class="py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <select wire:model.change="selectedDepartment" name="designation_type_unit_id" class="block w-full mt-1 rounded-md">
                         @foreach($departments as $department)
                             <option value="{{ $department->number }}"
@@ -60,7 +60,7 @@
                             </option>
                         @endforeach
                     </select>
-                </td>
+                </td>--}}
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                     <a href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf

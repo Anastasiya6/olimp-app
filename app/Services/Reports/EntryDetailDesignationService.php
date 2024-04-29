@@ -106,53 +106,16 @@ class EntryDetailDesignationService
 
                     }
                 } else {
+                    $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
                     $this->pdf->Ln();
                 }
                 $this->node($specification->designation_entry_id, 1, $specification->designationEntry->designation, $specification->designationEntry->name);
 
             }
         }
-
-
-
-
-
-
-
-
-        /*if($designation->children->isNotEmpty()) {
-            if ($level == 1) {
-                $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->MultiCell($this->width[1], $this->height, $designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->MultiCell($this->width[2], $this->height, $designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->Ln();
-            }
-            $this->newList();
-
-            foreach ($designation->children as $child) {
-                dd($designation,$designation->children);
-                $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->MultiCell($this->width[2], $this->height, $child->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->MultiCell($this->width[3], $this->height, $child->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-
-                if($child->designationMaterial->isNotEmpty()) {
-
-
-                    foreach ($child->designationMaterial as $material) {
-
-                        $this->pdf->MultiCell($this->width[4], $this->height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                        $this->pdf->MultiCell($this->width[5], $this->height, $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                        $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                        $this->pdf->Ln();
-                    }
-                }else{
-                    $this->pdf->Ln();
-                }
-
-                $this->node($child, 1);
-            }
-        }*/
     }
 
     public function newList()

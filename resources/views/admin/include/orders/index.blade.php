@@ -18,20 +18,23 @@
                         <table class="min-w-full border divide-y divide-gray-200">
                             <thead>
                             <tr>
-                                <th class="bg-gray-50 px-6 py-3 text-left">
+                                <th class="bg-gray-50 px-6 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Заказ №</span>
                                 </th>
-                                <th class="bg-gray-50 px-6 py-3 text-left">
+                                <th class="bg-gray-50 px-6 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Виріб</span>
                                 </th>
-                                <th class="bg-gray-50 px-6 py-3 text-left">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кількість</span>
+                                <th class="bg-gray-50 px-6 py-3 text-center">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кіл-ть</span>
                                 </th>
-                                <th class="bg-gray-50 px-6 py-3 text-left">
+                                <th class="bg-gray-50 px-6 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Розузлован</span>
                                 </th>
-                                <th class="bg-gray-50 px-6 py-3 text-left">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"></span>
+                                <th class="bg-gray-50 px-6 py-3 text-center">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Розузловати</span>
+                                </th>
+                                <th class="bg-gray-50 px-6 py-3 text-center">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відомість застосування</span>
                                 </th>
                                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                                 </th>
@@ -42,26 +45,24 @@
 
                             @foreach($items as $item)
                                 <tr class="bg-white">
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>{{ $item->order_number??'' }}</strong>
                                     </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>{{ $item->designation->designation }}</strong>
                                     </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>{{ $item->quantity??'' }}</strong>
                                     </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                        @if(array_key_exists($item->order_number,$in_report))
-                                           {{\Carbon\Carbon::parse($in_report[$item->order_number])->format('d.m.Y')}}
-                                        @endif
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                        <livewire:update-data-report :order_number="$item->order_number" :report_date="$report_dates[$item->order_number]"/>
                                     </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <livewire:disassembly :order_number="$item->order_number" />
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <a href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
-                                            Відомість застосування
+                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'order_number' => $item->order_number]) }}" target="_blank">
+                                            Pdf
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">

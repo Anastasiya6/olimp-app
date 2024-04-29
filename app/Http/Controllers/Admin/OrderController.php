@@ -22,10 +22,10 @@ class OrderController extends Controller
          return view('administrator::include.orders.index', [
             'items' => Order::paginate(25),
             'route' => $this->route,
-            'in_report' => ReportApplicationStatement
-                ::select('order_number',DB::raw('MIN(created_at) as min_created_at'))
-                ->groupBy('order_number')
-                ->pluck('min_created_at','order_number')
+            'report_dates' => Order::leftJoin('report_application_statements', 'orders.order_number', '=', 'report_application_statements.order_number')
+                ->select('orders.order_number', DB::raw('MIN(report_application_statements.created_at) as min_created_at'))
+                ->groupBy('orders.order_number')
+                ->pluck('min_created_at', 'orders.order_number')
                 ->toArray(),
             'title' => 'Заказы']);
     }
@@ -86,7 +86,8 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        $order->delete();
+        ReportApplicationStatement::where('order_number', $order->id)->delete();
+        Order::where('order_number', $order->order_number)->delete();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
     }

@@ -13,7 +13,7 @@ class EntryDetailDesignationService
 
     public $max_height = 10;
 
-    public $width = array(40,40,50,50,50,20,7,25);
+    public $width = array(40,40,50,55,50,20,7,25);
 
     public $header1 = [ 'Номер вузла',
                         "Назва деталі",

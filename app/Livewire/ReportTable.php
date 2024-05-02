@@ -41,7 +41,7 @@ class ReportTable extends Component
     public function generateReport($order_number,EntryDetailService $service)
     {
         $this->order_number = $order_number;
-        dd( $this->order_number );
+       // dd( $this->order_number );
         $order = Order::where('order_number',$order_number)->first();
 
         if($order){
@@ -65,7 +65,10 @@ class ReportTable extends Component
                     $query->select('order_number')
                         ->from('report_application_statements')
                         ->groupBy('order_number');
-                })->paginate(25);
+                })
+            ->orderBy('updated_at','desc')
+            ->paginate(25);
+
         $departments = Department::all();
         $default_department = Department::DEFAULT_DEPARTMENT;
 

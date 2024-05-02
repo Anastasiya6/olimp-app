@@ -13,7 +13,7 @@ class EntryDetailDesignationService
 
     public $max_height = 10;
 
-    public $width = array(40,40,50,60,60,20,7);
+    public $width = array(40,40,50,50,50,20,7,25);
 
     public $header1 = [ 'Номер вузла',
                         "Назва деталі",
@@ -21,12 +21,14 @@ class EntryDetailDesignationService
                         'Назва деталі',
                         'Матеріал',
                         'Норма',
-                        'К-ть'
+                        'К-ть',
+                        ''
                     ];
     public $header2 = [ '(КУДИ)',
                         "(КУДИ)",
                         '(ЩО)',
                         '(ЩО)',
+                        '',
                         '',
                         '',
                         ''
@@ -43,14 +45,14 @@ class EntryDetailDesignationService
         $this->pdf->MultiCell($this->width[0], $this->height, $designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
         $this->pdf->MultiCell($this->width[1], $this->height, $designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
         $this->pdf->Ln();
-        $this->node($designation->id,0);
+        $this->node($designation->id,0,1);
 
         $pdf_path = storage_path('app/public/entry_detail_'.$designation->designation.'.pdf');
         $this->pdf->Output($pdf_path, 'F');
         $this->pdf->Output($pdf_path, 'I');
     }
 
-    public function node($designation_id,$level,$designation='',$designation_name='')
+    public function node($designation_id,$level,$quantity_node,$designation='',$designation_name='')
     {
         $this->newList();
 
@@ -96,11 +98,13 @@ class EntryDetailDesignationService
                             $this->pdf->MultiCell($this->width[4], $this->height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[5], $this->height, $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                            $this->pdf->MultiCell($this->width[7], $this->height, "$quantity_node"."х".$specification->quantity."=".$quantity_node * $specification->quantity * $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->Ln();
                         }else{
                             $this->pdf->MultiCell($this->width[4], $this->height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[5], $this->height, $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                            $this->pdf->MultiCell($this->width[7], $this->height, "$quantity_node"."х".$specification->quantity."=".$quantity_node * $specification->quantity * $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->Ln();
                         }
 
@@ -112,7 +116,7 @@ class EntryDetailDesignationService
 
                     $this->pdf->Ln();
                 }
-                $this->node($specification->designation_entry_id, 1, $specification->designationEntry->designation, $specification->designationEntry->name);
+                $this->node($specification->designation_entry_id, 1, $specification->quantity,$specification->designationEntry->designation, $specification->designationEntry->name);
 
             }
         }

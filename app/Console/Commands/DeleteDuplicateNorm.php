@@ -26,8 +26,16 @@ class DeleteDuplicateNorm extends Command
      */
     public function handle()
     {
-        $designationCounts = DesignationMaterial::select('designation_id')
+        /*$designationCounts = DesignationMaterial::select('designation_id')
             ->selectRaw('COUNT(*) as count')
+            ->groupBy('designation_id')
+            ->having('count', '>', 1)
+            ->get();*/
+        $designationCounts = DesignationMaterial::select('designation_id')
+            ->join('materials', 'materials.id', '=', 'designation_materials.material_id')
+            ->leftJoin('group_materials', 'group_materials.material_id', '=', 'materials.id')
+            ->selectRaw('COUNT(*) as count')
+            ->whereNull('group_materials.material_id')
             ->groupBy('designation_id')
             ->having('count', '>', 1)
             ->get();

@@ -13,7 +13,7 @@ class EntryDetailDesignationService
 
     public $max_height = 10;
 
-    public $width = array(40,40,50,55,50,20,9,25);
+    public $width = array(40,40,50,55,50,20,12,25);
 
     public $header1 = [ 'Номер вузла',
                         "Назва деталі",
@@ -112,7 +112,8 @@ class EntryDetailDesignationService
                 } else {
                     $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                    $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity." х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[7], $this->height, $quantity_node."=".$quantity_node * $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                     $this->pdf->Ln();
                 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DesignationCreateRequest;
 use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,9 +35,9 @@ class DesignationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DesignationCreateRequest $request)
     {
-        $designation = Designation::updateOrCreate([
+        $designation = Designation::create([
             'designation' => $request->designation,
         ], [
             'name' => $request->name,
@@ -71,6 +72,12 @@ class DesignationController extends Controller
      */
     public function update(Request $request, Designation $designation)
     {
+
+        $validatedData = $request->validate([
+            'designation' => 'required|unique:designations,designation,' . $designation->id,
+        ], [
+            'designation.unique' => 'Такий креслярський номер вже є у виробах.',
+        ]);
         $designation->designation = $request->designation;
         $designation->name = $request->name;
         $designation->route = $request->route;

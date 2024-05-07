@@ -49,6 +49,7 @@ Route::resource('group-materials', GroupMaterialController::class);
 Route::resource('designation-trees', DesignationTreeController::class);
 Route::resource('specification-logs', SpecificationLogController::class);
 
+Route::get('pi0-all', [PI0Controller::class,'pi0Pdf'])->name('pi0.all');
 Route::get('application-statement/{filter}/{order_number}', [ApplicationStatementController::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
 Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');

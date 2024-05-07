@@ -162,21 +162,4 @@ class DetailSpecificationNormService
         // Выводим PDF в браузер
         $pdf->Output('example.pdf', 'I');
     }
-
-    public function detail($detail_,$pdf,$width)
-    {
-        $sum_norm = 0;
-        foreach($detail_ as $detail) {
-
-            $pdf->Cell($width[0], 10, '');
-            $pdf->Cell($width[1], 10, $detail['detail_name']);
-            $pdf->Cell($width[2], 10, $detail['quantity_total']);
-            $pdf->Cell($width[3], 10, $detail['unit']);
-            $pdf->Cell($width[4], 10, $detail['norm']);
-            $pdf->Cell($width[5], 10, $detail['norm'] * $detail['quantity_total']);
-            $pdf->Ln();
-            $sum_norm = $sum_norm + $detail['norm'] * $detail['quantity_total'];
-        }
-        return $sum_norm;
-    }
 }

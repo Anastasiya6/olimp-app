@@ -86,7 +86,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        ReportApplicationStatement::where('order_number', $order->id)->delete();
+        ReportApplicationStatement::where('order_number', $order->order_number)->delete();
         Order::where('order_number', $order->order_number)->delete();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 

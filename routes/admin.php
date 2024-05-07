@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\Logs\SpecificationLogController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PI0Controller;
-use App\Http\Controllers\Admin\Report\ApplicationStatement;
+use App\Http\Controllers\Admin\Report\ApplicationStatementController;
 use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
@@ -49,7 +49,7 @@ Route::resource('group-materials', GroupMaterialController::class);
 Route::resource('designation-trees', DesignationTreeController::class);
 Route::resource('specification-logs', SpecificationLogController::class);
 
-Route::get('application-statement/{filter}/{order_number}', [ApplicationStatement::class,'applicationStatement'])->name('application.statement');
+Route::get('application-statement/{filter}/{order_number}', [ApplicationStatementController::class,'applicationStatement'])->name('application.statement');
 Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
 Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
 Route::get('entry-detail/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');

@@ -24,7 +24,7 @@ class SpecificationCreateRequest extends FormRequest
         return [
             'designation_entry_designation' => 'required|different:designation_designation',
             'designation_designation' => 'required',
-            'specification_quantity' => 'required|integer',
+            'specification_quantity' => 'required|numeric',
 
         ];
     }

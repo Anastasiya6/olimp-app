@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DesignationCreateRequest;
 use App\Models\Designation;
 use App\Models\TypeUnit;
+use App\Services\Reports\PI0Service;
 use Illuminate\Http\Request;
 
 class PI0Controller extends Controller
@@ -95,5 +96,10 @@ class PI0Controller extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function pi0Pdf(PI0Service $service)
+    {
+        $service->pi0();
     }
 }

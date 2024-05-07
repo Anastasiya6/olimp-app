@@ -39,7 +39,6 @@ class DesignationController extends Controller
     {
         $designation = Designation::create([
             'designation' => $request->designation,
-        ], [
             'name' => $request->name,
             'route' => $request->route,
         ]);
@@ -72,7 +71,6 @@ class DesignationController extends Controller
      */
     public function update(Request $request, Designation $designation)
     {
-
         $validatedData = $request->validate([
             'designation' => 'required|unique:designations,designation,' . $designation->id,
         ], [

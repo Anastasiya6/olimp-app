@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DesignationCreateRequest;
 use App\Models\Designation;
 use App\Models\TypeUnit;
 use Illuminate\Http\Request;
@@ -35,11 +36,10 @@ class PI0Controller extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DesignationCreateRequest $request)
     {
-        $designation = Designation::firstOrCreate([
+        $designation = Designation::create([
             'designation' => $request->designation,
-        ], [
             'name' => $request->name,
             'gost' => $request->gost,
             'type' => 1,
@@ -75,6 +75,11 @@ class PI0Controller extends Controller
      */
     public function update(Request $request, Designation $pi0)
     {
+        $validatedData = $request->validate([
+            'designation' => 'required|unique:designations,designation,' . $pi0->id,
+        ], [
+            'designation.unique' => 'Такий креслярський номер вже є у виробах.',
+        ]);
         $pi0->designation = $request->designation;
         $pi0->name = $request->name;
         $pi0->gost = $request->gost;

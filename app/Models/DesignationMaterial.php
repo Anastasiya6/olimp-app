@@ -28,9 +28,9 @@ class DesignationMaterial extends Model
         return $this->belongsTo(Designation::class, 'designation_id');
     }
 
-    public function reportAppStat()
+    public function reportApplicationStatements()
     {
-        return $this->belongsTo(ReportApplicationStatement::class, 'designation_entry_id', 'designation_id');
+        return $this->hasMany(ReportApplicationStatement::class, 'designation_entry_id', 'designation_id');
     }
 
     public function department()

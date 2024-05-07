@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Reports;
+use App\Models\Material;
 use App\Models\ReportApplicationStatement;
 use App\Services\HelpService\PDFService;
 use TCPDF;
@@ -13,6 +14,17 @@ class SpecificationNormService
             ::where('order_number',$order_number)
             ->has('designationMaterial.material')
             ->with('designationEntry','designationMaterial')
+            ->get();
+
+        $items = Material::query()
+            ->join('designation_materials', 'materials.id', '=', 'designation_materials.material_id')
+            ->join('report_application_statements', 'report_application_statements.designation_entry_id', '=', 'designation_materials.designation_id')
+            ->join('designations', 'designations.id', '=', 'report_application_statements.designation_entry_id')
+            ->where('report_application_statements.order_number', $order_number)
+            ->select('materials.*', 'designations.designation as designation_name','report_application_statements.quantity_total','designation_materials.norm')
+            ->orderBy('materials.name')
+            ->orderBy('order_designationEntry_letters')
+            ->orderBy('order_designationEntry')
             ->get();
 
         $data = $items->map(function ($item) {
@@ -51,7 +63,7 @@ class SpecificationNormService
             '',
             '',
             ''];
-        $pdf = PDFService::getPdf($header1,$header2,$width,'Специфіковані норми витрат матеріалів на виріб',' ЗАКАЗ №'.$order_number);
+        $pdf = PDFService::getPdf($header1,$header2,$width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАКАЗ №'.$order_number);
         $page = 2;
         // Добавление данных таблицы
         foreach ($groupedData as $item) {

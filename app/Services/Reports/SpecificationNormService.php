@@ -64,7 +64,7 @@ class SpecificationNormService
         $pki_data = $pki_items->map(function ($item) {
             return [
                 'id' => $item->designationEntry->id.'pki',
-                'name' => $item->designationEntry->designation,
+                'name' => $item->designationEntry->name,
                 'unit' => $item->designationEntry->unit->unit,
                 'norm' =>$item->quantity_total,
                 'department' => substr($item->designationEntry->route, 0, 2),

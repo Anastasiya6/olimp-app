@@ -15,7 +15,7 @@ class ApplicationStatementService
 
     public $max_height = 10;
 
-    public $width = array(25,50,100,40,20,20,30);
+    public $width = array(25,50,95,45,20,20,30);
 
     public $header1 = [ 'Замовлення',
                         "Познач. деталі ",

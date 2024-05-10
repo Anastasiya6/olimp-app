@@ -65,7 +65,7 @@ class SpecificationNormService
             return [
                 'id' => $item->designationEntry->id.'pki',
                 'name' => $item->designationEntry->name,
-                'unit' => $item->designationEntry->unit->unit,
+                'unit' => $item->designationEntry->unit->unit??'шт',
                 'norm' =>$item->quantity_total,
                 'department' => substr($item->designationEntry->route, 0, 2),
             ];
@@ -80,10 +80,43 @@ class SpecificationNormService
                 'norm_with_koef' => $items->sum('norm')
             ];
         });
+
         $pki_groupedData = $pki_groupedData->sortBy('name');
+
+        $kr_items = ReportApplicationStatement
+            ::whereHas('designationEntry', function ($query) {
+                $query->where('designation', 'like', 'КР%');
+            })
+            ->where('order_number',$order_number)
+            ->with('designationEntry')
+            ->get();
+
+
+        $kr_data = $kr_items->map(function ($item) {
+            return [
+                'id' => $item->designationEntry->id.'kr',
+                'name' => $item->designationEntry->name,
+                'unit' => 'шт',
+                'norm' =>$item->quantity_total,
+                'department' => substr($item->designationEntry->route, 0, 2),
+            ];
+        });
+
+        $kr_groupedData = $kr_data->groupBy('id')->map(function ($items) {
+            return [
+                'name' => $items->first()['name'], // Берем название материала из первого элемента группы
+                'unit' => $items->first()['unit'], // Берем единицу измерения из первого элемента группы
+                'department' => $items->first()['department'], // Берем цех из первого элемента группы
+                'norm' => $items->sum('norm'), // Суммируем количество по всем элементам группы
+                'norm_with_koef' => $items->sum('norm')
+            ];
+        });
+        $kr_groupedData = $kr_groupedData->sortBy('name');
 
         $combinedData = $groupedData->merge($pki_groupedData);
 
+        $combinedData = $combinedData->merge($kr_groupedData);
+       // dd($combinedData);
         $this->getPdf($combinedData,$order_number);
 
     }

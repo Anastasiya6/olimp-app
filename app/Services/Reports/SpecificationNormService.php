@@ -120,6 +120,6 @@ class SpecificationNormService
         }
 
         // Выводим PDF в браузер
-        $pdf->Output('specification_norm.pdf', 'I');
+        $pdf->Output('specification_norm_'.$order_number.'.pdf', 'I');
     }
 }

@@ -13,7 +13,7 @@ class EntryDetailDesignationService
 
     public $max_height = 10;
 
-    public $width = array(40,40,50,55,50,20,12,25);
+    public $width = array(40,40,50,55,45,20,12,30);
 
     public $header1 = [ 'Номер вузла',
                         "Назва деталі",
@@ -22,7 +22,8 @@ class EntryDetailDesignationService
                         'Матеріал',
                         'Норма',
                         'К-ть',
-                        'Норма'
+                        'Норма',
+                       // ''
                     ];
     public $header2 = [ '(КУДИ)',
                         "(КУДИ)",
@@ -31,7 +32,8 @@ class EntryDetailDesignationService
                         '',
                         '',
                         '',
-                        'на застос.'
+                        'на застос.',
+                        //''
                         ];
     public $page = 2;
 
@@ -52,22 +54,17 @@ class EntryDetailDesignationService
         $this->pdf->Output($pdf_path, 'I');
     }
 
-    public function node($designation_id,$level,$quantity_node,$designation='',$designation_name='')
+    public function node($designation_id,$level,$quantity_node,$designation='',$designation_name='',$pred_quantity_node=0)
     {
         $this->newList();
 
         $specifications = Specification
             ::where('designation_id', $designation_id)
-           /* ->orderByRaw("
-                        CASE
-                            WHEN designation LIKE 'КР%' THEN 1
-                            WHEN designation LIKE 'ПИ0%' THEN 2
-                            ELSE 0
-                        END, designation
-                    ")*/
             ->with(['designationEntry','designationMaterial'])
             ->get();
-
+           // dd($specifications);
+        //$specifications = $specifications->sortBy('category_code');
+        $specifications = $specifications->sortBy('detail');
         // Проверяем, что коллекция не пуста
         if ($specifications->isNotEmpty()) {
 
@@ -85,10 +82,14 @@ class EntryDetailDesignationService
                 $this->pdf->MultiCell($this->width[2], $this->height, $specification->designationEntry->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                 $this->pdf->MultiCell($this->width[3], $this->height, $specification->designationEntry->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
+                $str = $pred_quantity_node ? $quantity_node.' x '.$pred_quantity_node:$quantity_node;
+
                 if ($specification->designationMaterial->isNotEmpty()) {
                     $count = 0;
+
                     foreach ($specification->designationMaterial as $material) {
                         $count++;
+                        $total = $pred_quantity_node ? $quantity_node * $specification->quantity * $material->norm * $pred_quantity_node : $quantity_node * $specification->quantity * $material->norm;
                         if($count>1){
                             $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
@@ -98,26 +99,31 @@ class EntryDetailDesignationService
                             $this->pdf->MultiCell($this->width[4], $this->height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[5], $this->height, $material->norm." х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity." х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                            $this->pdf->MultiCell($this->width[7], $this->height, $quantity_node."=".$quantity_node * $specification->quantity * $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                            $this->pdf->MultiCell($this->width[7], $this->height, $str."=".$total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                            //$this->pdf->MultiCell($this->width[8], $this->height, $pred_quantity_node, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->Ln();
                         }else{
                             $this->pdf->MultiCell($this->width[4], $this->height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[5], $this->height, $material->norm." х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity." х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                            $this->pdf->MultiCell($this->width[7], $this->height, $quantity_node."=".$quantity_node * $specification->quantity * $material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                            $this->pdf->MultiCell($this->width[7], $this->height, $str."=".$total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                           // $this->pdf->MultiCell($this->width[8], $this->height, $pred_quantity_node, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->Ln();
                         }
 
                     }
                 } else {
+                    $total = $pred_quantity_node ? $quantity_node * $specification->quantity * $pred_quantity_node : $quantity_node * $specification->quantity;
+
                     $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[6], $this->height, $specification->quantity." х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                    $this->pdf->MultiCell($this->width[7], $this->height, $quantity_node."=".$quantity_node * $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[7], $this->height, $str."=".$total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                   // $this->pdf->MultiCell($this->width[8], $this->height, $pred_quantity_node, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                     $this->pdf->Ln();
                 }
-                $this->node($specification->designation_entry_id, 1, $specification->quantity,$specification->designationEntry->designation, $specification->designationEntry->name);
+                $this->node($specification->designation_entry_id, 1, $specification->quantity,$specification->designationEntry->designation, $specification->designationEntry->name,$quantity_node);
 
             }
         }

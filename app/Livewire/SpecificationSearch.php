@@ -40,12 +40,12 @@ class SpecificationSearch extends Component
     public function render()
     {
         if ($this->exactMatch) {
-            $searchTerm = '%' . $this->searchTerm;
-            $searchTermChto = '%' . $this->searchTermChto;
+            $searchTerm = '%' . trim($this->searchTerm);
+            $searchTermChto = '%' . trim($this->searchTermChto);
 
         }else{
-            $searchTerm = '%' . $this->searchTerm . '%';
-            $searchTermChto = '%' . $this->searchTermChto . '%';
+            $searchTerm = '%' . trim($this->searchTerm) . '%';
+            $searchTermChto = '%' . trim($this->searchTermChto) . '%';
         }
 
         if ($searchTerm == '%%' && $searchTermChto == '%%') {

@@ -89,7 +89,7 @@ class SpecificationNormService
     }
     public function getPdf($groupedData,$order_number)
     {
-        $width = array(120,30,70,70,10);
+        $width = array(120,30,60,60,10);
 
         // Заголовок таблицы
         $header1 = ['Найменування матеріалів',

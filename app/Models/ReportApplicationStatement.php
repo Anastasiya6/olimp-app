@@ -27,7 +27,7 @@ class ReportApplicationStatement extends Model
 
     public function designationMaterial()
     {
-        return $this->belongsTo(DesignationMaterial::class, 'designation_entry_id','designation_id');
+        return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_entry_id');
     }
 
     /**

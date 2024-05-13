@@ -8,30 +8,46 @@ use TCPDF;
 
 class SpecificationNormService
 {
+    public $width = array(120,30,60,60,10);
+
+    public $height = 10;
+
+    public $max_height = 10;
+    // Заголовок таблицы
+    public $header1 = ['Найменування матеріалів',
+                        'Од.виміру',
+                        'Норма витрат на виріб',
+                        'Разом * 1.2',
+                        'Цех'];
+    public $header2 = ['',
+                        '',
+                        '',
+                        '',
+                        ''];
+    public $pdf = null;
+
+    public $page = 2;
+
     public function specificationNorm($order_number)
     {
-        /*$items = Material::query()
-        ->join('designation_materials', 'materials.id', '=', 'designation_materials.material_id')
-        ->join('report_application_statements', 'report_application_statements.designation_entry_id', '=', 'designation_materials.designation_id')
-        ->join('designations', 'designations.id', '=', 'report_application_statements.designation_entry_id')
-        ->where('report_application_statements.order_number', $order_number)
-        ->select('materials.*', 'designations.designation as designation_name','report_application_statements.quantity_total','designation_materials.norm')
-        ->with('designationMaterial')
-        ->orderBy('materials.name')
-        ->orderBy('order_designationEntry_letters')
-        ->orderBy('order_designationEntry')
-        ->get();
-        foreach($items as $item){
-            dd($item);
-        }*/
-
         $items = ReportApplicationStatement
             ::where('order_number',$order_number)
             ->has('designationMaterial.material')
-            ->with('designationEntry','designationMaterial')
+            ->with('designationEntry','designationMaterial.material')
             ->get();
 
-        $data = $items->map(function ($item) {
+        $data = $items->flatMap(function ($item) {
+            return $item->designationMaterial->map(function ($designationMaterial) use ($item) {
+                return [
+                    'id' => $designationMaterial->material->id,
+                    'name' => $designationMaterial->material->name,
+                    'unit' => $designationMaterial->material->unit->unit,
+                    'norm' => $designationMaterial->norm * $item->quantity_total,
+                    'department' => substr($item->designationEntry->route, 0, 2),
+                ];
+            });
+        });
+        /*$data = $items->map(function ($item) {
             return [
                 'id' => $item->designationMaterial->material->id,
                 'name' => $item->designationMaterial->material->name,
@@ -39,7 +55,7 @@ class SpecificationNormService
                 'norm' => $item->designationMaterial->norm * $item->quantity_total,
                 'department' => substr($item->designationEntry->route, 0, 2),
             ];
-        });
+        });*/
 
         $groupedData = $data->groupBy('id')->map(function ($items) {
             return [
@@ -122,37 +138,25 @@ class SpecificationNormService
     }
     public function getPdf($groupedData,$order_number)
     {
-        $width = array(120,30,60,60,10);
 
-        // Заголовок таблицы
-        $header1 = ['Найменування матеріалів',
-            'Од.виміру',
-            'Норма витрат на виріб',
-            'Разом * 1.2',
-            'Цех'];
-        $header2 = ['',
-            '',
-            '',
-            '',
-            ''];
-        $pdf = PDFService::getPdf($header1,$header2,$width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАКАЗ №'.$order_number);
-        $page = 2;
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАКАЗ №'.$order_number);
+
         // Добавление данных таблицы
         foreach ($groupedData as $item) {
-            if($pdf->getY() >= 185) {
-                $pdf->Cell(0, 5, 'ЛИСТ '.$page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
-                $pdf = PDFService::getHeaderPdf($pdf, $header1, $header2, $width);
-                $page++;
+            if($this->pdf->getY() >= 185) {
+                $this->pdf->Cell(0, 5, 'ЛИСТ '.$this->page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+                $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
+                $this->page++;
             }
-            $pdf->Cell($width[0], 10, $item['name']);
-            $pdf->Cell($width[1], 10, $item['unit']);
-            $pdf->Cell($width[2], 10, $item['norm']);
-            $pdf->Cell($width[3], 10, $item['norm_with_koef']);
-            $pdf->Cell($width[4], 10, $item['department']);
-            $pdf->Ln();
+            $this->pdf->MultiCell($this->width[0], $this->height, $item['name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[1], $this->height, $item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[2], $this->height, $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, $item['norm_with_koef'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item['department'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->Ln();
         }
 
         // Выводим PDF в браузер
-        $pdf->Output('specification_norm_'.$order_number.'.pdf', 'I');
+        $this->pdf->Output('specification_norm_'.$order_number.'.pdf', 'I');
     }
 }

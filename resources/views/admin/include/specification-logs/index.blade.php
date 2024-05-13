@@ -28,6 +28,9 @@
                                 <th class="bg-gray-50 px-6 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Зміни</span>
                                 </th>
+                                <th class="bg-gray-50 px-6 py-3 text-center">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата</span>
+                                </th>
                             </tr>
                             </thead>
 
@@ -49,6 +52,9 @@
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>{{ $item->message }}</strong>
+                                    </td>
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                        <strong>{{\Carbon\Carbon::parse($item->created_at)->format('d.m.Y H:i:s')}}</strong>
                                     </td>
                                 </tr>
                             @endforeach

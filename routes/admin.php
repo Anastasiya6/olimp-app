@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DesignationMaterialController;
 use App\Http\Controllers\Admin\DesignationTreeController;
 use App\Http\Controllers\Admin\GroupMaterialController;
 use App\Http\Controllers\Admin\IndexController;
+use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
 use App\Http\Controllers\Admin\Logs\SpecificationLogController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
@@ -48,6 +49,7 @@ Route::resource('reports', ReportController::class);
 Route::resource('group-materials', GroupMaterialController::class);
 Route::resource('designation-trees', DesignationTreeController::class);
 Route::resource('specification-logs', SpecificationLogController::class);
+Route::resource('designation-material-logs', DesignationMaterialLogController::class);
 
 Route::get('pi0-all', [PI0Controller::class,'pi0Pdf'])->name('pi0.all');
 Route::get('application-statement/{filter}/{order_number}', [ApplicationStatementController::class,'applicationStatement'])->name('application.statement');

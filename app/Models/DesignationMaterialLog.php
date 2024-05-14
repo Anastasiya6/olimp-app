@@ -16,6 +16,7 @@ class DesignationMaterialLog extends Model
         'detail',
         'designation_number',
         'material',
-        'message'
+        'message',
+        'norm'
     ];
 }

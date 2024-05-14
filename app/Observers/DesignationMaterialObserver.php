@@ -75,6 +75,7 @@ class DesignationMaterialObserver
             'designation' => $designationMaterial->designation->name,
             'material_id' => $designationMaterial->material_id,
             'material' => $designationMaterial->material->name,
+            'norm' => $designationMaterial->norm,
             'message' => $message
         ]);
     }

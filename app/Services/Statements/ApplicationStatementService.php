@@ -99,6 +99,7 @@ class ApplicationStatementService
                 'hcp' => $hcp,
                 'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
                 'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
+                'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
                 'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
 
             ]);

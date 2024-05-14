@@ -52,7 +52,7 @@ class ApplicationStatementPrintService
                                 designations AS designations2 ON report_application_statements.designation_id = designations2.id
                             '.$where.'
                             ORDER BY '.$add_order.'
-                                report_application_statements.order_designationEntry, report_application_statements.order_designation, designations1.name, designations2.route, order_number, category_code');
+                                report_application_statements.order_designationEntry, report_application_statements.order_designation_letters,report_application_statements.order_designation, designations1.name, designations2.route, order_number, category_code');
 
     }
 

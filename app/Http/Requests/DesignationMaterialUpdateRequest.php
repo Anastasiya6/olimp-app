@@ -23,7 +23,9 @@ class DesignationMaterialUpdateRequest extends FormRequest
     {
 
         return [
-            'norm' => 'required|numeric|min:0.000001',
+            'designation' => 'required',
+            'material' => 'required',
+            'norm' => 'required',
 
         ];
     }
@@ -31,9 +33,11 @@ class DesignationMaterialUpdateRequest extends FormRequest
     public function messages()
     {
         return [
+            'designation.required' => 'Виберіть деталь',
+            'material.required' => 'Виберіть матеріал',
             'norm.required' => 'Заповніть норму',
-            'norm.numeric' => 'Норма повинна бути числовим значенням',
-            'norm.min' => 'Норма повинна бути більше нуля',
+            //'norm.numeric' => 'Норма повинна бути числовим значенням',
+            //'norm.min' => 'Норма повинна бути більше нуля',
         ];
     }
 }

@@ -52,7 +52,7 @@ class DesignationMaterialController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, DesignationMaterialService $service)
+    public function store(DesignationMaterialUpdateRequest $request, DesignationMaterialService $service)
     {
         //dd($request);
         $service->store($request);

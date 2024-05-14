@@ -26,11 +26,11 @@
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Матеріал</span>
-                                <input type="text" name="name"
+                                <input type="text" name="material"
                                        class="block w-full mt-1 rounded-md" readonly
                                        placeholder="" value="{{old('name',$designationMaterial->material->name)}}" />
                             </label>
-                            @error('name')
+                            @error('material')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

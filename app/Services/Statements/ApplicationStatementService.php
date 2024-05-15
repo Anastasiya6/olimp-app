@@ -13,6 +13,12 @@ class ApplicationStatementService
 {
     const DEPARTMENT_RECEPIENT = '68';
 
+    public $array = array();
+
+    public $count = 0;
+
+    public $specifications = array();
+
     public function make($order_number)
     {
         $orders = Order
@@ -52,19 +58,35 @@ class ApplicationStatementService
 
             $this->disassembly($order->designation_id, $order->total_quantity, $order->order_number);
         }
+        //asort($this->array);
+        //echo print_r($this->array,1);
+       // echo $this->count;
       //  echo 'Програма виконана успішно';
     }
 
     public function disassembly($find_designation_id, $quantity, $order_number){
 
-        $specifications = Specification::with('designations')
-            ->where('designation_id', $find_designation_id)
-            //->where('category_code', '!=', '')
-            ->orderBy('designation_id')
-            ->orderBy('designation_entry_id')
-            ->get();
+        $targetString = $find_designation_id;
 
-        foreach ($specifications as $specification) {
+        // Проверка наличия целевой строки в массиве
+        /*if (in_array($targetString, $this->array)) {
+            //echo "Строка найдена!";
+            $this->count++;
+        }*/
+        $this->array[] = $find_designation_id;
+
+        //if(!array_key_exists($find_designation_id,$this->specifications)){
+            $this->specifications[$find_designation_id] = Specification::with('designations')
+                ->where('designation_id', $find_designation_id)
+                //->where('category_code', '!=', '')
+                ->orderBy('designation_id')
+                ->orderBy('designation_entry_id')
+                ->get();
+       // }else{
+           // echo 'in array '.$find_designation_id;
+        //}
+
+        foreach ($this->specifications[$find_designation_id] as $specification) {
 
             $hcp = SUBSTR($specification->designations->route,0,2);
             $tm = 0;
@@ -83,7 +105,6 @@ class ApplicationStatementService
                } elseif (substr($specification->designations->route, 0, 2) == "") {
                    $tm = $specification->designationEntry->route;
                }
-
             }
 
             ReportApplicationStatement::updateOrCreate([

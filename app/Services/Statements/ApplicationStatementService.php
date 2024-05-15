@@ -60,21 +60,21 @@ class ApplicationStatementService
 
             $this->disassembly($order->designation_id, $order->total_quantity, $order->order_number);
         }
-        //asort($this->array);
-        //echo print_r($this->array,1);
-       // echo $this->count;
+        foreach($this->report_app_stat_record as $record){
+            ReportApplicationStatement::where([
+                'designation_entry_id' => $record['designation_entry_id'],
+                'designation_id' => $record['designation_id'],
+                'order_number' => $record['order_number'],
+                'category_code' => $record['category_code'],
+            ])->update([
+                'quantity_total' =>  $record['quantity_total'],
+            ]);
+        }
       //  echo 'Програма виконана успішно';
     }
 
     public function disassembly($find_designation_id, $quantity, $order_number){
 
-        $targetString = $find_designation_id;
-
-        // Проверка наличия целевой строки в массиве
-        /*if (in_array($targetString, $this->array)) {
-            //echo "Строка найдена!";
-            $this->count++;
-        }*/
         $this->array[] = $find_designation_id;
 
         if(!array_key_exists($find_designation_id,$this->specifications)){
@@ -84,29 +84,32 @@ class ApplicationStatementService
                 ->orderBy('designation_id')
                 ->orderBy('designation_entry_id')
                 ->get();
-        }/*else{
-           // echo 'in array '.$find_designation_id;
-        }*/
+        }
 
         foreach ($this->specifications[$find_designation_id] as $specification) {
 
-            $hcp = SUBSTR($specification->designations->route,0,2);
-            $tm = 0;
-
             $find_record = $specification->designation_entry_id.','.$specification->designation_id.','.$order_number.','.$specification->category_code;
 
-            if(in_array($find_record,$this->report_app_stat_record)){
-
-                ReportApplicationStatement::where([
+            if(array_key_exists($find_record,$this->report_app_stat_record)){
+                $this->report_app_stat_record[$find_record]['quantity_total']+= $specification->quantity * $quantity;
+               /* ReportApplicationStatement::where([
                     'designation_entry_id' => $specification->designation_entry_id,
                     'designation_id' => $specification->designation_id,
                     'order_number' => $order_number,
                     'category_code' => $specification->category_code,
                 ])->update([
                     'quantity_total' => DB::raw('quantity_total + '.$specification->quantity * $quantity),
-                ]);
+                ]);*/
 
             }else {
+                $this->report_app_stat_record[$find_record] = array(
+                    'designation_entry_id' => $specification->designation_entry_id,
+                    'designation_id' => $specification->designation_id,
+                    'order_number' => $order_number,
+                    'category_code' => $specification->category_code,
+                    'quantity_total' => $specification->quantity * $quantity);
+                $hcp = SUBSTR($specification->designations->route,0,2);
+                $tm = 0;
                 if (isset($specification->designationEntry) && isset($specification->designations)) {
                     if ($specification->designationEntry->route == "" && $specification->designations->route != "") {
                         $tm = "99";
@@ -130,7 +133,7 @@ class ApplicationStatementService
                     'category_code' => $specification->category_code,
 
                     'quantity' => $specification->quantity,
-                    'quantity_total' => DB::raw('quantity_total + ' . $specification->quantity * $quantity,),// * $quantity,
+                    'quantity_total' => $specification->quantity * $quantity,// * $quantity,
                     'tm' => $tm,
                     'tm1' => self::DEPARTMENT_RECEPIENT,
                     'hcp' => $hcp,
@@ -141,7 +144,8 @@ class ApplicationStatementService
 
                 ]);
             }
-            $this->report_app_stat_record[] = $find_record;
+            //$this->report_app_stat_record[] = $find_record;
+
 
             if ($specification->category_code == 0 || $specification->category_code == 1) {
 

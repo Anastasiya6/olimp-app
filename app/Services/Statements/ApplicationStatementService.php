@@ -15,6 +15,8 @@ class ApplicationStatementService
 
     public $array = array();
 
+    public $report_app_stat_record = array();
+
     public $count = 0;
 
     public $specifications = array();
@@ -75,55 +77,71 @@ class ApplicationStatementService
         }*/
         $this->array[] = $find_designation_id;
 
-        //if(!array_key_exists($find_designation_id,$this->specifications)){
+        if(!array_key_exists($find_designation_id,$this->specifications)){
             $this->specifications[$find_designation_id] = Specification::with('designations')
                 ->where('designation_id', $find_designation_id)
                 //->where('category_code', '!=', '')
                 ->orderBy('designation_id')
                 ->orderBy('designation_entry_id')
                 ->get();
-       // }else{
+        }/*else{
            // echo 'in array '.$find_designation_id;
-        //}
+        }*/
 
         foreach ($this->specifications[$find_designation_id] as $specification) {
 
             $hcp = SUBSTR($specification->designations->route,0,2);
             $tm = 0;
 
-            if(isset($specification->designationEntry) && isset($specification->designations)) {
-               if ($specification->designationEntry->route == "" && $specification->designations->route != "") {
-                   $tm = "99";
-               } elseif ($specification->designationEntry->id == $specification->designations->id && $specification->designationEntry->route == "" && $specification->designations->route == "") {
-                   $tm = "99";
-               } elseif (substr($specification->designationEntry->route, 0, 2) == substr($specification->designations->route, 0, 2) && $specification->designationEntry->route != "") {
-                   $tm = $specification->designationEntry->route;
-               } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
-                   $tm = $specification->designationEntry->route;
-               } elseif (substr($specification->designations->route, 0, 2) != "") {
-                   $tm = $specification->designationEntry->route . "-99";
-               } elseif (substr($specification->designations->route, 0, 2) == "") {
-                   $tm = $specification->designationEntry->route;
-               }
+            $find_record = $specification->designation_entry_id.','.$specification->designation_id.','.$order_number.','.$specification->category_code;
+
+            if(in_array($find_record,$this->report_app_stat_record)){
+
+                ReportApplicationStatement::where([
+                    'designation_entry_id' => $specification->designation_entry_id,
+                    'designation_id' => $specification->designation_id,
+                    'order_number' => $order_number,
+                    'category_code' => $specification->category_code,
+                ])->update([
+                    'quantity_total' => DB::raw('quantity_total + '.$specification->quantity * $quantity),
+                ]);
+
+            }else {
+                if (isset($specification->designationEntry) && isset($specification->designations)) {
+                    if ($specification->designationEntry->route == "" && $specification->designations->route != "") {
+                        $tm = "99";
+                    } elseif ($specification->designationEntry->id == $specification->designations->id && $specification->designationEntry->route == "" && $specification->designations->route == "") {
+                        $tm = "99";
+                    } elseif (substr($specification->designationEntry->route, 0, 2) == substr($specification->designations->route, 0, 2) && $specification->designationEntry->route != "") {
+                        $tm = $specification->designationEntry->route;
+                    } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
+                        $tm = $specification->designationEntry->route;
+                    } elseif (substr($specification->designations->route, 0, 2) != "") {
+                        $tm = $specification->designationEntry->route . "-99";
+                    } elseif (substr($specification->designations->route, 0, 2) == "") {
+                        $tm = $specification->designationEntry->route;
+                    }
+                }
+
+                ReportApplicationStatement::create([
+                    'designation_entry_id' => $specification->designation_entry_id,
+                    'designation_id' => $specification->designation_id,
+                    'order_number' => $order_number,
+                    'category_code' => $specification->category_code,
+
+                    'quantity' => $specification->quantity,
+                    'quantity_total' => DB::raw('quantity_total + ' . $specification->quantity * $quantity,),// * $quantity,
+                    'tm' => $tm,
+                    'tm1' => self::DEPARTMENT_RECEPIENT,
+                    'hcp' => $hcp,
+                    'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
+                    'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
+                    'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
+                    'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
+
+                ]);
             }
-
-            ReportApplicationStatement::updateOrCreate([
-                'designation_entry_id' => $specification->designation_entry_id,
-                'designation_id' => $specification->designation_id,
-                'order_number' => $order_number,
-                'category_code' => $specification->category_code,
-                ],[
-                'quantity' => $specification->quantity,
-                'quantity_total' => DB::raw('quantity_total + '.$specification->quantity * $quantity,),// * $quantity,
-                'tm' => $tm,
-                'tm1' => self::DEPARTMENT_RECEPIENT,
-                'hcp' => $hcp,
-                'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
-                'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
-                'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
-                'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
-
-            ]);
+            $this->report_app_stat_record[] = $find_record;
 
             if ($specification->category_code == 0 || $specification->category_code == 1) {
 

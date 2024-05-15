@@ -61,14 +61,31 @@ class ApplicationStatementService
             $this->disassembly($order->designation_id, $order->total_quantity, $order->order_number);
         }
         foreach($this->report_app_stat_record as $record){
-            ReportApplicationStatement::where([
+            ReportApplicationStatement::create([
+                'designation_entry_id' => $record['designation_entry_id'],
+                'designation_id' => $record['designation_id'],
+                'order_number' => $record['order_number'],
+                'category_code' => $record['category_code'],
+
+                'quantity' => $record['quantity'],
+                'quantity_total' => $record['quantity_total'],
+                'tm' => $record['tm'],
+                'tm1' => self::DEPARTMENT_RECEPIENT,
+                'hcp' => $record['hcp'],
+                'order_designationEntry' =>$record['order_designationEntry'],
+                'order_designation' => $record['order_designation'],
+                'order_designation_letters' => $record['order_designation_letters'],
+                'order_designationEntry_letters' => $record['order_designationEntry_letters']
+
+            ]);
+            /*ReportApplicationStatement::where([
                 'designation_entry_id' => $record['designation_entry_id'],
                 'designation_id' => $record['designation_id'],
                 'order_number' => $record['order_number'],
                 'category_code' => $record['category_code'],
             ])->update([
                 'quantity_total' =>  $record['quantity_total'],
-            ]);
+            ]);*/
         }
       //  echo 'Програма виконана успішно';
     }
@@ -102,12 +119,7 @@ class ApplicationStatementService
                 ]);*/
 
             }else {
-                $this->report_app_stat_record[$find_record] = array(
-                    'designation_entry_id' => $specification->designation_entry_id,
-                    'designation_id' => $specification->designation_id,
-                    'order_number' => $order_number,
-                    'category_code' => $specification->category_code,
-                    'quantity_total' => $specification->quantity * $quantity);
+
                 $hcp = SUBSTR($specification->designations->route,0,2);
                 $tm = 0;
                 if (isset($specification->designationEntry) && isset($specification->designations)) {
@@ -126,7 +138,7 @@ class ApplicationStatementService
                     }
                 }
 
-                ReportApplicationStatement::create([
+              /*  ReportApplicationStatement::create([
                     'designation_entry_id' => $specification->designation_entry_id,
                     'designation_id' => $specification->designation_id,
                     'order_number' => $order_number,
@@ -142,7 +154,23 @@ class ApplicationStatementService
                     'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
                     'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
 
-                ]);
+                ]);*/
+                $this->report_app_stat_record[$find_record] = array(
+                    'designation_entry_id' => $specification->designation_entry_id,
+                    'designation_id' => $specification->designation_id,
+                    'order_number' => $order_number,
+                    'category_code' => $specification->category_code,
+                    'quantity' => $specification->quantity,
+                    'quantity_total' => $specification->quantity * $quantity,
+                    'tm' => $tm,
+                    'tm1' => self::DEPARTMENT_RECEPIENT,
+                    'hcp' => $hcp,
+                    'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
+                    'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
+                    'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
+                    'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
+
+                );
             }
             //$this->report_app_stat_record[] = $find_record;
 

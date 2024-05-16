@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Pub\Logs\DesignationMaterialLogController;
+use App\Http\Controllers\Pub\Logs\SpecificationLogController;
+use App\Http\Controllers\Pub\ReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Pub\IndexController;
 use App\Http\Controllers\Pub\MakeApplicationStatement;
-use App\Http\Controllers\Pub\PrintController;
-use App\Http\Controllers\Print;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,5 +37,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/print-page', [PrintController::class, 'printPage'])->name('print.application.statement');
 Route::get('/make-application-statement', [makeApplicationStatement::class, 'makeApplicationStatement'])->name('make.application.statement');
+Route::resource('public-reports', ReportController::class);
+Route::resource('public-specification-logs', SpecificationLogController::class);
+Route::resource('public-designation-material-logs', DesignationMaterialLogController::class);

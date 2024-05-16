@@ -1,5 +1,20 @@
 <div class="min-w-full align-middle">
+    <div class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+        <div>
+            @if(session()->has('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
+        <div class="py-4">
+            <input type="text" wire:model="designation_number" placeholder="Вузол"/>
+        </div>
 
+        <button wire:click="generateReportEntryDetailSpecification" class="underline-link">
+            Сформувати звіт
+        </button>
+    </div>
     <table class="min-w-full border divide-y divide-gray-200">
         <thead>
         <tr>
@@ -29,12 +44,6 @@
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектов. відомість</span>
-            </th>
-            <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Комлектов. відомість на деталь</span>
-            </th>
-            <th class="w-56 bg-gray-50 px-6 py-3 text-left">
-            </th>
         </tr>
         </thead>
 
@@ -93,22 +102,6 @@
                         Сформувати звіт
                     </a>
                 </td>
-                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <div>
-                        @if(session()->has('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                        @endif
-                    </div>
-                    <div class="py-4">
-                        <input type="text" wire:model="designation_number" placeholder="Вузол"/>
-                    </div>
-
-                    <button wire:click="generateReportEntryDetailSpecification" class="underline-link">
-                        Сформувати звіт
-                    </button>
-                </td>
             </tr>
         @endforeach
         </tbody>
@@ -116,12 +109,4 @@
     <div class="py-4">
         {{ $items->appends(request()->input())->links() }}
     </div>
-    <style>
-        .vertical-text {
-            writing-mode: vertical-lr; /* Пишет текст сверху вниз */
-            transform: rotate(180deg); /* Переворачивает текст так, чтобы он шел снизу вверх */
-            text-align: center;
-            white-space: nowrap; /* Обеспечивает, что текст не переносится на новую строку */
-        }
-    </style>
 </div>

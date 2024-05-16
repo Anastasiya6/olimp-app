@@ -47,15 +47,6 @@ class SpecificationNormService
                 ];
             });
         });
-        /*$data = $items->map(function ($item) {
-            return [
-                'id' => $item->designationMaterial->material->id,
-                'name' => $item->designationMaterial->material->name,
-                'unit' => $item->designationMaterial->material->unit->unit,
-                'norm' => $item->designationMaterial->norm * $item->quantity_total,
-                'department' => substr($item->designationEntry->route, 0, 2),
-            ];
-        });*/
 
         $groupedData = $data->groupBy('id')->map(function ($items) {
             return [

@@ -78,14 +78,6 @@ class ApplicationStatementService
                 'order_designationEntry_letters' => $record['order_designationEntry_letters']
 
             ]);
-            /*ReportApplicationStatement::where([
-                'designation_entry_id' => $record['designation_entry_id'],
-                'designation_id' => $record['designation_id'],
-                'order_number' => $record['order_number'],
-                'category_code' => $record['category_code'],
-            ])->update([
-                'quantity_total' =>  $record['quantity_total'],
-            ]);*/
         }
       //  echo 'Програма виконана успішно';
     }
@@ -109,14 +101,6 @@ class ApplicationStatementService
 
             if(array_key_exists($find_record,$this->report_app_stat_record)){
                 $this->report_app_stat_record[$find_record]['quantity_total']+= $specification->quantity * $quantity;
-               /* ReportApplicationStatement::where([
-                    'designation_entry_id' => $specification->designation_entry_id,
-                    'designation_id' => $specification->designation_id,
-                    'order_number' => $order_number,
-                    'category_code' => $specification->category_code,
-                ])->update([
-                    'quantity_total' => DB::raw('quantity_total + '.$specification->quantity * $quantity),
-                ]);*/
 
             }else {
 
@@ -138,23 +122,6 @@ class ApplicationStatementService
                     }
                 }
 
-              /*  ReportApplicationStatement::create([
-                    'designation_entry_id' => $specification->designation_entry_id,
-                    'designation_id' => $specification->designation_id,
-                    'order_number' => $order_number,
-                    'category_code' => $specification->category_code,
-
-                    'quantity' => $specification->quantity,
-                    'quantity_total' => $specification->quantity * $quantity,// * $quantity,
-                    'tm' => $tm,
-                    'tm1' => self::DEPARTMENT_RECEPIENT,
-                    'hcp' => $hcp,
-                    'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
-                    'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
-                    'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
-                    'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
-
-                ]);*/
                 $this->report_app_stat_record[$find_record] = array(
                     'designation_entry_id' => $specification->designation_entry_id,
                     'designation_id' => $specification->designation_id,
@@ -172,8 +139,6 @@ class ApplicationStatementService
 
                 );
             }
-            //$this->report_app_stat_record[] = $find_record;
-
 
             if ($specification->category_code == 0 || $specification->category_code == 1) {
 

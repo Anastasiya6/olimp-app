@@ -35,7 +35,7 @@ class ReportTable extends Component
             ]);
             return;
         }
-        return redirect()->route('entry.detail.designation', ['designation_number' => $this->designation_number]);
+        return redirect()->route('entry.detail.designation', ['designation_number' => trim($this->designation_number)]);
     }
 
     public function generateReport($order_number,EntryDetailService $service)

@@ -84,9 +84,30 @@ class EntryDetailService
                 $pdf->MultiCell($width[1], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
                 $pdf->MultiCell($width[2], $height, $row['designationEntry'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
                 $pdf->MultiCell($width[3], $height, $row['designationEntry_name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
-                $pdf->MultiCell($width[4], $height, $row['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
-                $pdf->MultiCell($width[5], $height, $row['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
-                $pdf->MultiCell($width[6], $height, $row['quantity'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                if($row['material']->isNotEmpty()) {
+                    $first = 0;
+                    foreach ($row['material'] as $material) {
+                        $first++;
+                        if($first>1){
+                            $pdf->Ln();
+                            $pdf->MultiCell($width[0], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                            $pdf->MultiCell($width[1], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                            $pdf->MultiCell($width[2], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                            $pdf->MultiCell($width[3], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+
+                        }
+                        $pdf->MultiCell($width[4], $height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                        $pdf->MultiCell($width[5], $height, $material->material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                        if($first==1 ){
+                            $pdf->MultiCell($width[6], $height, $row['quantity'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                        }
+
+                    }
+                }else{
+                    $pdf->MultiCell($width[4], $height,'', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+                    $pdf->MultiCell($width[5], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
+
+                }
                 $pdf->Ln();
             }
         }
@@ -107,8 +128,8 @@ class EntryDetailService
                     'designation_name' => $row->designation->name,
                     'designationEntry' => $row->designationEntry->designation??"",
                     'designationEntry_name' => $row->designationEntry->name??"",
-                    'material' => $row->designationMaterial->material->name??"",
-                    'norm' => $row->designationMaterial->norm??"",
+                    'material' => $row->designationMaterial,//->material->name??"",
+                    'norm' => $row->designationMaterial,//->norm??"",
                     'quantity' => $row->quantity,
                     'type' => $type,
                     'category_code' => $row->category_code

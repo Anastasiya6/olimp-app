@@ -65,7 +65,7 @@ class EntryDetailDesignationService
         $this->node($designation->id,0,1);
 
         $pdf_path = storage_path('app/public/entry_detail_'.$designation->designation.'.pdf');
-        $this->pdf->Output($pdf_path, 'F');
+       // $this->pdf->Output($pdf_path, 'F');
         $this->pdf->Output($pdf_path, 'I');
     }
 

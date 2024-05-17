@@ -121,14 +121,26 @@ class ApplicationStatementService
                     } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
                         $tm = $specification->designationEntry->route;
                     } elseif (substr($specification->designations->route, 0, 2) != "") {
-                       if(!str_ends_with($specification->designationEntry->route, '99')){
-                           $tm = $specification->designationEntry->route . "-99";
+                       if(!str_ends_with($specification->designationEntry->route, '99') && substr($specification->designationEntry->route, -2) != substr($specification->designations->route, 0,2)){
+                           $tm = $specification->designationEntry->route ? $specification->designationEntry->route."-99":$specification->designationEntry->route."99";
                        }else{
                            $tm = $specification->designationEntry->route;
                        }
                     } elseif (substr($specification->designations->route, 0, 2) == "") {
                         $tm = $specification->designationEntry->route;
                     }
+                }
+                if(substr($specification->designationEntry->route,0,2) == substr($specification->designations->route,0,2) && strpos($specification->designationEntry->route, '99') !== false){
+
+                    // Удаляем '99' из строки с дефисом, если он есть перед '99'
+                    $tm = preg_replace('/-\s*99/', '', $tm);
+
+                    // Удаляем '99' из строки без дефиса, если он не имеет дефиса перед собой
+                    $tm = preg_replace('/(?<!-)\s*99/', '', $tm);
+
+                    // Удаляем лишние пробелы перед и после '99'
+                    $tm = trim($tm);
+
                 }
                 if($specification->designations->route!=''){
                     $tm = $tm.'-'.substr($specification->designations->route, 0, 2);

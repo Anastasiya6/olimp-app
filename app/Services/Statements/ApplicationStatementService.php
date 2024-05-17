@@ -130,7 +130,7 @@ class ApplicationStatementService
                         $tm = $specification->designationEntry->route;
                     }
                 }
-                if(substr($specification->designationEntry->route,0,2) == substr($specification->designations->route,0,2) && strpos($specification->designationEntry->route, '99') !== false){
+                if(strpos($specification->designationEntry->route, substr($specification->designations->route,0,2)) !== false && strpos($specification->designationEntry->route, '99') !== false){
 
                     // Удаляем '99' из строки с дефисом, если он есть перед '99'
                     $tm = preg_replace('/-\s*99/', '', $tm);

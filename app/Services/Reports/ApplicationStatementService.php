@@ -68,7 +68,7 @@ class ApplicationStatementService
             $this->pdf->MultiCell($this->width[3], $this->height, $item->kuda, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
             $this->pdf->MultiCell($this->width[4], $this->height, $item->kols, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
             $this->pdf->MultiCell($this->width[5], $this->height, $item->kolzak, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[6], $this->height, $item->tm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[6], $this->height, $item->route==''? '   '.$item->tm : $item->tm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
             $this->pdf->Ln();
         }
         $this->pdf->AddPage();

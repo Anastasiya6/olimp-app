@@ -32,6 +32,9 @@ class ApplicationStatementService
         ReportApplicationStatement::where('order_number', $order_number)->delete();
 
         foreach($orders as $order) {
+
+            $tm = $order->designation->route ?  $order->designation->route . "-99-".self::DEPARTMENT_RECEPIENT : "99-".self::DEPARTMENT_RECEPIENT;
+
             //главная сборка, ту что указываем в заказе, которую хотим раскручивать
             ReportApplicationStatement::create([
                 'designation_id' => $order->designation_id,
@@ -40,14 +43,16 @@ class ApplicationStatementService
                 'quantity' => $order->quantity,
                 'quantity_total' => $order->quantity,
                 'order_number' => $order->order_number,
-                'tm' => $order->designation->route . "-99",
+                'tm' => $tm,
                 'tm1' => 68,
                 'hcp' => 0,
                 'order_designationEntry' => $this->getNumbers( $order->designation->designation),
                 'order_designation' => $this->getNumbers($order->designation->designation),
                 'order_designationEntry_letters' => $this->getLetters($order->designation->designation)
             ]);
+            $tm = '';
         }
+
         //zad
         $orders = Order
             ::where('order_number',$order_number)
@@ -107,7 +112,7 @@ class ApplicationStatementService
                 $hcp = SUBSTR($specification->designations->route,0,2);
                 $tm = 0;
                 if (isset($specification->designationEntry) && isset($specification->designations)) {
-                    if ($specification->designationEntry->route == "" && $specification->designations->route != "") {
+                    if ($specification->designationEntry->route == "" && $specification->designations->route != "" && !str_ends_with($specification->designations->route, '99')) {
                         $tm = "99";
                     } elseif ($specification->designationEntry->id == $specification->designations->id && $specification->designationEntry->route == "" && $specification->designations->route == "") {
                         $tm = "99";
@@ -116,7 +121,11 @@ class ApplicationStatementService
                     } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
                         $tm = $specification->designationEntry->route;
                     } elseif (substr($specification->designations->route, 0, 2) != "") {
-                        $tm = $specification->designationEntry->route . "-99";
+                       if(!str_ends_with($specification->designationEntry->route, '99')){
+                           $tm = $specification->designationEntry->route . "-99";
+                       }else{
+                           $tm = $specification->designationEntry->route;
+                       }
                     } elseif (substr($specification->designations->route, 0, 2) == "") {
                         $tm = $specification->designationEntry->route;
                     }
@@ -124,6 +133,7 @@ class ApplicationStatementService
                 if($specification->designations->route!=''){
                     $tm = $tm.'-'.substr($specification->designations->route, 0, 2);
                 }
+
                 $this->report_app_stat_record[$find_record] = array(
                     'designation_entry_id' => $specification->designation_entry_id,
                     'designation_id' => $specification->designation_id,

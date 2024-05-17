@@ -121,7 +121,9 @@ class ApplicationStatementService
                         $tm = $specification->designationEntry->route;
                     }
                 }
-
+                if($specification->designations->route!=''){
+                    $tm = $tm.'-'.substr($specification->designations->route, 0, 2);
+                }
                 $this->report_app_stat_record[$find_record] = array(
                     'designation_entry_id' => $specification->designation_entry_id,
                     'designation_id' => $specification->designation_id,

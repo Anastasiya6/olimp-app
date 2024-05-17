@@ -106,7 +106,7 @@ class EntryDetailService
                 }else{
                     $pdf->MultiCell($width[4], $height,'', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
                     $pdf->MultiCell($width[5], $height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
-
+                    $pdf->MultiCell($width[6], $height, $row['quantity'], 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'T');
                 }
                 $pdf->Ln();
             }

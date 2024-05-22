@@ -39,9 +39,9 @@ class Pi0Search extends Component
 
     public function render()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
 
-        $searchTermChto = '%' . $this->searchTermChto . '%';
+        $searchTermChto = '%' . trim($this->searchTermChto) . '%';
 
 
         if($searchTerm!='%%' || $searchTermChto!='%%'){
@@ -53,8 +53,9 @@ class Pi0Search extends Component
             }
 
             $items = Designation::with('unit')->where(function ($query) use ($searchTerm, $searchTermChto) {
-                $query->
-                where('name', 'like', $searchTerm)
+                $query
+                    ->where('name', 'like', $searchTerm)
+                    ->OrWhere('gost', 'like', $searchTerm)
                     ->where('designation', 'like', $searchTermChto)
                     ->where('type', 1);
             })

@@ -34,7 +34,7 @@ class PI0Service
            //this->newList();
 
             $this->pdf->Cell($this->width[0], $this->height, $pi0->designation);
-            $this->pdf->Cell($this->width[1], $this->height, $pi0->name);
+            $this->pdf->Cell($this->width[1], $this->height, $pi0->name.' '.$pi0->gost);
             $this->pdf->Ln();
 
         }

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Designation;
 use App\Models\DesignationMaterial;
 use App\Models\Material;
+use App\Models\Norm280;
 use App\Models\Norm66;
 use App\Models\Norm67;
 use App\Models\Norm69;
@@ -58,7 +59,7 @@ class NormFromExcel extends Command
     public function addNorm()
     {
         $i=0;
-        $norms = Norm71Second::all();
+        $norms = Norm280::all();
         $count_material = 0;
         $count_detail = 0;
         $count_designation_material = 0;
@@ -250,6 +251,9 @@ class NormFromExcel extends Command
 
         // Удаление подстроки "СБ"
         $string = str_replace('СБ', '', $string);
+
+        // Удаление подстроки "Е"
+        $string = str_replace('Е', '', $string);
 
         // Удаление всех пробельных символов (включая пробелы и символы переноса строки)
         $string = preg_replace('/\s+/', '', $string);

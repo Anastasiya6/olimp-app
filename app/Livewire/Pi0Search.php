@@ -16,7 +16,7 @@ class Pi0Search extends Component
 
     public $sortField;
 
-    public $sortAsc = true;
+    public $sortAsc = false;
 
     protected $queryString = ['searchTerm','searchTermChto','sortAsc','sortField'];
 
@@ -50,6 +50,7 @@ class Pi0Search extends Component
                 $orderBy = $this->sortField;
             }else{
                 $orderBy = 'name';
+                $this->sortAsc = true;
             }
 
             $items = Designation::with('unit')

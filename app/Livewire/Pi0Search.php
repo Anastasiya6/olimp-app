@@ -43,14 +43,15 @@ class Pi0Search extends Component
 
         $searchTermChto = '%' . trim($this->searchTermChto) . '%';
 
-
         if($searchTerm!='%%' || $searchTermChto!='%%'){
+
+            $sortAsc = $this->sortAsc ? 'asc' : 'desc';
 
             if($this->sortField){
                 $orderBy = $this->sortField;
             }else{
                 $orderBy = 'name';
-                $this->sortAsc = true;
+                $sortAsc = 'asc';
             }
 
             $items = Designation::with('unit')
@@ -61,7 +62,7 @@ class Pi0Search extends Component
                     })->where('designation', 'like', $searchTermChto)
                         ->where('type', 1);
                 })
-                ->orderBy($orderBy,$this->sortAsc ? 'asc' : 'desc')
+                ->orderBy($orderBy,$sortAsc)
                 ->paginate(50);
 
         }else {

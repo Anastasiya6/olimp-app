@@ -14,6 +14,13 @@ class DesignationMaterialUpdateRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        // Заменяем запятые на точки для поля norm
+        $this->merge([
+            'norm' => str_replace(',', '.', $this->norm),
+        ]);
+    }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,7 +32,7 @@ class DesignationMaterialUpdateRequest extends FormRequest
         return [
             'designation' => 'required',
             'material' => 'required',
-            'norm' => 'required',
+            'norm' => 'required|numeric',
 
         ];
     }
@@ -36,7 +43,7 @@ class DesignationMaterialUpdateRequest extends FormRequest
             'designation.required' => 'Виберіть деталь',
             'material.required' => 'Виберіть матеріал',
             'norm.required' => 'Заповніть норму',
-            //'norm.numeric' => 'Норма повинна бути числовим значенням',
+            'norm.numeric' => 'Норма повинна бути числовим значенням',
             //'norm.min' => 'Норма повинна бути більше нуля',
         ];
     }

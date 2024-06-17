@@ -13,7 +13,13 @@ class SpecificationCreateRequest extends FormRequest
     {
         return true; // Можно оставить как true, если авторизация не требуется, требуется, как будет авторизация, изменить надо на true
     }
-
+    protected function prepareForValidation()
+    {
+        // Заменяем запятые на точки для поля specification_quantity
+        $this->merge([
+            'specification_quantity' => str_replace(',', '.', $this->specification_quantity),
+        ]);
+    }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,7 +31,6 @@ class SpecificationCreateRequest extends FormRequest
             'designation_entry_designation' => 'required|different:designation_designation',
             'designation_designation' => 'required',
             'specification_quantity' => 'required|numeric',
-
         ];
     }
 
@@ -36,6 +41,8 @@ class SpecificationCreateRequest extends FormRequest
             'designation_designation.required' => 'Заповніть номер - Куди',
             'specification_quantity.required' => 'Введіть кількість',
             'designation_entry_designation.different' => 'Що не може бути таким же як Куди',
+            'specification_quantity.numeric' => 'Кількість повинна бути числовим значенням',
+
         ];
     }
 }

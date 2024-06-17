@@ -16,7 +16,7 @@ class Pi0Search extends Component
 
     public $sortField;
 
-    public $sortAsc = false;
+    public $sortAsc = true;
 
     protected $queryString = ['searchTerm','searchTermChto','sortAsc','sortField'];
 
@@ -52,16 +52,16 @@ class Pi0Search extends Component
                 $orderBy = 'name';
             }
 
-            $items = Designation::with('unit')->where(function ($query) use ($searchTerm, $searchTermChto) {
-                $query
-                    ->where('name', 'like', $searchTerm)
-                    ->OrWhere('gost', 'like', $searchTerm)
-                    ->where('designation', 'like', $searchTermChto)
-                    ->where('type', 1);
-            })
+            $items = Designation::with('unit')
+                ->where(function ($query) use ($searchTerm, $searchTermChto) {
+                    $query->where(function ($query) use ($searchTerm) {
+                        $query->where('name', 'like', $searchTerm)
+                            ->orWhere('gost', 'like', $searchTerm);
+                    })->where('designation', 'like', $searchTermChto)
+                        ->where('type', 1);
+                })
                 ->orderBy($orderBy,$this->sortAsc ? 'asc' : 'desc')
                 ->paginate(50);
-
 
         }else {
             if($this->sortField){

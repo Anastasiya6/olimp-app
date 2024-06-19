@@ -14,6 +14,11 @@ class DesignationSearch extends Component
 
     public $searchTermChto;
 
+    public function updateSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $searchTerm = '%' . $this->searchTerm . '%';

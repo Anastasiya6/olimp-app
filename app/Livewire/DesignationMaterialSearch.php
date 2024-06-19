@@ -4,9 +4,12 @@ namespace App\Livewire;
 
 use App\Models\DesignationMaterial;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class DesignationMaterialSearch extends Component
 {
+    use withPagination;
+
     public $searchTerm;
 
     public function deleteDesignationMaterial($id)

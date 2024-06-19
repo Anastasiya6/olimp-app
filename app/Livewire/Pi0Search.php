@@ -34,7 +34,7 @@ class Pi0Search extends Component
     {
         $this->resetPage();
 
-        $this->render();
+        //$this->render();
     }
 
     public function render()

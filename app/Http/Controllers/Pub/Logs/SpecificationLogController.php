@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Pub\Logs;
 
 use App\Http\Controllers\Controller;
-use App\Models\SpecificationLog;
 use Illuminate\Http\Request;
 
 class SpecificationLogController extends Controller
@@ -14,8 +13,7 @@ class SpecificationLogController extends Controller
      */
     public function index()
     {
-         return view('public::include.specification-logs.index', [
-            'items' => SpecificationLog::orderBy('updated_at','desc')->paginate(25),
+        return view('public::include.specification-logs.index', [
             'route' => $this->route,
             'title' => 'Зміни у специфікації']);
     }

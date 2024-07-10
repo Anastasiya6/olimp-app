@@ -60,7 +60,7 @@
             </th>
            {{-- <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Відомість по здаточним</span>
-            </th>-}}
+            </th>--}}
         </tr>
         </thead>
 

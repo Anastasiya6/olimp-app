@@ -8,7 +8,7 @@ use App\Services\Reports\EntryDetailDesignationService;
 
 class EntryDetailDesignationController extends Controller
 {
-    public function entryDetailDesignation($designation_number,EntryDetailDesignationService $service)
+    public function entryDetailDesignation($designation_number,$department,EntryDetailDesignationService $service)
     {
         if($designation_number){
 
@@ -16,7 +16,7 @@ class EntryDetailDesignationController extends Controller
 
             if($designation){
 
-                $service->entryDetailDesignation($designation);
+                $service->entryDetailDesignation($designation,$department);
             }
         }
     }

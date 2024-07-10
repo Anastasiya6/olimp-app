@@ -5,14 +5,19 @@ namespace App\Livewire;
 use App\Models\Department;
 use App\Models\Order;
 use App\Services\Reports\EntryDetailService;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Session;
 use Livewire\Component;
 
 class ReportTable extends Component
 {
     public $selectedDepartment;
 
+    public $selectedDepartmentEntry;
+
     public $order_number;
 
+    #[Session]
     public $designation_number;
 
     public $isProcessing = false;
@@ -20,6 +25,8 @@ class ReportTable extends Component
     public function mount()
     {
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
+
+        $this->selectedDepartmentEntry = Department::DEFAULT_DEPARTMENT;
 
     }
 
@@ -35,13 +42,13 @@ class ReportTable extends Component
             ]);
             return;
         }
-        return redirect()->route('entry.detail.designation', ['designation_number' => trim($this->designation_number)]);
+        return redirect()->route('entry.detail.designation', ['designation_number' => trim($this->designation_number),'department' => $this->selectedDepartmentEntry]);
     }
 
     public function generateReport($order_number,EntryDetailService $service)
     {
         $this->order_number = $order_number;
-       // dd( $this->order_number );
+
         $order = Order::where('order_number',$order_number)->first();
 
         if($order){
@@ -62,13 +69,27 @@ class ReportTable extends Component
     public function render()
     {
         $items = Order::whereIn('order_number', function($query) {
+            $query->select('order_number')
+                ->from('report_application_statements')
+                ->groupBy('order_number');
+        })
+            ->leftJoin('designations', 'orders.designation_id', '=', 'designations.id') // Додаємо приєднання до таблиці designations
+            ->select('order_number',
+                DB::raw('SUM(quantity) as quantity'),
+                DB::raw('count(quantity) as count_quantity'),
+                DB::raw('MAX(orders.updated_at) as updated_at'), DB::raw('MIN(designations.designation) as designation'))
+            ->groupBy('order_number')
+            ->orderBy('updated_at','desc')
+            ->paginate(25);
+
+       /*$items = Order::whereIn('order_number', function($query) {
                     $query->select('order_number')
                         ->from('report_application_statements')
                         ->groupBy('order_number');
                 })
             ->orderBy('updated_at','desc')
-            ->paginate(25);
-
+            ->with('designation')
+            ->paginate(25);*/
         $departments = Department::all();
         $default_department = Department::DEFAULT_DEPARTMENT;
 

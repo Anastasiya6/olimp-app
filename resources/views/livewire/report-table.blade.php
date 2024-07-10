@@ -58,9 +58,9 @@
             <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Відсутні норми матер-в</span>
             </th>
-            <th class="bg-gray-50 px-6 py-3 text-left">
+           {{-- <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Відомість по здаточним</span>
-            </th>
+            </th>-}}
         </tr>
         </thead>
 
@@ -107,11 +107,11 @@
                         Pdf
                     </a>
                 </td>
-                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+               {{-- <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                     <a href="{{ route('delivery.notes', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
-                </td>
+                </td>--}}
                {{-- <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                     @if(Illuminate\Support\Facades\Storage::exists('public/entry_detail_order_' . $item->order_number . '.pdf'))
                         <a href="{{asset('storage/entry_detail_order_' . $item->order_number . '.pdf')}}" class="underline-link" target="_blank">

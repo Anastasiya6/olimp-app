@@ -129,7 +129,7 @@ class SpecificationNormService
                 'name' => $item->designationEntry->name,
                 'unit' => $item->designationEntry->unit->unit??'шт',
                 'norm' =>$item->quantity_total,
-                'department' => substr($item->designationEntry->route, 0, 2),
+                'department' => substr($item->tm, -2),
             ];
         });
         if ($this->department != 0){
@@ -146,7 +146,8 @@ class SpecificationNormService
                     'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
                     'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
                     'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                    'norm_with_koef' => $departmentItems->sum('norm')
+                    'norm_with_koef' => $departmentItems->sum('norm'),
+                    'sort' => 2
                 ];
             })->values();
         });

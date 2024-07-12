@@ -64,7 +64,7 @@ class SpecificationNormService
         $combinedData = $this->getSortbyDepartment($combinedData);
 
         $combinedData = $combinedData->groupBy('department')->flatMap(function ($items) {
-            return $items->sortBy('name');
+            return $items->sortBy('name')->sortBy('sort');
         });
 
         $this->getPdf($combinedData);
@@ -160,7 +160,7 @@ class SpecificationNormService
                 'name' => $item->designationEntry->name,
                 'unit' => 'шт',
                 'norm' =>$item->quantity_total,
-                'department' => substr($item->designationEntry->route, 0, 2),
+                'department' => substr($item->tm, -2),
             ];
         });
 
@@ -178,7 +178,8 @@ class SpecificationNormService
                 'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
                 'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
                 'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                'norm_with_koef' => $departmentItems->sum('norm')
+                'norm_with_koef' => $departmentItems->sum('norm'),
+                'sort' => 1
                 ];
             })->values();
         });
@@ -225,7 +226,8 @@ class SpecificationNormService
                     'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
                     'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
                     'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                    'norm_with_koef' => $departmentItems->sum('norm') * 1.2
+                    'norm_with_koef' => $departmentItems->sum('norm') * 1.2,
+                    'sort' => 0
                 ];
             })->values(); // Преобразуем коллекцию в массив значений
         });

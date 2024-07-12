@@ -27,7 +27,7 @@ class ReportTable extends Component
     {
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
 
-     //   $this->selectedDepartmentEntry = Department::DEFAULT_DEPARTMENT;
+        $this->selectedDepartmentEntry = Department::DEFAULT_DEPARTMENT;
 
     }
 

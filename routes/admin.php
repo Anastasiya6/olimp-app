@@ -62,7 +62,7 @@ Route::resource('write-offs', WriteOffController::class);
 
 Route::get('pi0-all', [PI0Controller::class,'pi0Pdf'])->name('pi0.all');
 Route::get('application-statement/{filter}/{order_number}', [ApplicationStatementController::class,'applicationStatement'])->name('application.statement');
-Route::get('specification-material-norm/{order_number}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
+Route::get('specification-material-norm/{order_number}/{department}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
 Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
 Route::get('entry-detail/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
 Route::get('entry-detail-designation/{designation_number}/{department}', [EntryDetailDesignationController::class,'entryDetailDesignation'])->name('entry.detail.designation');

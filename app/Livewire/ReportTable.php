@@ -13,6 +13,7 @@ class ReportTable extends Component
 {
     public $selectedDepartment;
 
+    #[Session]
     public $selectedDepartmentEntry;
 
     public $order_number;
@@ -26,7 +27,7 @@ class ReportTable extends Component
     {
         $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
 
-        $this->selectedDepartmentEntry = Department::DEFAULT_DEPARTMENT;
+     //   $this->selectedDepartmentEntry = Department::DEFAULT_DEPARTMENT;
 
     }
 
@@ -42,7 +43,7 @@ class ReportTable extends Component
             ]);
             return;
         }
-        return redirect()->route('entry.detail.designation', ['designation_number' => trim($this->designation_number),'department' => $this->selectedDepartmentEntry]);
+        return  $this->redirectRoute('entry.detail.designation', ['designation_number' => trim($this->designation_number),'department' => $this->selectedDepartmentEntry]);
     }
 
     public function generateReport($order_number,EntryDetailService $service)

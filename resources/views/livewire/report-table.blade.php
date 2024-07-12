@@ -17,6 +17,9 @@
 
         <select wire:model.change="selectedDepartmentEntry" style="width: 100px" id="exactMatchCheckbox" name="department_id1"
                 class="block rounded-md">
+                <option value="0">
+                    Всі цеха
+                </option>
             @foreach($departments as $department)
                 <option value="{{ $department->number }}">
                     {{ $department->number }}
@@ -79,6 +82,9 @@
                 </td>
                 <td class="py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <select wire:model.change="selectedDepartment" name="department_id" class="block w-full mt-1 rounded-md">
+                        <option value="0">
+                            Всі цеха
+                        </option>
                         @foreach($departments as $department)
                             <option value="{{ $department->number }}"
                                     @if($department->number==$default_department) selected @endif 'selected' }}>
@@ -93,7 +99,7 @@
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('specification.material', ['order_number' => $item->order_number ]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('specification.material', ['order_number' => $item->order_number, 'department' => $selectedDepartment ]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>

@@ -133,4 +133,15 @@ class HelpService
         }
         return $string;
     }
+
+    public static function getNumbers($designation)
+    {
+        return preg_replace('/[^0-9]+/', '', $designation);
+
+    }
+    public static function getLetters($designation)
+    {
+        return preg_replace('/[^А-Яа-я]+/', '', $designation);
+
+    }
 }

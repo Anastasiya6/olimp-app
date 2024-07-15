@@ -7,7 +7,8 @@ namespace App\Services\Statements;
 use App\Models\Order;
 use App\Models\ReportApplicationStatement;
 use App\Models\Specification;
-use Illuminate\Support\Facades\DB;
+use App\Services\HelpService\HelpService;
+use App\Services\HelpService\StatementService;
 
 class ApplicationStatementService
 {
@@ -46,9 +47,9 @@ class ApplicationStatementService
                 'tm' => $tm,
                 'tm1' => 68,
                 'hcp' => 0,
-                'order_designationEntry' => $this->getNumbers( $order->designation->designation),
-                'order_designation' => $this->getNumbers($order->designation->designation),
-                'order_designationEntry_letters' => $this->getLetters($order->designation->designation)
+                'order_designationEntry' => HelpService::getNumbers( $order->designation->designation),
+                'order_designation' => HelpService::getNumbers($order->designation->designation),
+                'order_designationEntry_letters' => HelpService::getLetters($order->designation->designation)
             ]);
             $tm = '';
         }
@@ -110,41 +111,8 @@ class ApplicationStatementService
             }else {
 
                 $hcp = SUBSTR($specification->designations->route,0,2);
-                $tm = 0;
-                if (isset($specification->designationEntry) && isset($specification->designations)) {
-                    if ($specification->designationEntry->route == "" && $specification->designations->route != "" && !str_ends_with($specification->designations->route, '99')) {
-                        $tm = "99";
-                    } elseif ($specification->designationEntry->id == $specification->designations->id && $specification->designationEntry->route == "" && $specification->designations->route == "") {
-                        $tm = "99";
-                    } elseif (substr($specification->designationEntry->route, 0, 2) == substr($specification->designations->route, 0, 2) && $specification->designationEntry->route != "") {
-                        $tm = $specification->designationEntry->route;
-                    } elseif (substr($specification->designationEntry->route, -2) == $specification->designations->route) {
-                        $tm = $specification->designationEntry->route;
-                    } elseif (substr($specification->designations->route, 0, 2) != "") {
-                       if(!str_ends_with($specification->designationEntry->route, '99') && substr($specification->designationEntry->route, -2) != substr($specification->designations->route, 0,2)){
-                           $tm = $specification->designationEntry->route ? $specification->designationEntry->route."-99":$specification->designationEntry->route."99";
-                       }else{
-                           $tm = $specification->designationEntry->route;
-                       }
-                    } elseif (substr($specification->designations->route, 0, 2) == "") {
-                        $tm = $specification->designationEntry->route;
-                    }
-                }
-                if(strpos($specification->designationEntry->route, substr($specification->designations->route,0,2)) !== false && strpos($specification->designationEntry->route, '99') !== false){
 
-                    // Удаляем '99' из строки с дефисом, если он есть перед '99'
-                    $tm = preg_replace('/-\s*99/', '', $tm);
-
-                    // Удаляем '99' из строки без дефиса, если он не имеет дефиса перед собой
-                    $tm = preg_replace('/(?<!-)\s*99/', '', $tm);
-
-                    // Удаляем лишние пробелы перед и после '99'
-                    $tm = trim($tm);
-
-                }
-                if($specification->designations->route!=''){
-                    $tm = $tm.'-'.substr($specification->designations->route, 0, 2);
-                }
+                $tm = $specification->id.' '.StatementService::getTm($specification);
 
                 $this->report_app_stat_record[$find_record] = array(
                     'designation_entry_id' => $specification->designation_entry_id,
@@ -156,10 +124,10 @@ class ApplicationStatementService
                     'tm' => $tm,
                     'tm1' => self::DEPARTMENT_RECEPIENT,
                     'hcp' => $hcp,
-                    'order_designationEntry' => $specification->designationEntry ? $this->getNumbers($specification->designationEntry->designation) : '',
-                    'order_designation' => $specification->designations ? $this->getNumbers($specification->designations->designation) : '',
-                    'order_designation_letters' => $specification->designations ? $this->getLetters($specification->designations->designation) : '',
-                    'order_designationEntry_letters' => $specification->designationEntry ? $this->getLetters($specification->designationEntry->designation) : ''
+                    'order_designationEntry' => $specification->designationEntry ? HelpService::getNumbers($specification->designationEntry->designation) : '',
+                    'order_designation' => $specification->designations ? HelpService::getNumbers($specification->designations->designation) : '',
+                    'order_designation_letters' => $specification->designations ? HelpService::getLetters($specification->designations->designation) : '',
+                    'order_designationEntry_letters' => $specification->designationEntry ? HelpService::getLetters($specification->designationEntry->designation) : ''
 
                 );
             }
@@ -170,16 +138,5 @@ class ApplicationStatementService
             }
         }
     }
-    public function getNumbers($designation)
-    {
-        return preg_replace('/[^0-9]+/', '', $designation);
-
-    }
-    public function getLetters($designation)
-    {
-        return preg_replace('/[^А-Яа-я]+/', '', $designation);
-
-    }
-
 }
 

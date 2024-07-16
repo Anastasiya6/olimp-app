@@ -16,6 +16,15 @@ class SpecificationSearch extends Component
 
     public $exactMatch = false;
 
+    public function mount()
+    {
+        $last = Specification::orderBy('updated_at','desc')->with('designations')->first();
+
+        $designation = $last->designations->designation;
+
+        $this->searchTerm = $designation;
+    }
+
     public function deleteSpecification($id)
     {
         $specification = Specification::findOrFail($id);

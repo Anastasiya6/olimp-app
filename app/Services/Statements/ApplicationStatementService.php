@@ -112,7 +112,7 @@ class ApplicationStatementService
 
                 $hcp = SUBSTR($specification->designations->route,0,2);
 
-                $tm = $specification->id.' '.StatementService::getTm($specification);
+                $tm = StatementService::getTm($specification);
 
                 $this->report_app_stat_record[$find_record] = array(
                     'designation_entry_id' => $specification->designation_entry_id,

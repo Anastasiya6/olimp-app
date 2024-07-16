@@ -117,6 +117,7 @@ class EntryDetailDesignationService
                     $route_designationEntry = substr($specification->designationEntry->route,0,2);
 
                     if ($specification->designationMaterial->isNotEmpty()) {
+
                         $count = 0;
                         if($route_designationEntry != $this->department && $this->department != 0){
 
@@ -133,6 +134,7 @@ class EntryDetailDesignationService
                                 $count++;
                                 $total = $pred_quantity_node ? $quantity_node * $specification->quantity * $material->norm * $pred_quantity_node : $quantity_node * $specification->quantity * $material->norm;
                                 if ($count > 1) {
+                                    $this->newList();
                                     $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[2], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
@@ -199,7 +201,7 @@ class EntryDetailDesignationService
 
     public function newList()
     {
-        if ($this->pdf->getY() >= 180) {
+        if ($this->pdf->getY() >= 185) {
             $this->pdf->Cell(0, 5, $this->department_str.' '.'ЛИСТ ' . $this->page, 0, 1, 'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
             $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
             $this->page++;

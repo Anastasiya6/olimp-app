@@ -6,7 +6,7 @@ use App\Models\Specification;
 
 class StatementService
 {
-    public static function getTm(Specification $specification): string
+    public static function getTm(Specification $specification): ?string
     {
         $tm = 0;
         if (isset($specification->designationEntry) && isset($specification->designations)) {
@@ -45,7 +45,9 @@ class StatementService
         if($specification->designations->route!=''){
             $tm = $tm.'-'.substr($specification->designations->route, 0, 2);
         }
-
+      //  if($tm == null)
+           // $tm = '';
+            //dd($specification);
         return $tm;
 
     }

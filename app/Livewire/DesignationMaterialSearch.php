@@ -23,7 +23,7 @@ class DesignationMaterialSearch extends Component
 
     public function render()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
         $items = DesignationMaterial::whereHas('designation', function ($query) use ($searchTerm) {
             $query->where('designation', 'like', "%$searchTerm%");
         })

@@ -17,9 +17,9 @@ class ApplicationStatementPrintService
         $add_order = '';
 
         if($order_number == 0){
-            $where = 'WHERE order_number>'.$order_number;
+            $where = "WHERE order_number>'$order_number'";
         }else{
-            $where = 'WHERE order_number='.$order_number;
+            $where = "WHERE order_number='$order_number'";
         }
         if($filter == 1) {
             $add_order = 'designations1.designation LIKE "КР%" ASC,';

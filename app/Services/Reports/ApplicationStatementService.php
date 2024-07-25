@@ -15,7 +15,7 @@ class ApplicationStatementService
 
     public $max_height = 10;
 
-    public $width = array(25,50,95,45,20,20,30);
+    public $width = array(23,43,110,45,17,17,30);
 
     public $header1 = [ 'Замовлення',
                         "Познач. деталі ",
@@ -84,7 +84,14 @@ class ApplicationStatementService
         $this->pdf->Cell(0, 5, '',0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
 
         $this->pdf->Cell(0, 5, 'ВІДОМІСТЬ ЗАСТОСУВАННЯ',0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+        $this->pdf->Ln();
+        $this->pdf->Ln();
+        $this->pdf->Ln();
+        $this->pdf->Ln();
+        $this->pdf->Ln();
+        $this->pdf->Ln();
 
+        $this->pdf->Cell(0, 5, '                                            ДАТА '.\Carbon\Carbon::now()->format('d.m.Y').'                                                                                        '.'ГОЛОВНИЙ ТЕХНОЛОГ',0,1,'L'); // 'L' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
 
         // Выводим PDF в браузер
         $this->pdf->Output('example.pdf', 'I');

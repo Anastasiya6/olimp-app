@@ -141,7 +141,6 @@ class HelpService
     }
     public static function getLetters($designation)
     {
-        return preg_replace('/[^А-Яа-я]+/', '', $designation);
-
+        return preg_replace('/\d+/', '', $designation);
     }
 }

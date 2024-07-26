@@ -94,16 +94,16 @@ class DetailSpecificationNormService
                     foreach($groupedData_material as $detail){
                         $detail['norm'] = $detail['norm']*$group->norm;
                         $detail['unit'] = $group->materialEntry->unit->unit;
-                        $new_array[$group->material_entry_id."_Group"][$group->materialEntry->name][] = $detail;
+                        $new_array[$group->materialEntry->name.$group->material_entry_id."_Group"][$group->materialEntry->name][] = $detail;
                     }
                 }
             }else{
                 foreach($groupedData_material as $detail){
-                    $new_array[$material_id][$detail['material_name']][] = $detail;
+                    $new_array[$detail['material_name'].$material_id][$detail['material_name']][] = $detail;
                 }
             }
         }
-        // dd($new_array);
+        ksort($new_array);
         return $new_array;
     }
 

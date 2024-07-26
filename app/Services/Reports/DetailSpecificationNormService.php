@@ -97,7 +97,7 @@ class DetailSpecificationNormService
                         $new_array[$group->materialEntry->name.$group->material_entry_id."_Group"][$group->materialEntry->name][] = $detail;
                     }
                     usort($new_array[$group->materialEntry->name . $group->material_entry_id . "_Group"][$group->materialEntry->name], function ($a, $b) {
-                        return strcmp($a['detail_name'], $b['detail_name']);
+                        return strnatcmp($a['detail_name'], $b['detail_name']);
                     });
                 }
 

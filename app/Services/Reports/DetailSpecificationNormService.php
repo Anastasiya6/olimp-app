@@ -105,6 +105,9 @@ class DetailSpecificationNormService
                 foreach($groupedData_material as $detail){
                     $new_array[$detail['material_name'].$material_id][$detail['material_name']][] = $detail;
                 }
+                usort($new_array[$detail['material_name'].$material_id][$detail['material_name']], function ($a, $b) {
+                    return strnatcmp($a['detail_name'], $b['detail_name']);
+                });
             }
         }
         ksort($new_array);

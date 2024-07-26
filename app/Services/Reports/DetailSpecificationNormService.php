@@ -97,7 +97,7 @@ class DetailSpecificationNormService
                         $new_array[$group->materialEntry->name.$group->material_entry_id."_Group"][$group->materialEntry->name][] = $detail;
                     }
                     usort($new_array[$group->materialEntry->name . $group->material_entry_id . "_Group"][$group->materialEntry->name], function ($a, $b) {
-                        return strnatcmp($a['detail_name'], $b['detail_name']);
+                        return strcmp($a['detail_name'], $b['detail_name']);
                     });
                 }
 
@@ -106,7 +106,7 @@ class DetailSpecificationNormService
                     $new_array[$detail['material_name'].$material_id][$detail['material_name']][] = $detail;
                 }
                 usort($new_array[$detail['material_name'].$material_id][$detail['material_name']], function ($a, $b) {
-                    return strnatcmp($a['detail_name'], $b['detail_name']);
+                    return strcmp($a['detail_name'], $b['detail_name']);
                 });
             }
         }

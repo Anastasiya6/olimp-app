@@ -96,7 +96,11 @@ class DetailSpecificationNormService
                         $detail['unit'] = $group->materialEntry->unit->unit;
                         $new_array[$group->materialEntry->name.$group->material_entry_id."_Group"][$group->materialEntry->name][] = $detail;
                     }
+                    usort($new_array[$group->materialEntry->name . $group->material_entry_id . "_Group"][$group->materialEntry->name], function ($a, $b) {
+                        return strcmp($a['detail_name'], $b['detail_name']);
+                    });
                 }
+
             }else{
                 foreach($groupedData_material as $detail){
                     $new_array[$detail['material_name'].$material_id][$detail['material_name']][] = $detail;
@@ -104,6 +108,7 @@ class DetailSpecificationNormService
             }
         }
         ksort($new_array);
+
         return $new_array;
     }
 

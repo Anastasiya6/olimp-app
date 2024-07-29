@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DesignationMaterial extends Model
 {
@@ -18,17 +19,17 @@ class DesignationMaterial extends Model
         'department_id'
     ];
 
-    public function material()
+    public function material(): BelongsTo
     {
         return $this->belongsTo(Material::class, 'material_id');
     }
 
-    public function designation()
+    public function designation(): BelongsTo
     {
         return $this->belongsTo(Designation::class, 'designation_id');
     }
 
-    public function department()
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }

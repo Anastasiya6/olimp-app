@@ -40,10 +40,7 @@ class DesignationMaterialController extends Controller
      */
     public function create()
     {
-        //$last = Specification::orderBy('id','desc')->with('designations')->first();
-
         return view('administrator::include.designation-material.create', [
-            //'lastDesignation' => $last,
             'departments' => Department::all(),
             'default_department' => Department::DEFAULT_DEPARTMENT,
             'route' => $this->route]);

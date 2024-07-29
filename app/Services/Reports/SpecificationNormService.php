@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Services\Reports;
+use App\Models\OrderName;
 use App\Models\ReportApplicationStatement;
+use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
 use App\Services\HelpService\PDFService;
 
 class SpecificationNormService
@@ -26,32 +28,39 @@ class SpecificationNormService
 
     public $page = 1;
 
-    public $order_number;
+    public $order_name_id;
 
     public $first_department = 1;
 
     public $department = 'no department';
 
-    public function specificationNorm($order_number,$department)
+    private $reportApplicationStatementRepository;
+
+    public function __construct(ReportApplicationStatementRepositoryInterface $reportApplicationStatementRepository)
+    {
+        $this->reportApplicationStatementRepository = $reportApplicationStatementRepository;
+    }
+
+    public function specificationNorm($order_name_id,$department)
     {
         /*$this->department = 0 - Всі цеха*/
         $this->department = $department;
 
-        $this->order_number = $order_number;
+        $this->order_name_id = $order_name_id;
 
-        $items = $this->getItems();
+        $items = $this->reportApplicationStatementRepository->getByOrder($this->order_name_id);
 
         $groupedData = $this->getDataByDepartment($items);
 
         /*----------------------------------------------------------------*/
 
-        $pki_items = $this->getPkiItems();
+        $pki_items = $this->reportApplicationStatementRepository->getByOrderPki($this->order_name_id);
 
         $pki_groupedData = $this->getDataPkiByDepartment($pki_items);
 
         /*----------------------------------------------------------------*/
 
-        $kr_items = $this->getKrItems();
+        $kr_items = $this->reportApplicationStatementRepository->getByOrderKr($this->order_name_id);
 
         $kr_groupedData = $this->getDataKrByDepartment($kr_items);
 
@@ -69,36 +78,6 @@ class SpecificationNormService
 
         $this->getPdf($combinedData);
 
-    }
-    private function getItems()
-    {
-        return ReportApplicationStatement
-            ::where('order_number',$this->order_number)
-            ->has('designationMaterial.material')
-            ->with('designationEntry','designationMaterial.material')
-            ->get();
-    }
-
-    private function getPkiItems()
-    {
-        return ReportApplicationStatement
-            ::whereHas('designationEntry', function ($query) {
-                $query->where('type', 1);
-            })
-            ->where('order_number',$this->order_number)
-            ->with('designationEntry')
-            ->get();
-    }
-
-    private function getKrItems()
-    {
-        return ReportApplicationStatement
-            ::whereHas('designationEntry', function ($query) {
-                $query->where('designation', 'like', 'КР%');
-            })
-            ->where('order_number',$this->order_number)
-            ->with('designationEntry')
-            ->get();
     }
 
     private function getSortByDepartment($data)
@@ -141,10 +120,10 @@ class SpecificationNormService
         return $pki_data->groupBy('id')->flatMap(function ($items) {
             return $items->groupBy('department')->map(function ($departmentItems) {
                 return [
-                    'id' => $departmentItems->first()['id'], // Берем ID из первого элемента группы
+                    'id' => $departmentItems->first()['id'], // Берем ID из первого элемента группыента группы
+                    'department' => $departmentItems->first()['department'], // Берем цех из первого элемен
                     'name' => $departmentItems->first()['name'], // Берем название материала из первого элемента группы
-                    'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
-                    'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
+                    'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемта группы
                     'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
                     'norm_with_koef' => $departmentItems->sum('norm'),
                     'sort' => 2
@@ -236,7 +215,9 @@ class SpecificationNormService
 
     private function getPdf($groupedData)
     {
-        $this->pdf = PDFService::getPdf(array(),array(),$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАКАЗ №'.$this->order_number);
+        $order_number = OrderName::where('id',$this->order_name_id)->first();
+
+        $this->pdf = PDFService::getPdf(array(),array(),$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАМОВЛЕННЯ №'.$order_number->name);
 
         $change_department = false;
 
@@ -250,11 +231,11 @@ class SpecificationNormService
 
                 $this->department = $item['department'];
 
-                $this->newList(true);
+                $this->setNewList(true);
 
             }else{
 
-               $this->newList(false);
+               $this->setNewList(false);
 
             }
 
@@ -267,10 +248,10 @@ class SpecificationNormService
         }
 
         // Выводим PDF в браузер
-        $this->pdf->Output('specification_norm_'.$this->order_number.'.pdf', 'I');
+        $this->pdf->Output('specification_norm_'.$order_number->name.'.pdf', 'I');
     }
 
-    private function newList($change_department)
+    private function setNewList($change_department)
     {
         if($change_department){
             if($this->first_department != 1) {

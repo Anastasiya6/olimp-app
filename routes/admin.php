@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
 use App\Http\Controllers\Admin\Logs\SpecificationLogController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderNameController;
 use App\Http\Controllers\Admin\PI0Controller;
 use App\Http\Controllers\Admin\PlanTaskController;
 use App\Http\Controllers\Admin\Report\ApplicationStatementController;
@@ -17,6 +18,8 @@ use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
+use App\Http\Controllers\Admin\Report\ReportWriteOffController;
+use App\Http\Controllers\Admin\Report\SpecificationDeliveryNoteController;
 use App\Http\Controllers\Admin\Report\SpecificationNormController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\WriteOffController;
@@ -56,16 +59,22 @@ Route::resource('specification-logs', SpecificationLogController::class);
 Route::resource('designation-material-logs', DesignationMaterialLogController::class);
 
 Route::resource('plan-tasks', PlanTaskController::class);
-Route::get('plan-tasks/{order_number}/create', 'App\Http\Controllers\Admin\PlanTaskController@create')->name('plan-tasks.create');
-Route::get('plan-tasks/{planTask}/{order_number}/edit', 'App\Http\Controllers\Admin\PlanTaskController@edit')->name('plan-tasks.edit');
+Route::get('plan-tasks/{order_name_id}/create', 'App\Http\Controllers\Admin\PlanTaskController@create')->name('plan-tasks.create');
+Route::get('plan-tasks/{planTask}/{order_name_id}/edit', 'App\Http\Controllers\Admin\PlanTaskController@edit')->name('plan-tasks.edit');
 Route::resource('write-offs', WriteOffController::class);
 
 Route::get('pi0-all', [PI0Controller::class,'pi0Pdf'])->name('pi0.all');
-Route::get('application-statement/{filter}/{order_number}', [ApplicationStatementController::class,'applicationStatement'])->name('application.statement');
-Route::get('specification-material-norm/{order_number}/{department}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
-Route::get('detail-specification-material-norm/{department}/{order_number}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
-Route::get('entry-detail/{order_number}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
+Route::get('application-statement/{filter}/{order_name_id}', [ApplicationStatementController::class,'applicationStatement'])->name('application.statement');
+Route::get('specification-material-norm/{order_name_id}/{department}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
+Route::get('detail-specification-material-norm/{department}/{order_name_id}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
+Route::get('entry-detail/{order_name_id}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
 Route::get('entry-detail-designation/{designation_number}/{department}', [EntryDetailDesignationController::class,'entryDetailDesignation'])->name('entry.detail.designation');
+Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
 
-Route::get('not-norm-for-material/{department}/{order_number}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
-Route::get('delivery-note/{department}/{order_number}', [DeliveryNoteController::class,'deliveryNote'])->name('delivery.notes');
+//Route::get('write-off/{items}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
+Route::resource('order-names', OrderNameController::class);
+
+Route::get('plan-task-all', [PlanTaskController::class,'planTaskPdf'])->name('plan-task.all');
+Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
+Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNoteController::class,'deliveryNote'])->name('delivery.notes');
+Route::get('specification-delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [SpecificationDeliveryNoteController::class,'specificationDeliveryNote'])->name('specification.delivery.notes');

@@ -38,7 +38,7 @@
         <thead>
         <tr>
             <th class="bg-gray-50 px-6 py-3 text-left">
-                <span class="font-medium leading-4 tracking-wider text-gray-500">Заказ №</span>
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Замовлення №</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Виріб</span>
@@ -72,7 +72,7 @@
         @foreach($items as $item)
             <tr class="bg-white">
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                    <strong>{{ $item->order_number??'' }}</strong>
+                    <strong>{{ $item->order_name->name??'' }}</strong>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <strong>{{ $item->count_quantity==1?$item->designation:''  }}</strong>
@@ -94,26 +94,26 @@
                     </select>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('application.statement', [ 'filter' => 1, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('application.statement', [ 'filter' => 1, 'order_name_id' => $item->order_name_id]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('specification.material', ['order_number' => $item->order_number, 'department' => $selectedDepartment ]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('specification.material', ['order_name_id' => $item->order_name_id, 'department' => $selectedDepartment ]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('detail.specification.material', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('detail.specification.material', ['department' => $selectedDepartment, 'order_name_id' => $item->order_name_id]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                    <a href="{{ route('not.norm.material', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
+                    <a href="{{ route('not.norm.material', ['department' => $selectedDepartment, 'order_name_id' => $item->order_name_id]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
                 </td>
-               {{-- <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                {{--<td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                     <a href="{{ route('delivery.notes', ['department' => $selectedDepartment, 'order_number' => $item->order_number]) }}" class="underline-link" target="_blank">
                         Pdf
                     </a>
@@ -121,7 +121,7 @@
                {{-- <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                     @if(Illuminate\Support\Facades\Storage::exists('public/entry_detail_order_' . $item->order_number . '.pdf'))
                         <a href="{{asset('storage/entry_detail_order_' . $item->order_number . '.pdf')}}" class="underline-link" target="_blank">
-                            Заказ № {{$item->order_number}}
+                            Замовлення № {{$item->order_number}}
                         </a>
                     @endif
                     </br></br>

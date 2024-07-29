@@ -9,22 +9,22 @@ class Disassembly extends Component
 {
     public $isProcessing = false;
 
-    public $order_number;
+    public $order_name_id;
 
-    public function mount($order_number)
+    public function mount($order_name_id)
     {
-        $this->order_number = $order_number;
+        $this->order_name_id = $order_name_id;
     }
 
     public function generateReport(ApplicationStatementService $service)
     {
         $this->isProcessing = true;
 
-        $service->make($this->order_number);
+        $service->make($this->order_name_id);
 
         $this->isProcessing = false;
 
-        $this->dispatch('reportGenerated',$this->order_number,now()->toDateTimeString());
+        $this->dispatch('reportGenerated',$this->order_name_id,now()->toDateTimeString());
     }
 
     public function render()

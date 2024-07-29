@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
 use App\Models\Order;
-use App\Models\ReportApplicationStatement;
+use App\Models\OrderName;
 use App\Services\Order\OrderService;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -20,14 +19,21 @@ class OrderController extends Controller
     public function index()
     {
          return view('administrator::include.orders.index', [
-            'items' => Order::orderBy('updated_at','desc')->paginate(25),
+            'items' => Order::orderBy('updated_at','desc')->orderBy('order_name_id','desc')->with('order_name','designation')->paginate(25),
             'route' => $this->route,
-            'report_dates' => Order::leftJoin('report_application_statements', 'orders.order_number', '=', 'report_application_statements.order_number')
+            /*'report_dates' => Order::leftJoin('report_application_statements', 'orders.order_number', '=', 'report_application_statements.order_number')
                 ->select('orders.order_number', DB::raw('MIN(report_application_statements.created_at) as min_created_at'))
                 ->groupBy('orders.order_number')
                 ->pluck('min_created_at', 'orders.order_number')
-                ->toArray(),
-            'title' => 'Заказы']);
+                ->toArray(),*/
+             'report_dates' => Order::leftJoin('report_application_statements', function (JoinClause $join) {
+                 $join->on('orders.order_name_id', '=', 'report_application_statements.order_name_id')
+                     ->on('orders.designation_id', 'report_application_statements.designation_id')
+                     ->on('orders.designation_id', 'report_application_statements.designation_entry_id');
+             })
+                 ->pluck('report_application_statements.created_at', 'orders.id')
+                 ->toArray(),
+            'title' => 'Замовлення']);
     }
 
     /**
@@ -36,6 +42,7 @@ class OrderController extends Controller
     public function create()
     {
         return view('administrator::include.orders.create',[
+            'order_names' => OrderName::all(),
             'route' => $this->route ]);
     }
 
@@ -64,6 +71,7 @@ class OrderController extends Controller
     {
         return view('administrator::include.orders.edit', [
             'item' => $order,
+            'order_names' => OrderName::all(),
             'designation' => $order->designation->designation,
             'route' => $this->route
 
@@ -75,7 +83,6 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order, OrderService $service)
     {
-        //dd($request);
         $service->update($request, $order);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
@@ -86,8 +93,8 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        ReportApplicationStatement::where('order_number', $order->order_number)->delete();
-        Order::where('order_number', $order->order_number)->delete();
+       // ReportApplicationStatement::where('order_id', $order->id)->delete();
+        $order->delete();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
     }

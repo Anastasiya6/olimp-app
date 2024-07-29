@@ -15,9 +15,9 @@ class OrderService
 
         if(isset($designation->id)) {
             Order::create([
-                'order_number' => $request->order_number,
                 'designation_id' => $designation->id,
                 'quantity' => $request->quantity,
+                'order_name_id' => $request->order_name_id,
             ]);
         }
     }
@@ -27,7 +27,7 @@ class OrderService
         $designation = Designation::where('designation',$request->designation)->first();
 
         if(isset($designation->id)){
-            $order->order_number = $request->order_number;
+            $order->order_name_id = $request->order_name_id;
             $order->designation_id = $designation->id;
             $order->quantity = $request->quantity;
             $order->save();

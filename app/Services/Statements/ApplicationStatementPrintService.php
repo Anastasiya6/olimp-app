@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\DB;
 class ApplicationStatementPrintService
 {
 
-    static public function queryAppStatement($filter = 0,$order_number=0)
+    static public function queryAppStatement($filter = 0,$order_name_id=0)
     {
         $add_order = '';
 
-        if($order_number == 0){
-            $where = "WHERE order_number>'$order_number'";
+        if($order_name_id == 0){
+            $where = "WHERE order_name_id>'$order_name_id'";
         }else{
-            $where = "WHERE order_number='$order_number'";
+            $where = "WHERE order_name_id='$order_name_id'";
         }
         if($filter == 1) {
             $add_order = 'designations1.designation LIKE "КР%" ASC,';
@@ -38,7 +38,7 @@ class ApplicationStatementPrintService
                                 designations1.gost as gost,
                                 report_application_statements.quantity AS kols,
                                 report_application_statements.quantity_total as kolzak,
-                                order_number as zakaz,
+                                order_names.name as zakaz,
 
                                 tm as tm,
                                 "68" as tm1,
@@ -46,6 +46,8 @@ class ApplicationStatementPrintService
                                 designations1.route as route
                             FROM
                                 report_application_statements
+                            JOIN
+                                order_names ON order_names.id = report_application_statements.order_name_id
                             JOIN
                                 designations AS designations1 ON report_application_statements.designation_entry_id = designations1.id
                             JOIN

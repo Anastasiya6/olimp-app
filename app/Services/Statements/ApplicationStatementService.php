@@ -22,15 +22,15 @@ class ApplicationStatementService
 
     public $specifications = array();
 
-    public function make($order_number)
+    public function make($order_name_id)
     {
         $orders = Order
-            ::where('order_number',$order_number)
+            ::where('order_name_id',$order_name_id)
             ->orderBy('designation_id')
             ->orderBy('category_code')
             ->get();
 
-        ReportApplicationStatement::where('order_number', $order_number)->delete();
+        ReportApplicationStatement::where('order_name_id', $order_name_id)->delete();
 
         foreach($orders as $order) {
 
@@ -43,7 +43,8 @@ class ApplicationStatementService
                 'designation_entry_id' => $order->designation_id,
                 'quantity' => $order->quantity,
                 'quantity_total' => $order->quantity,
-                'order_number' => $order->order_number,
+                'order_name_id' => $order->order_name_id,
+                'order_id' => $order->id,
                 'tm' => $tm,
                 'tm1' => 68,
                 'hcp' => 0,
@@ -56,23 +57,23 @@ class ApplicationStatementService
 
         //zad
         $orders = Order
-            ::where('order_number',$order_number)
-            ->select('designation_id', 'category_code','order_number')
+            ::where('order_name_id',$order_name_id)
+            ->select('designation_id', 'category_code','order_name_id','id')
             ->selectRaw('SUM(quantity) as total_quantity')
-            ->groupBy('designation_id', 'category_code', 'order_number')
+            ->groupBy('designation_id', 'category_code', 'order_name_id','id')
             ->get();
 
         foreach($orders as $order) {
 
-            $this->disassembly($order->designation_id, $order->total_quantity, $order->order_number);
+            $this->disassembly($order->designation_id, $order->total_quantity, $order->order_name_id,$order->id);
         }
         foreach($this->report_app_stat_record as $record){
             ReportApplicationStatement::create([
                 'designation_entry_id' => $record['designation_entry_id'],
                 'designation_id' => $record['designation_id'],
-                'order_number' => $record['order_number'],
+                'order_name_id' => $record['order_name_id'],
+                'order_id' => $record['order_id'],
                 'category_code' => $record['category_code'],
-
                 'quantity' => $record['quantity'],
                 'quantity_total' => $record['quantity_total'],
                 'tm' => $record['tm'],
@@ -88,7 +89,7 @@ class ApplicationStatementService
       //  echo 'Програма виконана успішно';
     }
 
-    public function disassembly($find_designation_id, $quantity, $order_number){
+    public function disassembly($find_designation_id, $quantity, $order_name_id,$order_id){
 
         $this->array[] = $find_designation_id;
 
@@ -103,7 +104,7 @@ class ApplicationStatementService
 
         foreach ($this->specifications[$find_designation_id] as $specification) {
 
-            $find_record = $specification->designation_entry_id.','.$specification->designation_id.','.$order_number.','.$specification->category_code;
+            $find_record = $specification->designation_entry_id.','.$specification->designation_id.','.$order_name_id.','.$order_id.','.$specification->category_code;
 
             if(array_key_exists($find_record,$this->report_app_stat_record)){
                 $this->report_app_stat_record[$find_record]['quantity_total']+= $specification->quantity * $quantity;
@@ -117,7 +118,8 @@ class ApplicationStatementService
                 $this->report_app_stat_record[$find_record] = array(
                     'designation_entry_id' => $specification->designation_entry_id,
                     'designation_id' => $specification->designation_id,
-                    'order_number' => $order_number,
+                    'order_name_id' => $order_name_id,
+                    'order_id' => $order_id,
                     'category_code' => $specification->category_code,
                     'quantity' => $specification->quantity,
                     'quantity_total' => $specification->quantity * $quantity,
@@ -134,7 +136,7 @@ class ApplicationStatementService
 
             if ($specification->category_code == 0 || $specification->category_code == 1) {
 
-                $this->disassembly($specification->designation_entry_id, $specification->quantity * $quantity, $order_number);
+                $this->disassembly($specification->designation_entry_id, $specification->quantity * $quantity, $order_name_id, $order_id);
             }
         }
     }

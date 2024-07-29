@@ -58,14 +58,17 @@
                         <x-dropdown-link wire:navigate :href="route('pi0s.index')">
                             {{ __('ПИ0') }}
                         </x-dropdown-link>
-                       {{-- <x-dropdown-link wire:navigate :href="route('delivery-notes.index')">
+                        <x-dropdown-link wire:navigate :href="route('delivery-notes.index')">
                             {{ __('Здаточні') }}
-                        </x-dropdown-link>--}}
+                        </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('orders.index')">
                             {{ __('Розузловування') }}
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('reports.index')">
                             {{ __('Звіти') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('order-names.index')">
+                            {{ __('Замовлення') }}
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('specification-logs.index')">
                             {{ __('Зміни у специфікації') }}

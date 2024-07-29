@@ -1,5 +1,5 @@
 <div>
-    @if($report_dates[$order_number])
-        {{\Carbon\Carbon::parse($report_dates[$order_number])->format('d.m.Y')}}
+    @if($report_dates[$order_name_id])
+        {{\Carbon\Carbon::parse($report_dates[$order_name_id])->format('d.m.Y')}}
     @endif
 </div>

@@ -13,12 +13,16 @@
                         @csrf
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Заказ №</span>
-                                <input type="text" name="order_number"
-                                       class="block w-full mt-1 rounded-md"
-                                       placeholder="" value="{{old('name')}}" />
+                                <span class="text-gray-700">Виберіть замволення</span>
+                                <select name="order_name_id" class="block w-full mt-1 rounded-md">
+                                    @foreach($order_names as $order_name)
+                                        <option value="{{ $order_name->id }}">
+                                            {{ $order_name->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
-                            @error('order_number')
+                            @error('order_name_id')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
@@ -44,6 +48,7 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        @include('administrator::include.orders.checkbox')
 
                         <x-primary-button type="submit">
                             Зберегти

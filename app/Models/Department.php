@@ -11,5 +11,11 @@ class Department extends Model
 
     CONST DEFAULT_DEPARTMENT = 25;
 
+    CONST DEFAULT_FIRST_DEPARTMENT_ID = 2;
+
+    CONST DEFAULT_SECOND_DEPARTMENT_ID = 3;
+
+    CONST FIRST_DEPARTMENT = '06';
+
     public $timestamps = true;
 }

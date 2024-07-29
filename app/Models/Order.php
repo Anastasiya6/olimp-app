@@ -10,13 +10,18 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_number',
         'designation_id',
-        'quantity'
+        'quantity',
+        'order_name_id'
     ];
 
     public function designation()
     {
         return $this->belongsTo(Designation::class);
+    }
+
+    public function order_name()
+    {
+        return $this->belongsTo(OrderName::class);
     }
 }

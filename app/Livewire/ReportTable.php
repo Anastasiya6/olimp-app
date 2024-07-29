@@ -16,7 +16,7 @@ class ReportTable extends Component
     #[Session]
     public $selectedDepartmentEntry;
 
-    public $order_number;
+    public $order_name_id;
 
     #[Session]
     public $designation_number;
@@ -69,20 +69,19 @@ class ReportTable extends Component
     }
     public function render()
     {
-        $items = Order::whereIn('order_number', function($query) {
-            $query->select('order_number')
+        $items = Order::whereIn('order_name_id', function($query) {
+            $query->select('order_name_id')
                 ->from('report_application_statements')
-                ->groupBy('order_number');
+                ->groupBy('order_name_id');
         })
             ->leftJoin('designations', 'orders.designation_id', '=', 'designations.id') // Додаємо приєднання до таблиці designations
-            ->select('order_number',
+            ->select('order_name_id',
                 DB::raw('SUM(quantity) as quantity'),
                 DB::raw('count(quantity) as count_quantity'),
                 DB::raw('MAX(orders.updated_at) as updated_at'), DB::raw('MIN(designations.designation) as designation'))
-            ->groupBy('order_number')
+            ->groupBy('order_name_id')
             ->orderBy('updated_at','desc')
             ->paginate(25);
-
        /*$items = Order::whereIn('order_number', function($query) {
                     $query->select('order_number')
                         ->from('report_application_statements')
@@ -93,7 +92,6 @@ class ReportTable extends Component
             ->paginate(25);*/
         $departments = Department::all();
         $default_department = Department::DEFAULT_DEPARTMENT;
-
 
         return view('livewire.report-table',compact('items','departments','default_department'));
     }

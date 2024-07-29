@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ReportApplicationStatement extends Model
 {
@@ -17,6 +19,8 @@ class ReportApplicationStatement extends Model
         'quantity',
         'quantity_total',
         'order_number',
+        'order_name_id',
+        'order_id',
         'tm',
         'tm1',
         'hcp',
@@ -26,7 +30,7 @@ class ReportApplicationStatement extends Model
         'order_designation_letters'
     ];
 
-    public function designationMaterial()
+    public function designationMaterial(): HasMany
     {
         return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_entry_id');
     }
@@ -34,14 +38,14 @@ class ReportApplicationStatement extends Model
     /**
      * Определение отношения belongsTo к модели Designation (по полю designation_entry_id).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function designationEntry()
+    public function designationEntry(): BelongsTo
     {
         return $this->belongsTo(Designation::class, 'designation_entry_id');
     }
 
-    public function designation()
+    public function designation(): BelongsTo
     {
         return $this->belongsTo(Designation::class);
     }

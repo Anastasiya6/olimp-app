@@ -19,25 +19,10 @@
                             <thead>
                             <tr>
                                 <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">№ замовл.</span>
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Назва замовлення</span>
                                 </th>
                                 <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Виріб</span>
-                                </th>
-                                <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кіл-ть</span>
-                                </th>
-                                <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Розузлован</span>
-                                </th>
-                                <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Розузловати</span>
-                                </th>
-                                <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відомість застосув.</span>
-                                </th>
-                                <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Відомість застосув. (Покупні)</span>
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Є замовленням</span>
                                 </th>
                                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                                 </th>
@@ -49,29 +34,14 @@
                             @foreach($items as $item)
                                 <tr class="bg-white">
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <strong>{{ $item->order_name->name??'' }}</strong>
+                                        <strong>{{ $item->name??'' }}</strong>
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <strong>{{ $item->designation->designation }}</strong>
-                                    </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <strong>{{ $item->quantity??'' }}</strong>
-                                    </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <livewire:update-data-report :order_name_id="$item->order_name_id" :report_date="$report_dates[$item->id]"/>
-                                    </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <livewire:disassembly :order_name_id="$item->order_name_id" />
-                                    </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 1, 'order_name_id' => $item->order_name_id]) }}" target="_blank">
-                                            Pdf
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 2, 'order_name_id' => $item->order_name_id]) }}" target="_blank">
-                                            Pdf
-                                        </a>
+                                        <strong>
+                                            <div class="py-4">
+                                                <input type="checkbox" disabled  name="is_order" @if($item->is_order) checked @endif id="exactMatchCheckbox" value="1">
+                                            </div>
+                                        </strong>
                                     </td>
                                     <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                         <a href="{{ route($route.'.edit', $item) }}"

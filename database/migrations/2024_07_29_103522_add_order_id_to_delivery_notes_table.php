@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('delivery_notes', function (Blueprint $table) {
 
-            $table->unsignedBigInteger('order_name_id')->nullable()->after('order_number');
+            $table->unsignedBigInteger('order_name_id')->nullable()->after('id');
 
            /* $table->foreign('order_name_id')
                 ->references('id')

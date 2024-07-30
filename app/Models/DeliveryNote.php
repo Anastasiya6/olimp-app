@@ -21,7 +21,8 @@ class DeliveryNote extends Model
         'sender_department_id',
         'receiver_department_id',
         'material_id',
-        'is_written_off'
+        'is_written_off',
+        'with_purchased'
     ];
 
     public function scopeWithFilters(Builder $query, $startDate, $endDate, $selectedOrder, $selectedDepartmentSender, $selectedDepartmentReceiver)

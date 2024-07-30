@@ -89,6 +89,7 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        @include('administrator::include.delivery-notes.checkbox')
                         <x-primary-button type="submit">
                             Зберегти
                         </x-primary-button>

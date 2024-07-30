@@ -30,7 +30,8 @@ class DeliveryNoteService
                     'document_date' => $request->document_date,
                     'order_name_id' => $request->order_name_id,
                     'sender_department_id' => $request->sender_department_id,
-                    'receiver_department_id' => $request->receiver_department_id
+                    'receiver_department_id' => $request->receiver_department_id,
+                    'with_purchased' => $request->with_purchased
 
                 ]
             );
@@ -39,8 +40,12 @@ class DeliveryNoteService
 
     public function update(Request $request, DeliveryNote $deliveryNote)
     {
-       // $deliveryNote->department_id = $request->department_id;
+      //  dd($request);
+        $deliveryNote->sender_department_id = $request->sender_department_id;
+        $deliveryNote->receiver_department_id = $request->receiver_department_id;
+        $deliveryNote->order_name_id = $request->order_name_id;
         $deliveryNote->quantity = $request->quantity;
+        $deliveryNote->with_purchased = $request->with_purchased;
         $deliveryNote->save();
     }
 

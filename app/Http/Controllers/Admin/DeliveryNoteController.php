@@ -68,7 +68,7 @@ class DeliveryNoteController extends Controller
      */
     public function edit(DeliveryNote $deliveryNote)
     {
-        $orders = Order::where('is_order',1)->orderBy('order_number')->get();
+        $orders = OrderName::where('is_order',1)->orderBy('name')->get();
 
         return view('administrator::include.delivery-notes.edit',[
             'route' => $this->route,

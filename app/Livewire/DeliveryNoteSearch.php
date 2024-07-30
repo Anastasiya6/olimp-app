@@ -46,7 +46,10 @@ class DeliveryNoteSearch extends Component
 
     public function render()
     {
-        $items = DeliveryNote::with('order_name')->orderBy('created_at','desc')->paginate(25);
+        $items = DeliveryNote
+            ::with('order_name')
+            ->orderBy('updated_at','desc')
+            ->paginate(25);
 
         return view('livewire.delivery-note-search',[
             'items'=>$items,

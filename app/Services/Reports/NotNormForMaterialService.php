@@ -2,14 +2,27 @@
 
 namespace App\Services\Reports;
 use App\Models\ReportApplicationStatement;
+use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;
 
 class NotNormForMaterialService
 {
-    public function notNormForMaterial($department,$order_number)
+
+    public $order_name_id;
+
+    private $orderNameRepository;
+
+    public function __construct(OrderNameRepositoryInterface $orderNameRepository)
     {
+        $this->orderNameRepository = $orderNameRepository;
+    }
+
+    public function notNormForMaterial($department,$order_name_id)
+    {
+        $this->order_name_id = $order_name_id;
+
         $items = ReportApplicationStatement
-            ::where('order_number',$order_number)
+            ::where('order_name_id',$order_name_id)
             //->select('designation_entry_id','order_designationEntry','designation_id')
             //->groupBy('designation_entry_id','order_designationEntry','designation_id')
             ->doesntHave('designationMaterial')
@@ -37,7 +50,8 @@ class NotNormForMaterialService
             '',
             ''
         ];
-        $pdf = PDFService::getPdf($header1,$header2,$width,'Відсутні норми',' Цех '.$department.' Заказ '.$order_number);
+        $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
+        $pdf = PDFService::getPdf($header1,$header2,$width,'Відсутні норми',' Цех '.$department.' Замовлення №'.$order_number->name);
         $page = 2;
         $height = 10;
         $max_height = 10;
@@ -57,10 +71,6 @@ class NotNormForMaterialService
                 $pdf->MultiCell($width[2], $height, $row['designation']->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
                 $pdf->MultiCell($width[3], $height, $row['designation']->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $max_height, 'B');
 
-                /*$pdf->Cell($width[0], 40, $row['designationEntry']->designation);
-                $pdf->Cell($width[1], 40, $row['designationEntry']->name);
-                $pdf->Cell($width[2], 40, $row['designation']->designation);
-                $pdf->Cell($width[3], 40, $row['designation']->name);*/
                 $pdf->Ln();
             }
         }

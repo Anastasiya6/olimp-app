@@ -7,9 +7,8 @@ use App\Services\Reports\DeliveryNoteService;
 
 class DeliveryNoteController extends Controller
 {
-    public function deliveryNote($sender_department,$receiver_department,$order_number,DeliveryNoteService $service)
+    public function deliveryNote($sender_department,$receiver_department,$order_name_id,DeliveryNoteService $service)
     {
-        $service->deliveryNote($sender_department,$receiver_department,$order_number);
+        $service->deliveryNote($sender_department,$receiver_department,$order_name_id);
     }
-
 }

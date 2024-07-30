@@ -80,7 +80,7 @@ class DeliveryNoteService
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ВІДОМІСТЮ ЗАСТОСУВАННЯ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ПЛАНОМ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name);
 
         // Добавление данных таблицы
         foreach ($report_application_items as $item) {

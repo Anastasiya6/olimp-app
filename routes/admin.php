@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PI0Controller;
 use App\Http\Controllers\Admin\PlanTaskController;
 use App\Http\Controllers\Admin\Report\ApplicationStatementController;
 use App\Http\Controllers\Admin\Report\DeliveryNoteController;
+use App\Http\Controllers\Admin\Report\DeliveryNoteDesignationController;
 use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
@@ -78,3 +79,4 @@ Route::get('plan-task-all', [PlanTaskController::class,'planTaskPdf'])->name('pl
 Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
 Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNoteController::class,'deliveryNote'])->name('delivery.notes');
 Route::get('specification-delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [SpecificationDeliveryNoteController::class,'specificationDeliveryNote'])->name('specification.delivery.notes');
+Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('delivery.notes.designation');

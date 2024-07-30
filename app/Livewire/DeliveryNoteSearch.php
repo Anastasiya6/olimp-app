@@ -13,6 +13,8 @@ class DeliveryNoteSearch extends Component
 {
     use WithPagination;
 
+    public $searchTerm;
+
     public $selectedDepartmentSender;
 
     public $selectedDepartmentReceiver;
@@ -44,12 +46,35 @@ class DeliveryNoteSearch extends Component
         session()->flash('message', 'Запис успішно видалено.');
     }
 
+    public function updateSearch()
+    {
+        $this->resetPage();
+
+    }
+
     public function render()
     {
-        $items = DeliveryNote
-            ::with('order_name')
-            ->orderBy('updated_at','desc')
-            ->paginate(25);
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
+
+        if ($searchTerm == '%%') {
+
+            $items = DeliveryNote
+                ::with('order_name')
+                ->orderBy('updated_at','desc')
+                ->paginate(25);
+
+        } else {
+
+            $items = DeliveryNote
+                ::whereHas('designation', function ($query) use ($searchTerm) {
+                    $query->where('designation', 'like', $searchTerm)
+                        ->orderByRaw("CAST(designation AS SIGNED)");
+                })
+                ->with('order_name')
+                ->orderBy('updated_at','desc')
+                ->paginate(25);
+        }
+
 
         return view('livewire.delivery-note-search',[
             'items'=>$items,

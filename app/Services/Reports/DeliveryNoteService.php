@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\PlanTask;
 use App\Models\ReportApplicationStatement;
+use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;
 use Illuminate\Support\Facades\DB;
 
@@ -40,6 +41,13 @@ class DeliveryNoteService
 
     public $order_name_id;
 
+    private $orderNameRepository;
+
+    public function __construct(OrderNameRepositoryInterface $orderNameRepository)
+    {
+        $this->orderNameRepository = $orderNameRepository;
+    }
+
     public function deliveryNote($sender_department,$receiver_department,$order_name_id)
     {
         $this->sender_department = $sender_department;
@@ -69,7 +77,8 @@ class DeliveryNoteService
     }
     public function getPdf($delivery_notes_items,$report_application_items)
     {
-        $order_number = OrderName::where('id',$this->order_name_id)->first();
+        $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
+
 
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ВІДОМІСТЮ ЗАСТОСУВАННЯ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name);
 

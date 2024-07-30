@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 use App\Models\GroupMaterial;
 use App\Models\ReportApplicationStatement;
+use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;
 
 class DetailSpecificationNormService
@@ -29,18 +30,26 @@ class DetailSpecificationNormService
 
     public $height = 10;
 
-    public function detailSpecificationNorm($department,$order_number)
-    {
-        $data = $this->getData($department,$order_number);
+    private $orderNameRepository;
 
-        $this->getPdf($data,$department,$order_number);
+    public function __construct(OrderNameRepositoryInterface $orderNameRepository)
+    {
+
+        $this->orderNameRepository = $orderNameRepository;
+    }
+
+    public function detailSpecificationNorm($department,$order_name_id)
+    {
+        $data = $this->getData($department,$order_name_id);
+
+        $this->getPdf($data,$department,$order_name_id);
 
     }
 
-    public function getData($department,$order_number)
+    public function getData($department,$order_name_id)
     {
          $items = ReportApplicationStatement
-             ::where('order_number',$order_number)
+             ::where('order_name_id',$order_name_id)
              /*->whereHas('designation', function ($query) use ($department){
              $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
          })*/
@@ -115,9 +124,11 @@ class DetailSpecificationNormService
         return $new_array;
     }
 
-    public function getPdf($data,$department,$order_number)
+    public function getPdf($data,$department,$order_name_id)
     {
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАННІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ','ЦЕХ '.$department.' ЗАМОВЛЕННЯ '.$order_number);
+        $order_number = $this->orderNameRepository->getByOrderFirst($order_name_id);
+
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАННІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ','ЦЕХ '.$department.' ЗАМОВЛЕННЯ '.$order_number->name);
 
         $sum_norm = 0;
 

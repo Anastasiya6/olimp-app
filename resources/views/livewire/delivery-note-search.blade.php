@@ -4,7 +4,7 @@
 
         <label for="exactMatchCheckbox">Замовл.</label>
 
-        <select wire:model="selectedOrder" style="width: 100px" id="exactMatchCheckbox" name="order_id" class="block w-full mt-1 rounded-md">
+        <select wire:model.change="selectedOrder" style="width: 100px" id="exactMatchCheckbox" name="order_id" class="block w-full mt-1 rounded-md">
             @foreach($order_names as $order_name)
                 <option value="{{ $order_name->id }}">
                     {{ $order_name->name }}

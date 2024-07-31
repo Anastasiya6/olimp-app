@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\OrderName;
 use App\Models\PlanTask;
 use App\Services\PlanTask\PlanTaskService;
+use App\Services\Reports\ReportPlanTaskService;
 use Illuminate\Http\Request;
 
 class PlanTaskController extends Controller
@@ -116,8 +117,8 @@ class PlanTaskController extends Controller
 
     }
 
-    public function pi0Pdf(PlanTaskService $service)
+    public function planTaskPdf($order_name_id,$sender_department,$receiver_department,ReportPlanTaskService $service)
     {
-        $service->plan_task();
+        $service->plan_task($order_name_id,$sender_department,$receiver_department);
     }
 }

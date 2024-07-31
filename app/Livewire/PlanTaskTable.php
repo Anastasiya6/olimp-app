@@ -77,9 +77,7 @@ class PlanTaskTable extends Component
 
     public function updateSearch()
     {
-        //dd($this->selectedOrder);
         $this->resetPage();
-
     }
 
     public function makeFromDisassembly()

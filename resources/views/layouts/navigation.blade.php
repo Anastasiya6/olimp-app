@@ -58,6 +58,9 @@
                         <x-dropdown-link wire:navigate :href="route('pi0s.index')">
                             {{ __('ПИ0') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('plan-tasks.index')">
+                            {{ __('План') }}
+                        </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('delivery-notes.index')">
                             {{ __('Здаточні') }}
                         </x-dropdown-link>

@@ -22,8 +22,7 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
-
-                        @livewire('plan-task-search-dropdown')
+                        <livewire:plan-task-search-dropdown :selectedOrder="$order_name_id" :sender_department_id="$sender_department_id" :receiver_department_id="$receiver_department_id"/>
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Кількість</span>

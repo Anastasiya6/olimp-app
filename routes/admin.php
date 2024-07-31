@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
+use App\Http\Controllers\Admin\Report\PlanTaskSpecificationNormController;
 use App\Http\Controllers\Admin\Report\ReportWriteOffController;
 use App\Http\Controllers\Admin\Report\SpecificationDeliveryNoteController;
 use App\Http\Controllers\Admin\Report\SpecificationNormController;
@@ -75,8 +76,8 @@ Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_depa
 //Route::get('write-off/{items}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
 Route::resource('order-names', OrderNameController::class);
 
+Route::get('plan-task-specification-norm/{order_name_id}/{department}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
 Route::get('plan-task-all/{order_name_id}/{sender_department}/{receiver_department}', [PlanTaskController::class,'planTaskPdf'])->name('plan-tasks.all');
 Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
 Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNoteController::class,'deliveryNote'])->name('delivery.notes');
-Route::get('specification-delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [SpecificationDeliveryNoteController::class,'specificationDeliveryNote'])->name('specification.delivery.notes');
 Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('delivery.notes.designation');

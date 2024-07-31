@@ -42,6 +42,11 @@
                     План у Pdf
                 </a>
             </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-3 px-6">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id]) }}" target="_blank">
+                    Специфіковані норми у Pdf
+                </a>
+            </div>
             <div>
                 @if(session()->has('message'))
                     <div>{{ session('message') }}</div>

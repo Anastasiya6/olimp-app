@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PlanTask extends Model
 {
@@ -42,6 +43,11 @@ class PlanTask extends Model
     public function designationEntry(): BelongsTo
     {
         return $this->belongsTo(Designation::class, 'designation_entry_id')->orderBy('designation');
+    }
+
+    public function designationMaterial(): HasMany
+    {
+        return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_entry_id');
     }
 
     public function order_name()

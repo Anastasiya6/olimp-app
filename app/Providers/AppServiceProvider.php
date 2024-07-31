@@ -7,8 +7,10 @@ use App\Models\Specification;
 use App\Observers\DesignationMaterialObserver;
 use App\Observers\SpecificationObserver;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
+use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
 use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
 use App\Repositories\OrderNameRepository;
+use App\Repositories\PlanTaskRepository;
 use App\Repositories\ReportApplicationStatementRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Specification::observe(SpecificationObserver::class);
         DesignationMaterial::observe(DesignationMaterialObserver::class);
         $this->app->bind(ReportApplicationStatementRepositoryInterface::class, ReportApplicationStatementRepository::class);
+        $this->app->bind(PlanTaskRepositoryInterface::class, PlanTaskRepository::class);
         $this->app->bind(OrderNameRepositoryInterface::class, OrderNameRepository::class);
 
 

@@ -35,10 +35,11 @@ class PlanTaskTable extends Component
     public function mount($selectedOrder,$sender_department_id,$receiver_department_id)
     {
         $this->selectedOrder = $selectedOrder;
-        //dd($this->selectedOrder);
+
         $this->default_department = Department::DEFAULT_DEPARTMENT;
-       // dd($this->selectedOrder);
+
         if(!$this->selectedOrder) {
+
             $order_first = OrderName::where('is_order', 1)->orderBy('name')->first();
 
             if (isset($order_first->id)) {
@@ -83,13 +84,6 @@ class PlanTaskTable extends Component
 
     public function makeFromDisassembly()
     {
-      //  $department1 = Department::where('number', $this->sender_department_id)->first();
-
-       // $department2 = Department::where('number', $this->receiver_department_id)->first();
-
-      /*  if(!isset($department1->id) || !isset($department2->id)){
-            exit;
-        }*/
         $this->isProcessing = true;
 
         $details = ReportApplicationStatement
@@ -133,13 +127,10 @@ class PlanTaskTable extends Component
 
     public function render()
     {
-     //   dd( $this->sender_department_id);
         $plan_tasks = PlanTask
             ::where('order_name_id', $this->selectedOrder)
             ->where('sender_department_id', $this->sender_department_id)
             ->where('receiver_department_id', $this->receiver_department_id)
-            //->whereRaw('LEFT(tm, 2) = ?', [$this->sender_department])
-            //->whereRaw('SUBSTR(tm, -2) = ?', [$this->receiver_department])
             ->with('designationEntry')
             ->orderBy('updated_at','desc')
             ->orderBy('order_designationEntry_letters')

@@ -15,8 +15,8 @@ class PlanTaskCreateRequest extends FormRequest
     {
         return [
             'order_name_id' => ['required'],
-            'quantity' => ['required'],
-            'category_code' => ['required'],
+            'quantity_total' => ['required'],
+           // 'category_code' => ['required'],
             'designation_entry_designation' => ['required'],
         ];
     }
@@ -25,8 +25,8 @@ class PlanTaskCreateRequest extends FormRequest
     {
         return [
             'order_name_id.required' => 'Виберіть замовлення',
-            'quantity.required' => 'Введіть кількість деталей',
-            'category_code.required' => 'Введіть шифр',
+            'quantity_total.required' => 'Введіть кількість деталей',
+           // 'category_code.required' => 'Введіть шифр',
             'designation_entry_designation.required' => 'Введіть номер деталі в поле "Що"',
         ];
     }

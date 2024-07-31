@@ -31,16 +31,10 @@ class DeliveryNoteController extends Controller
      */
     public function create()
     {
-        $last_record = DeliveryNote::orderBy('updated_at','desc')->firstOrNew([]);
-       // $document_number_last = $last->document_number;
-
-        //   $this->searchTerm = $designation;
-        $orders = OrderName::where('is_order',1)->orderBy('name')->get();
-
         return view('administrator::include.delivery-notes.create', [
             'departments' => Department::all(),
-            'order_names' => $orders,
-            'last_record' => $last_record,
+            'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
+            'last_record' => DeliveryNote::orderBy('updated_at','desc')->firstOrNew([]),
             'route' => $this->route]);
     }
 

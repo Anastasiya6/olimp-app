@@ -13,10 +13,11 @@
                     <form method="POST" action="{{ route($route.'.update',$item->id) }}">
                         @csrf
                         @method('put')
+                        <input type="hidden" name="order_name_id" value="{{ $order_name_id }}">
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Замовлення №</span>
-                                <input type="text" name="order_number" class="block w-full mt-1 rounded-md" placeholder=""
+                                <input type="text" name="order_name" readonly class="block w-full mt-1 rounded-md" placeholder=""
                                        value="{{ $order_number }}" />
                             </label>
                             @error('order_number')
@@ -36,34 +37,34 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Шифр</span>
-                                <input type="text" name="category_code" readonly
-                                       class="block w-full mt-1 rounded-md"
-                                       placeholder="" value="{{old('category_code',$item->category_code)}}" />
-                            </label>
-                            @error('category_code')
-                            <div class="text-sm text-red-600">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-6">
-                            <label class="block">
                                 <span class="text-gray-700">Кількість</span>
-                                <input type="text" name="quantity"
+                                <input type="text" name="quantity_total"
                                        class="block w-full mt-1 rounded-md"
-                                       placeholder="" value="{{old('quantity',$item->quantity)}}" />
+                                       placeholder="" value="{{old('quantity',$item->quantity_total)}}" />
                             </label>
                             @error('quantity')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        <input type="hidden" name="sender_department_id" value="{{ $sender_department_id }}">
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Маршрут</span>
-                                <input type="text" name="tm"
-                                       class="block w-full mt-1 rounded-md"
-                                       placeholder="" value="{{old('tm',$item->tm)}}" />
+                                <span class="text-gray-700">Цех відправник</span>
+                                <input type="text" name="sender_department" readonly class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ $sender_department }}" />
                             </label>
-                            @error('tm')
+                            @error('sender_department')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <input type="hidden" name="receiver_department_id" value="{{ $receiver_department_id }}">
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Цех отримувач</span>
+                                <input type="text" name="receiver_department" readonly class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ $receiver_department }}" />
+                            </label>
+                            @error('receiver_department')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

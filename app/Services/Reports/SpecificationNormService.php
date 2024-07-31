@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 use App\Models\OrderName;
 use App\Models\ReportApplicationStatement;
+use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
 use App\Services\HelpService\PDFService;
 
@@ -36,9 +37,13 @@ class SpecificationNormService
 
     private $reportApplicationStatementRepository;
 
-    public function __construct(ReportApplicationStatementRepositoryInterface $reportApplicationStatementRepository)
+    private $orderNameRepository;
+
+    public function __construct(ReportApplicationStatementRepositoryInterface $reportApplicationStatementRepository,OrderNameRepositoryInterface $orderNameRepository)
     {
         $this->reportApplicationStatementRepository = $reportApplicationStatementRepository;
+
+        $this->orderNameRepository = $orderNameRepository;
     }
 
     public function specificationNorm($order_name_id,$department)
@@ -215,7 +220,7 @@ class SpecificationNormService
 
     private function getPdf($groupedData)
     {
-        $order_number = OrderName::where('id',$this->order_name_id)->first();
+        $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
         $this->pdf = PDFService::getPdf(array(),array(),$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАМОВЛЕННЯ №'.$order_number->name);
 

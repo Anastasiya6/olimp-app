@@ -60,8 +60,8 @@ Route::resource('specification-logs', SpecificationLogController::class);
 Route::resource('designation-material-logs', DesignationMaterialLogController::class);
 
 Route::resource('plan-tasks', PlanTaskController::class);
-Route::get('plan-tasks/{order_name_id}/create', 'App\Http\Controllers\Admin\PlanTaskController@create')->name('plan-tasks.create');
-Route::get('plan-tasks/{planTask}/{order_name_id}/edit', 'App\Http\Controllers\Admin\PlanTaskController@edit')->name('plan-tasks.edit');
+Route::get('plan-tasks/{order_name_id}/{sender_department}/{receiver_department}/create', 'App\Http\Controllers\Admin\PlanTaskController@create')->name('plan-tasks.create');
+Route::get('plan-tasks/{planTask}/{order_name_id}/{sender_department}/{receiver_department}/edit', 'App\Http\Controllers\Admin\PlanTaskController@edit')->name('plan-tasks.edit');
 Route::resource('write-offs', WriteOffController::class);
 
 Route::get('pi0-all', [PI0Controller::class,'pi0Pdf'])->name('pi0.all');

@@ -4,5 +4,5 @@
             {{ __('План') }}
         </h2>
     </x-slot>
-    <livewire:plan-task-table :selectedOrder="$order_name_id"/>
+    <livewire:plan-task-table :selectedOrder="$order_name_id" :sender_department_id="$sender_department_id" :receiver_department_id="$receiver_department_id"/>
 </x-app-layout>

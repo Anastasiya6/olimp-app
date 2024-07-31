@@ -15,7 +15,9 @@ class PlanTask extends Model
         'quantity_total',
         'category_code',
         'designation_entry_id',
-        'order_number',
+        'sender_department_id',
+        'receiver_department_id',
+        'order_name_id',
         'order_designationEntry',
         'order_designationEntry_letters',
         'is_report_application_statement',
@@ -40,5 +42,20 @@ class PlanTask extends Model
     public function designationEntry(): BelongsTo
     {
         return $this->belongsTo(Designation::class, 'designation_entry_id')->orderBy('designation');
+    }
+
+    public function order_name()
+    {
+        return $this->belongsTo(OrderName::class);
+    }
+
+    public function senderDepartment()
+    {
+        return $this->belongsTo(Department::class, 'sender_department_id');
+    }
+
+    public function receiverDepartment()
+    {
+        return $this->belongsTo(Department::class, 'receiver_department_id');
     }
 }

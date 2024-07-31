@@ -37,11 +37,11 @@
                     Перенести дані з відом. застосув. у план
                 </button>
             </div>
-            {{--<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-3 px-6">
-                <a style="text-decoration: underline;" href="{{ route('pi0.all') }}" target="_blank">
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-3 px-6">
+                <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
                     План у Pdf
                 </a>
-            </div>--}}
+            </div>
             <div>
                 @if(session()->has('message'))
                     <div>{{ session('message') }}</div>
@@ -93,9 +93,6 @@
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                                     <strong>{{ $item->designationEntry->designation??'' }}</strong>
                                 </td>
-                               {{--td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->category_code??'' }}</strong>
-                                </td>--}}
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                     <strong>{{ $item->quantity_total??'' }}</strong>
                                 </td>

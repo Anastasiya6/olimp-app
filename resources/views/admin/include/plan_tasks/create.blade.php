@@ -11,10 +11,11 @@
                 <div class="p-6 bg-white border-b border-gray-200 max-w-lg w-full lg:max-w-xs">
                     <form method="POST" action="{{ route($route.'.store') }}">
                         @csrf
+                        <input type="hidden" name="order_name_id" value="{{ $order_name_id }}">
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Замовлення №</span>
-                                <input type="text" name="order_number" readonly class="block w-full mt-1 rounded-md" placeholder=""
+                                <input type="text" name="order_name" readonly class="block w-full mt-1 rounded-md" placeholder=""
                                        value="{{ $order_number }}" />
                             </label>
                             @error('order_number')
@@ -26,33 +27,68 @@
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Кількість</span>
-                                <input type="text" name="quantity" class="block w-full mt-1 rounded-md" placeholder=""
-                                       value="{{ old('quantity') }}" />
+                                <input type="text" name="quantity_total" class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ old('quantity_total') }}" />
                             </label>
-                            @error('quantity')
+                            @error('quantity_total')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <input type="hidden" name="sender_department_id" value="{{ $sender_department_id }}">
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Цех відправник</span>
+                                <input type="text" name="sender_department" readonly class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ $sender_department }}" />
+                            </label>
+                            @error('sender_department')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <input type="hidden" name="receiver_department_id" value="{{ $receiver_department_id }}">
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Цех отримувач</span>
+                                <input type="text" name="receiver_department" readonly class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ $receiver_department }}" />
+                            </label>
+                            @error('receiver_department')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        {{--<div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Цех відправник</span>
+                                <select name="sender_department_id" class="block w-full mt-1 rounded-md">
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}"
+                                        @if($sender_department_id == $department->id) selected @endif>
+                                            {{ $department->number }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+                            @error('sender_department_id')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Шифр</span>
-                                <input type="text" name="category_code" class="block w-full mt-1 rounded-md" placeholder=""
-                                       value="{{ old('category_code') }}" />
+                                <span class="text-gray-700">Цех отримувач</span>
+                                <select name="receiver_department_id" class="block w-full mt-1 rounded-md">
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}"
+                                                @if($receiver_department == $department->number) selected @endif>
+                                            {{ $department->number }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
-                            @error('category_code')
+                            @error('receiver_department_id')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
-                        </div>
-                        <div class="mb-6">
-                            <label class="block">
-                                <span class="text-gray-700">Маршрут</span>
-                                <input type="text" name="tm" class="block w-full mt-1 rounded-md" placeholder=""
-                                       value="{{ old('tm') }}" />
-                            </label>
-                            @error('tm')
-                            <div class="text-sm text-red-600">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        </div>--}}
                         <x-primary-button type="submit">
                             Зберегти
                         </x-primary-button>

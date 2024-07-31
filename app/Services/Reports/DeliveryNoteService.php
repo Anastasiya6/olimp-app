@@ -51,6 +51,7 @@ class DeliveryNoteService
     public function deliveryNote($sender_department,$receiver_department,$order_name_id)
     {
         $this->sender_department = $sender_department;
+      //  dd($sender_department,$receiver_department,$order_name_id);
 
         $this->receiver_department = $receiver_department;
 
@@ -78,7 +79,6 @@ class DeliveryNoteService
     public function getPdf($delivery_notes_items,$report_application_items)
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
-
 
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ПЛАНОМ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name);
 
@@ -131,9 +131,11 @@ class DeliveryNoteService
             ->where('order_name_id',$this->order_name_id)
             ->where('order_designationEntry_letters','!=','ПИ')
             ->where('order_designationEntry_letters','!=','КР')
+            ->where('sender_department_id', $this->sender_department)
+            ->where('receiver_department_id', [$this->receiver_department])
             ->groupBy('designation_entry_id')
-            ->havingRaw('MIN(LEFT(tm, 2)) = ?', [$this->sender_department_number])
-            ->havingRaw('MIN(SUBSTR(tm, -2)) = ?', [$this->receiver_department_number])
+            //->havingRaw('sender_department_id = ?', [$this->sender_department])
+           // ->havingRaw('receiver_department_id = ?', [$this->receiver_department])
             ->with('designationEntry')
             ->get();
 

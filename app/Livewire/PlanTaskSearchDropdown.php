@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Designation;
+use App\Models\PlanTask;
 use App\Models\Specification;
 use App\Models\TypeUnit;
 use Illuminate\Support\Facades\Log;
@@ -16,9 +17,31 @@ class PlanTaskSearchDropdown extends Component
 
     public $selectedDesignation = '';
 
+    public $selectedDesignationId = '';
+
     public $selectedName = '';
 
+    public $selectedOrder;
+
+    public $sender_department_id;
+
+    public $receiver_department_id;
+
+    public $search_designation_message;
+
     public $type = 0;
+
+    public function mount($selectedOrder,$sender_department_id,$receiver_department_id)
+    {
+
+        $this->message = '';
+
+        $this->selectedOrder = $selectedOrder;
+
+        $this->sender_department_id = $sender_department_id;
+
+        $this->receiver_department_id = $receiver_department_id;
+    }
 
     public function searchResult()
     {
@@ -47,23 +70,23 @@ class PlanTaskSearchDropdown extends Component
 
             $this->selectedDesignation = '';
 
-            //$this->newDesignation = true;
-
-            /*if (strpos($this->search, 'ПИ0') === 0) {
-
-                $this->newDesignationGost = true;
-
-                $this->type = 1;
-
-            } else {
-
-                $this->newDesignationRoute = true;
-            }*/
         }elseif(count($designations)==1){
+
 
             $this->searchResults = [];
 
             $this->selectedDesignation = $this->search;
+
+            $this->selectedDesignationId = $designations->first()->id;
+
+            if($this->search_in_plan()){
+
+                $this->search_designation_message = 'Така деталь вже є в плані';
+
+            }else{
+
+                $this->search_designation_message = '';
+            }
 
         }else{
 
@@ -72,12 +95,29 @@ class PlanTaskSearchDropdown extends Component
         }
     }
 
-    public function selectSearch($designation,$name)
+    public function selectSearch($designation,$name,$id)
     {
+        $this->selectedDesignationId = $id;
         $this->selectedDesignation = $designation;
         $this->selectedName = $name;
         $this->searchResults = [];
         $this->search = $name;
+        if($this->search_in_plan()){
+            $this->search_designation_message = 'Така деталь вже є в плані';
+        }else{
+            $this->search_designation_message = '';
+        }
+    }
+
+    public function search_in_plan()
+    {
+        return PLanTask
+            ::where('designation_entry_id',$this->selectedDesignationId)
+            ->where('order_name_id',$this->selectedOrder)
+            ->where('sender_department_id',$this->sender_department_id)
+            ->where('receiver_department_id',$this->receiver_department_id)
+            ->first();
+
     }
 
     public function clear()

@@ -64,6 +64,9 @@
                         <x-dropdown-link wire:navigate :href="route('delivery-notes.index')">
                             {{ __('Здаточні') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('write-offs.index')">
+                            {{ __('Списання') }}
+                        </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('orders.index')">
                             {{ __('Розузловування') }}
                         </x-dropdown-link>

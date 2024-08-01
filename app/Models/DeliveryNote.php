@@ -31,7 +31,7 @@ class DeliveryNote extends Model
             ->whereRaw('DATE(created_at) >= ?', [$startDate])
             ->whereRaw('DATE(created_at) <= ?', [$endDate])
             //->where('is_written_off',  $is_written_off)
-            ->where('order_number', $selectedOrder)
+            ->where('order_name_id', $selectedOrder)
             ->where('sender_department_id', $selectedDepartmentSender)
             ->where('receiver_department_id', $selectedDepartmentReceiver);
     }

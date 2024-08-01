@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Services\Reports;
-use App\Models\OrderName;
-use App\Models\ReportApplicationStatement;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
 use App\Services\HelpService\PDFService;

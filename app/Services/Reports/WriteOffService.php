@@ -2,16 +2,12 @@
 
 namespace App\Services\Reports;
 use App\Models\DeliveryNote;
-use App\Models\Department;
-use App\Models\Order;
-use App\Models\ReportApplicationStatement;
 use App\Models\Specification;
 use App\Services\HelpService\PDFService;
-use Illuminate\Support\Facades\DB;
 
 class WriteOffService
 {
-    public $width = array(30,30,40,20,30,50,10,30,30);
+    public $width = array(21,21,40,20,30,30,50,10,30,30);
 
     public $height = 10;
 
@@ -22,6 +18,7 @@ class WriteOffService
                         'Номер',
                         'Кількість',
                         'Замовлення №',
+                        'Код 1C',
                         'Матеріал',
                         'Од',
                         'Норма',
@@ -29,6 +26,7 @@ class WriteOffService
     public $header2 = ['документа',
                         'документа',
                         'деталі',
+                        '',
                         '',
                         '',
                         '',
@@ -98,6 +96,8 @@ class WriteOffService
 
             $this->pdf->MultiCell($this->width[4], $this->height, $item->order_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
+            $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
             $first = 0;
 
             if($item->materials) {
@@ -105,7 +105,7 @@ class WriteOffService
                 $materials = $item->materials->sortBy('material')->sortBy('sort');
 
                 foreach ($materials as $norm) {
-
+                  //  dd($norm);
                     $first++;
 
                     $this->setNewList();
@@ -124,14 +124,17 @@ class WriteOffService
 
                         $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
+                        $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
                     }
-                    $this->pdf->MultiCell($this->width[5], $this->height, $norm->material, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[6], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[6], $this->height, $norm->material, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[7], $this->height, $norm->sort == 0 ? $norm->norm.' * 1.2 = ' : $norm->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[7], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[8], $this->height, $norm->sort == 0 ? $norm->norm * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[8], $this->height, $norm->sort == 0 ? $norm->norm.' * 1.2 = ' : $norm->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+                    $this->pdf->MultiCell($this->width[9], $this->height, $norm->sort == 0 ? $norm->norm * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }
@@ -139,7 +142,9 @@ class WriteOffService
 
             $this->pdf->Ln();
         }
-        $this->pdf->Cell(0, 10, 'Разом по матеріалам ',0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+        $this->pdf->SetFont('dejavusans', 'B', 14);
+        $this->pdf->Cell(0, 10, "Разом по матеріалам",0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+        $this->pdf->SetFont('dejavusans', '', 10);
 
         $this->getPdfMaterials($records->materials);
 
@@ -161,6 +166,7 @@ class WriteOffService
         $records = DeliveryNote
             ::whereIn('id',$this->ids)
             ->orderBy('document_number')
+            ->with('designationMaterial.material')
             ->get();
 
         foreach($records as $item){
@@ -176,6 +182,7 @@ class WriteOffService
                         'material' => $material->material->name,
                         'norm' => $material->norm,
                         'unit' => $material->material->unit->unit??'',
+                        'code_1c' => $material->material->code_1c,
                         'sort' => 0);
 
                     $item->materials->push((object)[
@@ -192,9 +199,11 @@ class WriteOffService
         }
 
         $this->all_materials = collect($this->all_materials);
+
         $records->materials = $this->all_materials->groupBy('material_id')->map(function ($group) {
             return [
                 'material_id' => $group->first()['material_id'],
+                'code_1c' => $group->first()['code_1c'],
                 'material' => $group->first()['material'],
                 'norm' => $group->sum('norm'),
                 'unit' => $group->first()['unit'],
@@ -211,13 +220,13 @@ class WriteOffService
             ::where('designation_id', $designation_id)
             ->with(['designations', 'designationEntry', 'designationMaterial.material.unit'])
             ->get();
-
+        //dd($this->all_materials);
         if ($specifications->isNotEmpty()) {
+
             foreach ($specifications as $specification) {
 
                 if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
                     $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
-
                     $materials->push((object)[
                         'material' => $specification->designationEntry->designation,
                         'norm' => $specification->quantity,
@@ -240,6 +249,7 @@ class WriteOffService
                             'material' => $material->material->name,
                             'norm' => $material->norm,
                             'unit' => $material->material->unit->unit??"",
+                            'code_1c' => $material->material->code_1c,
                             'sort' => 0);
 
                         $materials->push((object)[
@@ -281,13 +291,15 @@ class WriteOffService
 
             $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[5], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[5], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[6], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[6], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? $item['norm'].' * 1.2 = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[7], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[8], $this->height, $item['sort'] == 0 ? $item['norm'] * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[8], $this->height, $item['sort'] == 0 ? $item['norm'].' * 1.2 = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width[9], $this->height, $item['sort'] == 0 ? $item['norm'] * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
         }
 

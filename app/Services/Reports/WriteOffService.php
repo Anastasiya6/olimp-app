@@ -7,7 +7,7 @@ use App\Services\HelpService\PDFService;
 
 class WriteOffService
 {
-    public $width = array(21,21,40,20,30,30,50,10,30,30);
+    public $width = array(25,25,40,10,30,30,50,10,30,30);
 
     public $height = 10;
 
@@ -16,7 +16,7 @@ class WriteOffService
     public $header1 = ['Номер',
                         'Дата',
                         'Номер',
-                        'Кількість',
+                        'К-ть',
                         'Замовлення №',
                         'Код 1C',
                         'Матеріал',

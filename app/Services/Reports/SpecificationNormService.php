@@ -7,19 +7,21 @@ use App\Services\HelpService\PDFService;
 
 class SpecificationNormService
 {
-    public $width = array(120,30,60,60,10);
+    public $width = array(30,120,20,50,50,10);
 
     public $height = 10;
 
     public $max_height = 10;
     // Заголовок таблицы
-    public $header1 = ['Найменування матеріалів',
-                        'Од.виміру',
+    public $header1 = ['Код 1С',
+                        'Найменування матеріалів',
+                        'Од.',
                         'Норма витрат на виріб',
                         'Разом * 1.2',
                         'Цех'];
     public $header2 = ['',
                         '',
+                        'виміру',
                         '',
                         '',
                         ''];
@@ -181,6 +183,7 @@ class SpecificationNormService
                         'id' => $designationMaterial->material->id,
                         'name' => $designationMaterial->material->name,
                         'unit' => $designationMaterial->material->unit->unit,
+                        'code_1c' => $designationMaterial->material->code_1c,
                         'norm' => $designationMaterial->norm * $item->quantity_total,
                         'department' => substr($item->designationEntry->route, 0, 2),
                     ];
@@ -195,6 +198,7 @@ class SpecificationNormService
                         'id' => $designationMaterial->material->id,
                         'name' => $designationMaterial->material->name,
                         'unit' => $designationMaterial->material->unit->unit,
+                        'code_1c' => $designationMaterial->material->code_1c,
                         'norm' => $designationMaterial->norm * $item->quantity_total,
                         'department' => substr($item->designationEntry->route, 0, 2),
                     ];
@@ -208,6 +212,7 @@ class SpecificationNormService
                     'name' => $departmentItems->first()['name'], // Берем название материала из первого элемента группы
                     'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
                     'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
+                    'code_1c' => $departmentItems->first()['code_1c'],
                     'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
                     'norm_with_koef' => $departmentItems->sum('norm') * 1.2,
                     'sort' => 0
@@ -241,12 +246,12 @@ class SpecificationNormService
                $this->setNewList(false);
 
             }
-
-            $this->pdf->MultiCell($this->width[0], $this->height, $item['name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[1], $this->height, $item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[2], $this->height, $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[3], $this->height, $item['norm_with_koef'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[4], $this->height, $item['department'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[0], $this->height, $item['code_1c']??'', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[1], $this->height, $item['name'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[2], $this->height, $item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item['norm_with_koef'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[5], $this->height, $item['department'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
             $this->pdf->Ln();
         }
 

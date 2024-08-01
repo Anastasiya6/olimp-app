@@ -17,7 +17,7 @@
                             <label class="block">
                                 <span class="text-gray-700">Документ</span>
                                 <input type="text" name="document_number"
-                                       class="block w-full mt-1 rounded-md" readonly
+                                       class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('document_number',$item->document_number)}}" />
                             </label>
                             @error('document_number')

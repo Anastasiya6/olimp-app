@@ -12,6 +12,7 @@ class Material extends Model
     protected $fillable = [
         'name',
         'type_unit_id',
+        'code_1c'
     ];
 
     public function unit()

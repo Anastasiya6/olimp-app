@@ -12,6 +12,7 @@ class MaterialService
         Material::create([
             'name' => $request->name,
             'type_unit_id' => $request->type_unit_id,
+            'code_1c' => $request->code_1c
         ]);
     }
 
@@ -19,7 +20,7 @@ class MaterialService
     {
         $material->name = $request->name;
         $material->type_unit_id = $request->type_unit_id;
-
+        $material->code_1c = $request->code_1c;
         $material->save();
     }
 }

@@ -238,6 +238,7 @@ class WriteOffService
                         'material_id' => $specification->designationEntry->id.$type,
                         'material' => $specification->designationEntry->designation,
                         'norm' => $specification->quantity,
+                        'code_1c' => '',
                         'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit??"",
                         'sort' => $type == 'kr' ? 1 : 2);
                 }

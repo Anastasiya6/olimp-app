@@ -28,8 +28,8 @@ class DeliveryNote extends Model
     public function scopeWithFilters(Builder $query, $startDate, $endDate, $selectedOrder, $selectedDepartmentSender, $selectedDepartmentReceiver)
     {
         return $query
-            ->whereRaw('DATE(created_at) >= ?', [$startDate])
-            ->whereRaw('DATE(created_at) <= ?', [$endDate])
+            ->whereRaw('DATE(document_date) >= ?', [$startDate])
+            ->whereRaw('DATE(document_date) <= ?', [$endDate])
             //->where('is_written_off',  $is_written_off)
             ->where('order_name_id', $selectedOrder)
             ->where('sender_department_id', $selectedDepartmentSender)

@@ -47,7 +47,7 @@ class ReportPlanTaskService
            // dd($plan_task);
             $this->pdf->Cell($this->width[0], $this->height, $item->designationEntry->designation);
             $this->pdf->Cell($this->width[1], $this->height, $item->quantity_total);
-            $this->pdf->Cell($this->width[2], $this->height, $item->order_name->name);
+            $this->pdf->Cell($this->width[2], $this->height, $item->orderName->name);
             $this->pdf->Cell($this->width[3], $this->height, $item->senderDepartment->number);
             $this->pdf->Cell($this->width[4], $this->height, $item->receiverDepartment->number);
             $this->pdf->Ln();

@@ -50,7 +50,7 @@ class PlanTask extends Model
         return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_entry_id');
     }
 
-    public function order_name()
+    public function orderName()
     {
         return $this->belongsTo(OrderName::class);
     }

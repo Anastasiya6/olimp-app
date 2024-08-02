@@ -20,7 +20,7 @@ class Order extends Model
         return $this->belongsTo(Designation::class);
     }
 
-    public function order_name()
+    public function orderName(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(OrderName::class);
     }

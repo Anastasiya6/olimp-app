@@ -19,7 +19,7 @@ class OrderController extends Controller
     public function index()
     {
          return view('administrator::include.orders.index', [
-            'items' => Order::orderBy('updated_at','desc')->orderBy('order_name_id','desc')->with('order_name','designation')->paginate(25),
+            'items' => Order::orderBy('updated_at','desc')->orderBy('order_name_id','desc')->with('orderName','designation')->paginate(25),
             'route' => $this->route,
             /*'report_dates' => Order::leftJoin('report_application_statements', 'orders.order_number', '=', 'report_application_statements.order_number')
                 ->select('orders.order_number', DB::raw('MIN(report_application_statements.created_at) as min_created_at'))

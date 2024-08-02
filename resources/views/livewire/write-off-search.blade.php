@@ -104,7 +104,7 @@
                         <strong>{{ $item->designation->designation??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->order_name->name??'' }}</strong>
+                        <strong>{{ $item->orderName->name??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->quantity??'' }}</strong>
@@ -132,14 +132,28 @@
     </div>
     <x-modal-window name="viewLog" title="">
         <x-slot:body>
-            <div class="sm:flex sm:justify-center px-3 py-3 text-xl font-semibold">
+            <div class="sm:flex sm:justify-center text-xl font-semibold">
                 Списання
             </div>
-            <div class="sm:flex sm:justify-center text-lg px-3 py-3">
+            <div class="sm:flex sm:justify-center text-lg">
                 З &nbsp<b>{{\Carbon\Carbon::parse($startDate)->format('d.m.Y')}}</b>&nbsp по &nbsp<b>{{\Carbon\Carbon::parse($endDate)->format('d.m.Y')}}</b>
             </div>
-            <div class="sm:flex sm:justify-center text-lg px-6 py-6">
-                Замовлення &nbsp<b>№{{$selectedOrder}}</b>
+            <div class="sm:flex sm:justify-center text-lg">
+                Замовлення &nbsp<b>№{{$order_number}}</b>
+            </div>
+            <div class="sm:flex sm:justify-between px-3 py-3">
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver, 'type_report' => 0]) }}" target="_blank">
+                    Звіт по деталям
+                </a>
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                   href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver, 'type_report' => 1]) }}" target="_blank">
+                    Разом по матеріалам
+                </a>
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                   href="{{ route('report.write.off.no.material', ['order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver]) }}" target="_blank">
+                    Нема матеріалів
+                </a>
             </div>
             <table class="min-w-full border divide-y divide-gray-200">
                 <thead>
@@ -189,11 +203,6 @@
                 @endif
                 </tbody>
             </table>
-            <div class="sm:flex sm:justify-center px-6 py-6">
-                <a class="link-underline" href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver]) }}" target="_blank">
-                    <b>Звіт pdf</b>
-                </a>
-         </div>
         </x-slot:body>
     </x-modal-window>
 </div>

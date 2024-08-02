@@ -67,7 +67,7 @@ class DeliveryNoteDesignationService
 
             $this->pdf->MultiCell($this->width[3], $this->height, \Carbon\Carbon::parse($item->created_at)->format('d.m.Y')??'', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item->order_name->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item->orderName->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[5], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -90,7 +90,7 @@ class DeliveryNoteDesignationService
             $query->where('designation', 'like', $this->designation)
                 ->orderByRaw("CAST(designation AS SIGNED)");
         })
-            ->with('order_name')
+            ->with('orderName')
             ->orderBy('document_number')
             ->get();
     }

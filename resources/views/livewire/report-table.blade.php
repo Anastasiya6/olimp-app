@@ -72,7 +72,7 @@
         @foreach($items as $item)
             <tr class="bg-white">
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                    <strong>{{ $item->order_name->name??'' }}</strong>
+                    <strong>{{ $item->orderName->name??'' }}</strong>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                     <strong>{{ $item->count_quantity==1?$item->designation:''  }}</strong>

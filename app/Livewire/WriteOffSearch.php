@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\Specification;
+use App\Services\HelpService\NoMaterialService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -23,6 +24,8 @@ class WriteOffSearch extends Component
     public $endDate;
 
     public $selectedOrder;
+
+    public $order_number;
 
     public $selectedDepartmentSender;
 
@@ -65,6 +68,12 @@ class WriteOffSearch extends Component
     {
         $this->flag = 1;
 
+        $this->order_number = OrderName::find($this->selectedOrder);
+
+        if ($this->order_number) {
+            $this->order_number = $this->order_number->name;
+        }
+
         $this->selectedDeliveryNotes = DeliveryNote::whereIn('id',$this->selectedItems)->get();
 
         $this->dispatch('open-modal',name:'viewLog');
@@ -103,7 +112,7 @@ class WriteOffSearch extends Component
             if($item->designationMaterial->isEmpty()){
                 $item->material = 0;
             }
-            $item->material = $this->node($item->designation_id,$item->designationMaterial->isNotEmpty());
+            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty());
             if($item->material && $this->flag == 0){
                $this->selectedItems[] = $item->id;
             }
@@ -115,33 +124,5 @@ class WriteOffSearch extends Component
             'default_second_department' => Department::DEFAULT_SECOND_DEPARTMENT_ID,
             'departments' => Department::whereIn('id',array(2,3,5))->get(),
             'orders'=>OrderName::where('is_order',1)->orderBy('name')->get()]);
-    }
-
-    private function node($designation_id,$material)
-    {
-        $specifications = Specification
-            ::where('designation_id', $designation_id)
-            ->with(['designations', 'designationEntry', 'designationMaterial'])
-            ->get();
-
-        if ($specifications->isNotEmpty()) {
-            foreach ($specifications as $specification) {
-
-                if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
-                    continue;
-                }
-
-                $result = $this->node($specification->designation_entry_id, $specification->designationMaterial->isNotEmpty());
-                if ($result == 0) {
-                    return 0;
-                }
-            }
-        }else{
-
-            if (!$material) {
-                return 0;
-            }
-        }
-        return 1;
     }
 }

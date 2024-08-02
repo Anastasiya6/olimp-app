@@ -1,6 +1,9 @@
 <div>
     <div class="py-4">
-        <input type="text" wire:model.live="searchTerm" placeholder="Пошук по назві"/>
+        <input type="text" wire:model.live="searchTerm" placeholder="Пошук по номеру деталі"/>
+    </div>
+    <div class="py-4">
+        <input type="text" wire:model.live="searchTermMaterial" placeholder="Пошук по назві матеріалу"/>
     </div>
     <div>
         @if(session()->has('message'))

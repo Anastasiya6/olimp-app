@@ -142,15 +142,19 @@
                 Замовлення &nbsp<b>№{{$order_number}}</b>
             </div>
             <div class="sm:flex sm:justify-between px-3 py-3">
-                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
-                href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver, 'type_report' => 0]) }}" target="_blank">
-                    Звіт по деталям
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                   href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver, 'type_report' => 0]) }}" target="_blank">
+                    По здаточним
                 </a>
-                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver, 'type_report' => 2]) }}" target="_blank">
+                    по деталям
+                </a>
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
                    href="{{ route('report.write.off', ['ids' => json_encode($this->selectedItems), 'order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver, 'type_report' => 1]) }}" target="_blank">
                     Разом по матеріалам
                 </a>
-                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
+                <a class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
                    href="{{ route('report.write.off.no.material', ['order_name_id' => $this->selectedOrder, 'start_date' => $startDate, 'end_date' => $endDate, 'sender_department' => $this->selectedDepartmentSender,'receiver_department' => $this->selectedDepartmentReceiver]) }}" target="_blank">
                     Нема матеріалів
                 </a>

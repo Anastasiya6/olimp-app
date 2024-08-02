@@ -9,7 +9,9 @@ use App\Services\HelpService\PDFService;
 
 class WriteOffService
 {
-    public $width = array(25,25,40,10,30,30,50,10,30,30);
+    public $width = array(16,23,35,40,10,15,30,50,10,30,25);
+
+    public $width1 = array(50,230);
 
     public $height = 10;
 
@@ -18,15 +20,17 @@ class WriteOffService
     public $header1 = ['Номер',
                         'Дата',
                         'Номер',
+                        'Назва',
                         'К-ть',
-                        'Замовлення №',
+                        'Замовл.',
                         'Код 1C',
                         'Матеріал',
                         'Од',
                         'Норма',
                         'Норма * 1.2'];
-    public $header2 = ['документа',
-                        'документа',
+    public $header2 = ['докумен.',
+                        'докумен.',
+                        'деталі',
                         'деталі',
                         '',
                         '',
@@ -35,6 +39,14 @@ class WriteOffService
                         '.вим.',
                         '',
                         ''];
+    public $header3 = [
+        'Номер деталі',
+        'Назва деталі',
+  ];
+    public $header4 = [
+        '',
+        '',
+ ];
     public $pdf = null;
 
     public $page = 2;
@@ -88,21 +100,45 @@ class WriteOffService
 
         $this->order = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name);
-
         if($this->type_report == 0) {
 
-            $this->getDetailPdf($records);
+            $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name);
 
-        }else{
+            $this->getDeliveryNotePdf($records);
+
+        }elseif($this->type_report == 1){
+
+            $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name);
 
             $this->getMaterialPdf($records->materials);
 
-        }
+        }elseif($this->type_report == 2){
 
+            $this->pdf = PDFService::getPdf($this->header3,$this->header4,$this->width1,'ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name);
+
+            $this->getDetailPdf($records);
+
+        }
     }
 
     private function getDetailPdf($records)
+    {
+        foreach ($records as $item) {
+
+            $this->setNewList();
+
+            $this->pdf->MultiCell($this->width1[0], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width1[1], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->Ln();
+        }
+
+        // Выводим PDF в браузер
+        $this->pdf->Output('write_off_details_'.$this->order->name.'.pdf', 'I');
+    }
+
+    private function getDeliveryNotePdf($records)
     {
         foreach ($records as $item) {
 
@@ -114,11 +150,13 @@ class WriteOffService
 
             $this->pdf->MultiCell($this->width[2], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[3], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item->orderName->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[5], $this->height, $item->orderName->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $first = 0;
 
@@ -148,15 +186,18 @@ class WriteOffService
 
                         $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
+                        $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+
                     }
 
-                    $this->pdf->MultiCell($this->width[6], $this->height, $norm->material, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[7], $this->height, $norm->material, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[7], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[8], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[8], $this->height, $norm->sort == 0 ? $norm->norm.' * 1.2 = ' : $norm->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[9], $this->height, $norm->sort == 0 ? $norm->norm.' * 1.2 = ' : $norm->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[9], $this->height, $norm->sort == 0 ? $norm->norm * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[10], $this->height, $norm->sort == 0 ? $norm->norm * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }
@@ -166,7 +207,7 @@ class WriteOffService
         }
 
         // Выводим PDF в браузер
-        $this->pdf->Output('delivery_note_details_'.$this->order->name.'.pdf', 'I');
+        $this->pdf->Output('write_off_delivery_note_'.$this->order->name.'.pdf', 'I');
     }
 
     private function setNewList()
@@ -324,19 +365,21 @@ class WriteOffService
 
             $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[5], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[6], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[6], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[7], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[7], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[8], $this->height, $item['sort'] == 0 ? $item['norm'].' * 1.2 = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[8], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[9], $this->height, $item['sort'] == 0 ? $item['norm'] * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[9], $this->height, $item['sort'] == 0 ? $item['norm'].' * 1.2 = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width[10], $this->height, $item['sort'] == 0 ? $item['norm'] * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }
 
-        $this->pdf->Output('delivery_note_materials_'.$this->order->name.'.pdf', 'I');
+        $this->pdf->Output('write_off_materials_'.$this->order->name.'.pdf', 'I');
     }
 }

@@ -17,7 +17,7 @@
                                 <select name="order_name_id" class="block w-full mt-1 rounded-md">
                                     @foreach($order_names as $order_name)
                                         <option value="{{ $order_name->id }}">
-                                            {{ $orderName->name }}
+                                            {{ $order_nameame->name }}
                                         </option>
                                     @endforeach
                                 </select>

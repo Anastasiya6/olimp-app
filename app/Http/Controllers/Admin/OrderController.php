@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderName;
+use App\Services\HelpService\NoMaterialService;
 use App\Services\Order\OrderService;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
@@ -18,19 +19,31 @@ class OrderController extends Controller
      */
     public function index()
     {
+        $items = Order
+            ::orderBy('updated_at','desc')
+            ->orderBy('order_name_id','desc')
+            ->with('orderName','designation','designationMaterial.material')
+            ->paginate(10);
+
+        $items->transform(function ($item) {
+
+            if($item->designationMaterial->isEmpty()){
+                $item->is_material = 0;
+            }
+
+            $item->is_material = NoMaterialService::noMaterial($item->designation_id, $item->designationMaterial->isNotEmpty());
+
+            return $item;
+        });
+
          return view('administrator::include.orders.index', [
-            'items' => Order::orderBy('updated_at','desc')->orderBy('order_name_id','desc')->with('orderName','designation')->paginate(25),
+            'items' => $items,
             'route' => $this->route,
-            /*'report_dates' => Order::leftJoin('report_application_statements', 'orders.order_number', '=', 'report_application_statements.order_number')
-                ->select('orders.order_number', DB::raw('MIN(report_application_statements.created_at) as min_created_at'))
-                ->groupBy('orders.order_number')
-                ->pluck('min_created_at', 'orders.order_number')
-                ->toArray(),*/
-             'report_dates' => Order::leftJoin('report_application_statements', function (JoinClause $join) {
+            'report_dates' => Order::leftJoin('report_application_statements', function (JoinClause $join) {
                  $join->on('orders.order_name_id', '=', 'report_application_statements.order_name_id')
                      ->on('orders.designation_id', 'report_application_statements.designation_id')
                      ->on('orders.designation_id', 'report_application_statements.designation_entry_id');
-             })
+            })
                  ->pluck('report_application_statements.created_at', 'orders.id')
                  ->toArray(),
             'title' => 'Замовлення']);

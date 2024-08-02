@@ -18,6 +18,9 @@
                         <table class="min-w-full border divide-y divide-gray-200">
                             <thead>
                             <tr>
+                                <th class="bg-gray-50 px-6 py-3 text-left">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Є матеріали</span>
+                                </th>
                                 <th class="bg-gray-50 px-3 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">№ замовл.</span>
                                 </th>
@@ -48,6 +51,13 @@
 
                             @foreach($items as $item)
                                 <tr class="bg-white">
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                        <strong>
+                                            <div class="py-4">
+                                                <input type="checkbox" disabled  name="material" @if($item->is_material) checked @endif id="exactMatchCheckbox" value="1">
+                                            </div>
+                                        </strong>
+                                    </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>{{ $item->orderName->name??'' }}</strong>
                                     </td>

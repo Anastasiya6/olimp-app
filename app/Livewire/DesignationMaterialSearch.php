@@ -12,6 +12,8 @@ class DesignationMaterialSearch extends Component
 
     public $searchTerm;
 
+    public $searchTermMaterial;
+
     public function deleteDesignationMaterial($id)
     {
         $designationMaterial = DesignationMaterial::findOrFail($id);
@@ -24,11 +26,27 @@ class DesignationMaterialSearch extends Component
     public function render()
     {
         $searchTerm = '%' . trim($this->searchTerm) . '%';
-        $items = DesignationMaterial::whereHas('designation', function ($query) use ($searchTerm) {
-            $query->where('designation', 'like', "%$searchTerm%");
-        })
-            ->orderBy('updated_at','desc')
-            ->paginate(50);
+
+        $searchTermMaterial = '%' . trim($this->searchTermMaterial) . '%';
+
+        if($searchTerm!='%%' || $searchTermMaterial!='%%'){
+
+            $items = DesignationMaterial::whereHas('designation', function ($query) use ($searchTerm) {
+                $query->where('designation', 'like', "%$searchTerm%");
+            })
+                ->whereHas('material', function ($query) use ($searchTermMaterial) {
+                    $query->where('name', 'like', "%$searchTermMaterial%");
+                })
+                ->orderBy('updated_at','desc')
+                ->paginate(50);
+
+        }else{
+
+            $items = DesignationMaterial
+                ::orderBy('updated_at','desc')
+                ->paginate(50);
+        }
+
         $route = 'designation-materials';
         return view('livewire.designation-material-search',compact('items','route'));
     }

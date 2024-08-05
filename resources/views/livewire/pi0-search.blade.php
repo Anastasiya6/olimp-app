@@ -27,7 +27,7 @@
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Гост</span>
                 </th>
                 <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Од.виміру</span>
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Од.вимір.</span>
                 </th>
                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                 </th>

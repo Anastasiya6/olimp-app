@@ -23,6 +23,8 @@ class DesignationMaterialService
     {
         $designationMaterial->norm = $request->norm;
         $designationMaterial->department_id = $request->department_id;
+        $designationMaterial->material_id = $request->material_id;
+
         $designationMaterial->save();
     }
 }

@@ -1,6 +1,17 @@
 <div class="py-12">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div class="sm:flex sm:justify-between px-6 py-3">
+                <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
+                    План у Pdf
+                </a>
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id]) }}" target="_blank">
+                    Специфіковані норми у Pdf
+                </a>
+                <a style="text-decoration: underline;" href="{{ route('plan-tasks.export',['order_name_id'=> $selectedOrder,'department' => $sender_department_id]) }}">
+                    Специфіковані норми в Excel
+                </a>
+            </div>
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-6 px-6">
 
                 <label for="exactMatchCheckbox">Вибрати замовлення</label>
@@ -36,16 +47,6 @@
                         class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                     Перенести дані з відом. застосув. у план
                 </button>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-3 px-6">
-                <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
-                    План у Pdf
-                </a>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-3 px-6">
-                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id]) }}" target="_blank">
-                    Специфіковані норми у Pdf
-                </a>
             </div>
             <div>
                 @if(session()->has('message'))

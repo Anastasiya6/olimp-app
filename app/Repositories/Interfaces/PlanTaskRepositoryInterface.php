@@ -6,4 +6,6 @@ interface PlanTaskRepositoryInterface
 {
     public function getByOrderDepartment($order_name_id,$sender_department_id);
 
+    public function getDataByDepartment($items);
+
 }

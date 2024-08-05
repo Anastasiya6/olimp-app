@@ -80,6 +80,10 @@ Route::resource('order-names', OrderNameController::class);
 
 Route::get('plan-task-specification-norm/{order_name_id}/{department}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
 Route::get('plan-task-all/{order_name_id}/{sender_department}/{receiver_department}', [PlanTaskController::class,'planTaskPdf'])->name('plan-tasks.all');
+
+Route::get('plan-task-export/{order_name_id}/{department}', [PlanTaskController::class,'exportExcel'])->name('plan-tasks.export');
+
+
 Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
 Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNoteController::class,'deliveryNote'])->name('delivery.notes');
 Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('delivery.notes.designation');

@@ -9,6 +9,7 @@ use App\Models\OrderName;
 use App\Models\PlanTask;
 use App\Services\PlanTask\PlanTaskService;
 use App\Services\Reports\ReportPlanTaskService;
+use App\Services\ReportsExcel\PlanTaskSpecificationNormService;
 use Illuminate\Http\Request;
 
 class PlanTaskController extends Controller
@@ -120,5 +121,13 @@ class PlanTaskController extends Controller
     public function planTaskPdf($order_name_id,$sender_department,$receiver_department,ReportPlanTaskService $service)
     {
         $service->plan_task($order_name_id,$sender_department,$receiver_department);
+    }
+
+    public function exportExcel($order_name_id,$sender_department_id, PlanTaskSpecificationNormService $service)
+    {
+        $fileName = $service->exportExcel($order_name_id,$sender_department_id);
+
+        // Возврат файла для скачивания (опционально)
+        return response()->download($fileName)->deleteFileAfterSend(true);
     }
 }

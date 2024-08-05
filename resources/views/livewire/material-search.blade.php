@@ -2,13 +2,18 @@
     <div class="py-4">
         <input type="text" wire:model.live="searchTerm" placeholder="Пошук по назві"/>
     </div>
+    <div>
+        @if(session()->has('message'))
+            <div>{{ session('message') }}</div>
+        @endif
 
+    </div>
     <div class="min-w-full align-middle">
         <table class="min-w-full border divide-y divide-gray-200">
             <thead>
             <tr>
                 <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Назва</span>
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-400">Назва</span>
                 </th>
                 <th class="bg-gray-50 px-6 py-3 text-left">
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Одиниця виміру</span>
@@ -39,13 +44,12 @@
                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                             Edit
                         </a>
-                        {{--<form action="{{ route('designations.destroy', $designation) }}" method="POST" onsubmit="return confirm('Ви впевнені, що хочете видалити запис?')" style="display: inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <x-danger-button>
-                                Видалити
-                            </x-danger-button>
-                        </form>--}}
+                        <x-danger-button
+                            wire:key="{{ $item->id }}"
+                            wire:click="deleteMaterial({{ $item->id }})"
+                            wire:confirm="Ви впевнені, що хочете видалити запис?">
+                            Delete
+                        </x-danger-button>
                     </td>
                 </tr>
             @endforeach
@@ -55,6 +59,13 @@
             {{ $items->appends(request()->input())->links() }}
         </div>
     </div>
+    <x-small-modal-window name="viewLog" title="">
+        <x-slot:body>
+            <div class="min-w-full align-middle">
+                {{$material_message}}
+            </div>
+        </x-slot:body>
+    </x-small-modal-window>
 </div>
 
 

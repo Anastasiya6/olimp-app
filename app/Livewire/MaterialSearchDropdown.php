@@ -17,6 +17,16 @@ class MaterialSearchDropdown extends Component
 
     public $selectedMaterialId = 0;
 
+    public function mount($material_id,$material_name)
+    {
+        if($material_id != null && $material_name != null){
+
+            $this->selectedMaterialId = $material_id;
+
+            $this->selectedMaterial = $material_name;
+        }
+    }
+
 
     public function searchResult()
     {

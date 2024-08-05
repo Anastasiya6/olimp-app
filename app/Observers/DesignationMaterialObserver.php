@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Department;
 use App\Models\DesignationMaterial;
 use App\Models\DesignationMaterialLog;
+use App\Models\Material;
 
 class DesignationMaterialObserver
 {
@@ -26,7 +27,7 @@ class DesignationMaterialObserver
 
         if($designationMaterial->isDirty('norm')){
 
-            $message = "Оновлена норма. Було ".$designationMaterial->getOriginal('norm')." Стало ".$designationMaterial->norm;
+            $message = " Оновлена норма. Було ".$designationMaterial->getOriginal('norm')." Стало ".$designationMaterial->norm;
 
         }
         if($designationMaterial->isDirty('department_id')){
@@ -35,7 +36,18 @@ class DesignationMaterialObserver
             $department = Department::find($departmentId);
             $departmentNumber = $department->number??"";
 
-            $message.= "Змінено цех. Було ".$departmentNumber." Стало ".$designationMaterial->department->number;
+            $message.= " Змінено цех. Було ".$departmentNumber." Стало ".$designationMaterial->department->number;
+
+        }
+        if($designationMaterial->isDirty('material_id')){
+
+            $materialid = $designationMaterial->getOriginal('material_id');
+
+            $material = Material::find($materialid);
+
+            $materialName = $material->name??"";
+
+            $message.= " Змінено матеріал. Було ".$materialName." Стало ".$designationMaterial->material->name;
 
         }
         if($message){

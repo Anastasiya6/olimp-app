@@ -23,7 +23,10 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="mb-6">
+
+                        <livewire:material-search-dropdown :material_id="$designationMaterial->material_id" :material_name="$designationMaterial->material->name"/>
+
+                      {{--  <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Матеріал</span>
                                 <input type="text" name="material"
@@ -33,7 +36,7 @@
                             @error('material')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div>--}}
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Норма</span>

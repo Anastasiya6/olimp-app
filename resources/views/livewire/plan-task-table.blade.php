@@ -68,14 +68,14 @@
                             <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Деталь</span>
                             </th>
-                            {{--<th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Шифр приналежності</span>
-                            </th>--}}
+                            <th class="bg-gray-50 px-3 py-3 text-center">
+                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Найменування деталі</span>
+                            </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кіл-ть</span>
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Замовлення №</span>
+                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Замовл.</span>
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Цех відправник</span>
@@ -85,6 +85,9 @@
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З відомості застос.</span>
+                            </th>
+                            <th class="bg-gray-50 px-6 py-3 text-left">
+                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп.</span>
                             </th>
                             <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                             </th>
@@ -98,6 +101,9 @@
 
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                                     <strong>{{ $item->designationEntry->designation??'' }}</strong>
+                                </td>
+                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                                    <strong>{{ $item->designationEntry->name??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                     <strong>{{ $item->quantity_total??'' }}</strong>
@@ -113,6 +119,13 @@
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                     <strong>{{ $item->is_report_application_statement? 'Так' : 'Ні' }}</strong>
+                                </td>
+                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                    <strong>
+                                        <div class="py-4">
+                                            <input type="checkbox" disabled  name="with_purchased" @if($item->with_purchased) checked @endif id="exactMatchCheckbox" value="1">
+                                        </div>
+                                    </strong>
                                 </td>
                                 <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                     <a href="{{ route($route.'.edit', ['planTask' => $item, 'order_name_id' => $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}"

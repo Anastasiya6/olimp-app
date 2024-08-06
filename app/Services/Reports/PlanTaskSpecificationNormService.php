@@ -3,8 +3,8 @@
 namespace App\Services\Reports;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
-use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
 use App\Services\HelpService\PDFService;
+use App\Services\HelpService\SortingService;
 
 class PlanTaskSpecificationNormService
 {
@@ -35,15 +35,19 @@ class PlanTaskSpecificationNormService
 
     public $sender_department_id;
 
-    private $planTaskRepositoryInterface;
+    private PlanTaskRepositoryInterface $planTaskRepository;
 
-    private $orderNameRepository;
+    private OrderNameRepositoryInterface $orderNameRepository;
 
-    public function __construct(PlanTaskRepositoryInterface $planTaskRepositoryInterface,OrderNameRepositoryInterface $orderNameRepository)
+    private SortingService $sortingService;
+
+    public function __construct(PlanTaskRepositoryInterface $planTaskRepository,OrderNameRepositoryInterface $orderNameRepository, SortingService $sortingService)
     {
-        $this->planTaskRepositoryInterface = $planTaskRepositoryInterface;
+        $this->planTaskRepository = $planTaskRepository;
 
         $this->orderNameRepository = $orderNameRepository;
+
+        $this->sortingService = $sortingService;
     }
 
     public function specificationNorm($order_name_id,$sender_department_id)
@@ -52,13 +56,33 @@ class PlanTaskSpecificationNormService
 
         $this->order_name_id = $order_name_id;
 
-        $items = $this->planTaskRepositoryInterface->getByOrderDepartment($this->order_name_id,$this->sender_department_id);
+        $items = $this->planTaskRepository->getByOrderDepartment($this->order_name_id,$this->sender_department_id);
 
-       // dd($items);
+        $groupedData = $this->planTaskRepository->getDataByDepartment($items)->sortBy('name');
 
-        $groupedData = $this->planTaskRepositoryInterface->getDataByDepartment($items)->sortBy('name');
-        //dd($groupedData);
-        $this->getPdf($groupedData);
+        /*----------------------------------------------------------------*/
+
+        $pki_items = $this->planTaskRepository->getByOrderPki($this->order_name_id);
+
+        $pki_groupedData = $this->planTaskRepository->getDataPkiByDepartment($pki_items,$this->sender_department_id);
+
+        /*----------------------------------------------------------------*/
+
+        $kr_items = $this->planTaskRepository->getByOrderKr($this->order_name_id);
+
+        $kr_groupedData = $this->planTaskRepository->getDataKrByDepartment($kr_items, $this->sender_department_id);
+
+        /*----------------------------------------------------------------*/
+
+        $combinedData = $groupedData->merge($pki_groupedData);
+
+        $combinedData = $combinedData->merge($kr_groupedData);
+
+        $combinedData = $combinedData->groupBy('department')->flatMap(function ($items) {
+            return $items->sortBy('name')->sortBy('sort');
+        });
+
+        $this->getPdf($combinedData);
 
     }
 

@@ -12,15 +12,17 @@ class ReportPlanTaskService
 
     public $max_height = 10;
 
-    public $width = array(100,30,30,30,30);
+    public $width = array(60,100,30,30,30,30);
 
     public $header1 = [ 'Номер',
+                        'Найменування',
                         "К-ть",
                         'Замовлення',
                         'Цех',
                         'Цех'
                     ];
     public $header2 = [ 'деталі',
+                        'деталі',
                         "",
                         '',
                         'відправник',
@@ -46,10 +48,11 @@ class ReportPlanTaskService
            //this->newList();
            // dd($plan_task);
             $this->pdf->Cell($this->width[0], $this->height, $item->designationEntry->designation);
-            $this->pdf->Cell($this->width[1], $this->height, $item->quantity_total);
-            $this->pdf->Cell($this->width[2], $this->height, $item->orderName->name);
-            $this->pdf->Cell($this->width[3], $this->height, $item->senderDepartment->number);
-            $this->pdf->Cell($this->width[4], $this->height, $item->receiverDepartment->number);
+            $this->pdf->Cell($this->width[1], $this->height, $item->designationEntry->name);
+            $this->pdf->Cell($this->width[2], $this->height, $item->quantity_total);
+            $this->pdf->Cell($this->width[3], $this->height, $item->orderName->name);
+            $this->pdf->Cell($this->width[4], $this->height, $item->senderDepartment->number);
+            $this->pdf->Cell($this->width[5], $this->height, $item->receiverDepartment->number);
             $this->pdf->Ln();
 
         }

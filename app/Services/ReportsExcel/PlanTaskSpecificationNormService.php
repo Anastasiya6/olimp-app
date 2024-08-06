@@ -18,22 +18,34 @@ class PlanTaskSpecificationNormService
 
     private $width = array(15,60,8,15,15,5);
 
-    private PlanTaskRepositoryInterface $planTaskRepositoryInterface;
+    private PlanTaskRepositoryInterface $planTaskRepository;
 
     private OrderNameRepositoryInterface $orderNameRepository;
 
-    public function __construct(PlanTaskRepositoryInterface $planTaskRepositoryInterface,OrderNameRepositoryInterface $orderNameRepository)
+    public function __construct(PlanTaskRepositoryInterface $planTaskRepository,OrderNameRepositoryInterface $orderNameRepository)
     {
-        $this->planTaskRepositoryInterface = $planTaskRepositoryInterface;
+        $this->planTaskRepository = $planTaskRepository;
 
         $this->orderNameRepository = $orderNameRepository;
     }
 
     public function exportExcel($order_name_id,$sender_department_id)
     {
-        $items = $this->planTaskRepositoryInterface->getByOrderDepartment($order_name_id,$sender_department_id);
+        $items = $this->planTaskRepository->getByOrderDepartment($order_name_id,$sender_department_id);
 
-        $groupedData = $this->planTaskRepositoryInterface->getDataByDepartment($items)->sortBy('name');
+        $groupedData = $this->planTaskRepository->getDataByDepartment($items)->sortBy('name');
+
+        /*----------------------------------------------------------------*/
+
+        $pki_items = $this->planTaskRepository->getByOrderPki($order_name_id);
+
+        $pki_groupedData = $this->planTaskRepository->getDataPkiByDepartment($pki_items,$sender_department_id);
+
+        /*----------------------------------------------------------------*/
+
+        $kr_items = $this->planTaskRepository->getByOrderKr($order_name_id);
+
+        $kr_groupedData = $this->planTaskRepository->getDataKrByDepartment($kr_items,$sender_department_id);
 
         // Новый объект Spreadsheet
         $spreadsheet = new Spreadsheet();

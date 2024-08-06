@@ -13,7 +13,7 @@
                         @csrf
                         @livewire('designation-search-dropdown')
 
-                        @livewire('material-search-dropdown')
+                        <livewire:material-search-dropdown :material_id="null" :material_name="null"/>
 
                         <div class="mb-6">
                             <label class="block">

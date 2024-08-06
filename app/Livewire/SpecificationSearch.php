@@ -43,7 +43,6 @@ class SpecificationSearch extends Component
     {
         $this->resetPage();
 
-        //$this->render();
     }
 
     public function render()

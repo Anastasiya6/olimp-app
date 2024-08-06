@@ -26,7 +26,8 @@ class PlanTaskService
                     'category_code' => $request->category_code??0,
                     'type' => $request->type,
                     'sender_department_id' => $request->sender_department_id,
-                    'receiver_department_id' => $request->receiver_department_id
+                    'receiver_department_id' => $request->receiver_department_id,
+                    'with_purchased' => $request->with_purchased
                 ]
             );
         }
@@ -35,6 +36,7 @@ class PlanTaskService
     public function update(PlanTask $planTask,Request $request)
     {
         $planTask->quantity_total = $request->quantity_total;
+        $planTask->with_purchased = $request->with_purchased;
         $planTask->save();
     }
 }

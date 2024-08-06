@@ -58,7 +58,8 @@
                         </a>
                         <x-danger-button
                             wire:key="{{ $specification->id }}"
-                            wire:click="deleteSpecification({{ $specification->id }})">
+                            wire:click="deleteSpecification({{ $specification->id }})"
+                            wire:confirm="Ви впевнені, що хочете видалити запис?">
                             Delete
                         </x-danger-button>
                     </td>

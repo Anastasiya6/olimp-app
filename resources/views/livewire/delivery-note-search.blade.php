@@ -60,10 +60,13 @@
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Деталь</span>
                 </th>
                 <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Документ</span>
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Найменування деталі</span>
                 </th>
                 <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата документу</span>
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Докум.</span>
+                </th>
+                <th class="bg-gray-50 px-6 py-3 text-left">
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата докум.</span>
                 </th>
                 <th class="bg-gray-50 px-6 py-3 text-left">
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата внесення</span>
@@ -93,6 +96,9 @@
                 <tr class="bg-white">
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->designation->designation??'' }}</strong>
+                    </td>
+                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                        <strong>{{ $item->designation->name??'' }}</strong>
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->document_number??'' }}</strong>

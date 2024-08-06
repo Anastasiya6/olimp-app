@@ -4,6 +4,7 @@ namespace App\Services\Reports;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
 use App\Services\HelpService\PDFService;
+use App\Services\HelpService\SortingService;
 
 class SpecificationNormService
 {
@@ -35,15 +36,19 @@ class SpecificationNormService
 
     public $department = 'no department';
 
-    private $reportApplicationStatementRepository;
+    private ReportApplicationStatementRepositoryInterface $reportApplicationStatementRepository;
 
-    private $orderNameRepository;
+    private OrderNameRepositoryInterface $orderNameRepository;
 
-    public function __construct(ReportApplicationStatementRepositoryInterface $reportApplicationStatementRepository,OrderNameRepositoryInterface $orderNameRepository)
+    private SortingService $sortingService;
+
+    public function __construct(ReportApplicationStatementRepositoryInterface $reportApplicationStatementRepository,OrderNameRepositoryInterface $orderNameRepository,SortingService $sortingService)
     {
         $this->reportApplicationStatementRepository = $reportApplicationStatementRepository;
 
         $this->orderNameRepository = $orderNameRepository;
+
+        $this->sortingService = $sortingService;
     }
 
     public function specificationNorm($order_name_id,$department)
@@ -55,19 +60,19 @@ class SpecificationNormService
 
         $items = $this->reportApplicationStatementRepository->getByOrder($this->order_name_id);
 
-        $groupedData = $this->getDataByDepartment($items);
+        $groupedData = $this->reportApplicationStatementRepository->getDataByDepartment($items,$this->department);
 
         /*----------------------------------------------------------------*/
 
         $pki_items = $this->reportApplicationStatementRepository->getByOrderPki($this->order_name_id);
 
-        $pki_groupedData = $this->getDataPkiByDepartment($pki_items);
+        $pki_groupedData = $this->reportApplicationStatementRepository->getDataPkiByDepartment($pki_items,$this->department);
 
         /*----------------------------------------------------------------*/
 
         $kr_items = $this->reportApplicationStatementRepository->getByOrderKr($this->order_name_id);
 
-        $kr_groupedData = $this->getDataKrByDepartment($kr_items);
+        $kr_groupedData = $this->reportApplicationStatementRepository->getDataKrByDepartment($kr_items,$this->department);
 
         /*----------------------------------------------------------------*/
 
@@ -75,7 +80,9 @@ class SpecificationNormService
 
         $combinedData = $combinedData->merge($kr_groupedData);
 
-        $combinedData = $this->getSortbyDepartment($combinedData);
+        if($this->department == 0){
+            $combinedData = $this->sortingService->getSortbyDepartment($combinedData);
+        }
 
         $combinedData = $combinedData->groupBy('department')->flatMap(function ($items) {
             return $items->sortBy('name')->sortBy('sort');
@@ -83,142 +90,6 @@ class SpecificationNormService
 
         $this->getPdf($combinedData);
 
-    }
-
-    private function getSortByDepartment($data)
-    {
-        if($this->department != 0 )
-            return $data;
-        return $data->sort(function ($a, $b) {
-            // Если у первого элемента нет цеха, а у второго есть - второй элемент должен быть выше
-            if (empty($a['department']) && !empty($b['department'])) {
-                return 1;
-            }
-
-            // Если у второго элемента нет цеха, а у первого есть - первый элемент должен быть выше
-            if (!empty($a['department']) && empty($b['department'])) {
-                return -1;
-            }
-
-            // Если у обоих элементов есть цеха или у обоих нет - сортируем по названию цеха
-            return strcmp($a['department'], $b['department']);
-        });
-    }
-
-    private function getDataPkiByDepartment($pki_items)
-    {
-        $pki_data = $pki_items->map(function ($item) {
-            return [
-                'id' => $item->designationEntry->id.'pki',
-                'name' => $item->designationEntry->name,
-                'unit' => $item->designationEntry->unit->unit??'шт',
-                'norm' =>$item->quantity_total,
-                'department' => substr($item->tm, -2),
-            ];
-        });
-        if ($this->department != 0){
-            $pki_data = $pki_data->filter(function ($item) {
-                return $item['department'] == $this->department;
-            });
-        }
-
-        return $pki_data->groupBy('id')->flatMap(function ($items) {
-            return $items->groupBy('department')->map(function ($departmentItems) {
-                return [
-                    'id' => $departmentItems->first()['id'], // Берем ID из первого элемента группыента группы
-                    'department' => $departmentItems->first()['department'], // Берем цех из первого элемен
-                    'name' => $departmentItems->first()['name'], // Берем название материала из первого элемента группы
-                    'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемта группы
-                    'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                    'norm_with_koef' => $departmentItems->sum('norm'),
-                    'sort' => 2
-                ];
-            })->values();
-        });
-    }
-
-    private function getDataKrByDepartment($kr_items)
-    {
-        $kr_data = $kr_items->map(function ($item) {
-            return [
-                'id' => $item->designationEntry->id.'kr',
-                'name' => $item->designationEntry->name,
-                'unit' => 'шт',
-                'norm' =>$item->quantity_total,
-                'department' => substr($item->tm, -2),
-            ];
-        });
-
-        if ($this->department != 0){
-            $kr_data = $kr_data->filter(function ($item) {
-                return $item['department'] == $this->department;
-            });
-        }
-
-        return $kr_data->groupBy('id')->flatMap(function ($items) {
-            return $items->groupBy('department')->map(function ($departmentItems) {
-
-                return [
-                'name' => $departmentItems->first()['name'], // Берем название материала из первого элемента группы
-                'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
-                'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
-                'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                'norm_with_koef' => $departmentItems->sum('norm'),
-                'sort' => 1
-                ];
-            })->values();
-        });
-    }
-
-    private function getDataByDepartment($items)
-    {
-        if ($this->department != 0){
-            $data = $items->flatMap(function ($item) {
-                return $item->designationMaterial->filter(function ($designationMaterial) use ($item) {
-                    // Проверка на соответствие department
-                    $department = substr($item->designationEntry->route, 0, 2);
-                    return $department == $this->department;
-                })->map(function ($designationMaterial) use ($item) {
-                    return [
-                        'id' => $designationMaterial->material->id,
-                        'name' => $designationMaterial->material->name,
-                        'unit' => $designationMaterial->material->unit->unit,
-                        'code_1c' => $designationMaterial->material->code_1c,
-                        'norm' => $designationMaterial->norm * $item->quantity_total,
-                        'department' => substr($item->designationEntry->route, 0, 2),
-                    ];
-                });
-            })->sortBy('id');
-
-        }else {
-
-            $data = $items->flatMap(function ($item) {
-                return $item->designationMaterial->map(function ($designationMaterial) use ($item) {
-                    return [
-                        'id' => $designationMaterial->material->id,
-                        'name' => $designationMaterial->material->name,
-                        'unit' => $designationMaterial->material->unit->unit,
-                        'code_1c' => $designationMaterial->material->code_1c,
-                        'norm' => $designationMaterial->norm * $item->quantity_total,
-                        'department' => substr($item->designationEntry->route, 0, 2),
-                    ];
-                });
-            })->sortBy('id');
-        }
-        return $data->groupBy('id')->flatMap(function ($items) {
-            return $items->groupBy('department')->map(function ($departmentItems) {
-                return [
-                    'id' => $departmentItems->first()['id'], // Берем ID из первого элемента группы
-                    'name' => $departmentItems->first()['name'], // Берем название материала из первого элемента группы
-                    'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
-                    'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
-                    'code_1c' => $departmentItems->first()['code_1c'],
-                    'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                    'norm_with_koef' => $departmentItems->sum('norm') * 1.2,
-                    'sort' => 0
-                ];
-            })->values(); // Преобразуем коллекцию в массив значений
-        });
     }
 
     private function getPdf($groupedData)

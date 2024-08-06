@@ -47,7 +47,7 @@ class PlanTask extends Model
 
     public function designationMaterial(): HasMany
     {
-        return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_entry_id');
+        return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_id');
     }
 
     public function orderName()

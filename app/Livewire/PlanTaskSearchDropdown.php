@@ -112,7 +112,7 @@ class PlanTaskSearchDropdown extends Component
     public function search_in_plan()
     {
         return PLanTask
-            ::where('designation_entry_id',$this->selectedDesignationId)
+            ::where('designation_id',$this->selectedDesignationId)
             ->where('order_name_id',$this->selectedOrder)
             ->where('sender_department_id',$this->sender_department_id)
             ->where('receiver_department_id',$this->receiver_department_id)

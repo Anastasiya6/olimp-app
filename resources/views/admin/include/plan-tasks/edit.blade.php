@@ -27,11 +27,11 @@
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Що</span>
-                                <input type="text" name="designation_entry_designation"
+                                <input type="text" name="designation_designation"
                                        class="block w-full mt-1 rounded-md" readonly
-                                       placeholder="" value="{{old('designation_entry_designation',$item->designationEntry->designation)}}" />
+                                       placeholder="" value="{{old('designation_designation',$item->designations->designation)}}" />
                             </label>
-                            @error('designation_entry_designation')
+                            @error('designation_designation')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

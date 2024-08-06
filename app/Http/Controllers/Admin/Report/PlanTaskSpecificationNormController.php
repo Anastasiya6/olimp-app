@@ -7,8 +7,14 @@ use App\Services\Reports\PlanTaskSpecificationNormService;
 
 class PlanTaskSpecificationNormController extends Controller
 {
-    public function planTaskSpecificationNorm($order_name_id,$department,PlanTaskSpecificationNormService $service)
+    public function planTaskSpecificationNorm($order_name_id,$department,$type_report_in,PlanTaskSpecificationNormService $service)
     {
-        $service->specificationNorm($order_name_id,$department);
+        $fileName = $service->specificationNorm($order_name_id,$department,$type_report_in);
+
+        if($type_report_in == 'Excel'){
+
+            return response()->download($fileName)->deleteFileAfterSend(true);
+
+        }
     }
 }

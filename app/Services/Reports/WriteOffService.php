@@ -5,6 +5,7 @@ use App\Models\DeliveryNote;
 use App\Models\OrderName;
 use App\Models\Specification;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
+use App\Services\HelpService\MaterialService;
 use App\Services\HelpService\PDFService;
 
 class WriteOffService
@@ -65,15 +66,17 @@ class WriteOffService
 
     public $ids;
 
-    public $all_materials;
+    public $materialService;
 
     public $type_report = 0;
 
     private OrderNameRepositoryInterface $orderNameRepository;
 
-    public function __construct( OrderNameRepositoryInterface $orderNameRepository)
+    public function __construct( OrderNameRepositoryInterface $orderNameRepository, MaterialService $service )
     {
         $this->orderNameRepository = $orderNameRepository;
+
+        $this->materialService = $service;
     }
 
     public function writeOff($ids,$order_name_id,$start_date,$end_date,$sender_department,$receiver_department,$type_report = 0)
@@ -202,7 +205,6 @@ class WriteOffService
                 }
             }
 
-
             $this->pdf->Ln();
         }
 
@@ -227,114 +229,8 @@ class WriteOffService
             ->with('designationMaterial.material','orderName')
             ->get();
 
-        foreach($records as $item){
+        return $this->materialService->material($records,$this->type_report);
 
-            $item->materials = collect();
-
-            if($item->designationMaterial->isNotEmpty()){
-
-                foreach($item->designationMaterial as $material) {
-
-                    if($this->type_report == 0){
-
-                        $item->materials->push((object)[
-                            'material' => $material->material->name,
-                            'norm' => $material->norm,
-                            'unit' => $material->material->unit->unit??"",
-                            'sort' => 0
-                        ]);
-
-                    }elseif($this->type_report == 1){
-
-                        $this->all_materials[] = array(
-                            'material_id' => $material->material->id,
-                            'material' => $material->material->name,
-                            'norm' => $material->norm,
-                            'unit' => $material->material->unit->unit??'',
-                            'code_1c' => $material->material->code_1c,
-                            'sort' => 0);
-                    }
-                }
-            }
-
-            $this->node($item->materials,$item->designation_id);
-
-        }
-        if($this->type_report == 1) {
-
-            $this->all_materials = collect($this->all_materials);
-
-            $records->materials = $this->all_materials->groupBy('material_id')->map(function ($group) {
-                return [
-                    'material_id' => $group->first()['material_id'],
-                    'code_1c' => $group->first()['code_1c'],
-                    'material' => $group->first()['material'],
-                    'norm' => $group->sum('norm'),
-                    'unit' => $group->first()['unit'],
-                    'sort' => $group->first()['sort'],
-                ];
-            })->sortBy('material')->sortBy('sort');
-        }
-        return $records;
-    }
-
-    private function node($materials,$designation_id)
-    {
-        $specifications = Specification
-            ::where('designation_id', $designation_id)
-            ->with(['designations', 'designationEntry', 'designationMaterial.material.unit'])
-            ->get();
-
-        if ($specifications->isNotEmpty()) {
-
-            foreach ($specifications as $specification) {
-
-                if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
-
-                    $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
-
-                    if($this->type_report == 0) {
-                        $materials->push((object)[
-                            'material' => $specification->designationEntry->designation,
-                            'norm' => $specification->quantity,
-                            'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                            'sort' => $type == 'kr' ? 1 : 2
-                        ]);
-                    }elseif($this->type_report == 1) {
-                        $this->all_materials[] = array(
-                            'material_id' => $specification->designationEntry->id . $type,
-                            'material' => $specification->designationEntry->designation,
-                            'norm' => $specification->quantity,
-                            'code_1c' => '',
-                            'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                            'sort' => $type == 'kr' ? 1 : 2);
-                    }
-                }
-
-                foreach ($specification->designationMaterial as $material) {
-
-                    if($this->type_report == 1) {
-                        $this->all_materials[] = array(
-                            'material_id' => $material->material->id,
-                            'material' => $material->material->name,
-                            'norm' => $material->norm,
-                            'unit' => $material->material->unit->unit ?? "",
-                            'code_1c' => $material->material->code_1c,
-                            'sort' => 0);
-                    }elseif($this->type_report == 0) {
-                        $materials->push((object)[
-                            'material' => $material->material->name,
-                            'norm' => $material->norm,
-                            'unit' => $material->material->unit->unit ?? "",
-                            'sort' => 0
-                        ]);
-                    }
-                }
-                $this->node($materials,$specification->designation_entry_id);
-
-            }
-        }
-        return $materials;
     }
 
     private function getMaterialPdf($materials)
@@ -345,14 +241,8 @@ class WriteOffService
 
         $this->pdf->SetFont('dejavusans', '', 10);
 
-        $count = 0;
-
         foreach ($materials as $item) {
 
-            $count++;
-           /* if($count == 10 ){
-                dd($item['sort']);
-            }*/
             $this->setNewList();
 
             $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');

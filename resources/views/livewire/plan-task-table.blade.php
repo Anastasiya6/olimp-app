@@ -5,10 +5,10 @@
                 <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
                     План у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id]) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
                     Специфіковані норми у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-tasks.export',['order_name_id'=> $selectedOrder,'department' => $sender_department_id]) }}">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Excel']) }}" target="_blank">
                     Специфіковані норми в Excel
                 </a>
             </div>
@@ -100,10 +100,10 @@
                             <tr class="bg-white">
 
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->designationEntry->designation??'' }}</strong>
+                                    <strong>{{ $item->designations->designation??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->designationEntry->name??'' }}</strong>
+                                    <strong>{{ $item->designations->name??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                     <strong>{{ $item->quantity_total??'' }}</strong>

@@ -11,16 +11,16 @@ class PlanTaskService
 {
     public function store(Request $request)
     {
-        $designation = Designation::where('designation', $request->designation_entry_designation)->first();
+        $designation = Designation::where('designation', $request->designation_designation)->first();
 
         if(isset($designation->id)){
 
             PlanTask::create(
                 [
                     'order_name_id' => $request->order_name_id,
-                    'designation_entry_id' => $designation->id,
-                    'order_designationEntry' => HelpService::getNumbers($request->designation_entry_designation),
-                    'order_designationEntry_letters' => HelpService::getLetters($request->designation_entry_designation),
+                    'designation_id' => $designation->id,
+                    'order_designationEntry' => HelpService::getNumbers($request->designation_designation),
+                    'order_designationEntry_letters' => HelpService::getLetters($request->designation_designation),
                     'quantity' => $request->quantity_total,
                     'quantity_total' => $request->quantity_total,
                     'category_code' => $request->category_code??0,

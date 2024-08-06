@@ -15,7 +15,7 @@ class PlanTask extends Model
         'quantity',
         'quantity_total',
         'category_code',
-        'designation_entry_id',
+        'designation_id',
         'sender_department_id',
         'receiver_department_id',
         'order_name_id',

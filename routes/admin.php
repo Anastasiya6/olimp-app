@@ -78,7 +78,7 @@ Route::get('write-off-no-material/{order_name_id}/{start_date}/{end_date}/{sende
 //Route::get('write-off/{items}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
 Route::resource('order-names', OrderNameController::class);
 
-Route::get('plan-task-specification-norm/{order_name_id}/{department}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
+Route::get('plan-task-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
 Route::get('plan-task-all/{order_name_id}/{sender_department}/{receiver_department}', [PlanTaskController::class,'planTaskPdf'])->name('plan-tasks.all');
 
 Route::get('plan-task-export/{order_name_id}/{department}', [PlanTaskController::class,'exportExcel'])->name('plan-tasks.export');

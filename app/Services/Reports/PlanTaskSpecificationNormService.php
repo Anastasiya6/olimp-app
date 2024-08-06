@@ -6,7 +6,6 @@ use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
 use App\Services\HelpService\MaterialService;
 use App\Services\HelpService\PDFService;
-use App\Services\HelpService\SortingService;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -37,6 +36,7 @@ class PlanTaskSpecificationNormService
     public $header2 = ['',
         '',
         'вимір.',
+        '',
         '',
         ''];
     public $pdf = null;
@@ -88,7 +88,6 @@ class PlanTaskSpecificationNormService
             return $this->getExcel($records->materials);
 
         }
-
 
     }
 

@@ -21,7 +21,7 @@ class PlanTaskController extends Controller
      */
     public function index()
     {
-        return view('administrator::include.plan_tasks.index',[
+        return view('administrator::include.plan-tasks.index',[
             'order_name_id' => session('order_name_id'),
             'sender_department_id' => session('sender_department_id'),
             'receiver_department_id' => session('receiver_department_id'),
@@ -43,7 +43,7 @@ class PlanTaskController extends Controller
             $order_number = $order->name;
         }
 
-        return view('administrator::include.plan_tasks.create',[
+        return view('administrator::include.plan-tasks.create',[
             'route' => $this->route,
             'order_name_id' => $order_name_id,
             'sender_department_id' => $sender_department_id,
@@ -87,7 +87,7 @@ class PlanTaskController extends Controller
             $order_number = $order->name;
         }
 
-        return view('administrator::include.plan_tasks.edit',[
+        return view('administrator::include.plan-tasks.edit',[
             'item' => $planTask,
             'order_name_id' => $order_name_id,
             'sender_department_id' => $sender_department_id,

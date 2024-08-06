@@ -97,7 +97,7 @@ class PlanTaskTable extends Component
            $attributes = [
                'order_name_id' => $detail->order_name_id,
                'order_id' => $detail->order_id,
-               'designation_entry_id' => $detail->designation_entry_id,
+               'designation_id' => $detail->designation_entry_id,
                'tm' => $detail->tm
            ];
 

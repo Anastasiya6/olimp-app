@@ -8,8 +8,8 @@ use App\Models\Department;
 use App\Models\OrderName;
 use App\Models\PlanTask;
 use App\Services\PlanTask\PlanTaskService;
+use App\Services\Reports\PlanTaskSpecificationNormService;
 use App\Services\Reports\ReportPlanTaskService;
-use App\Services\ReportsExcel\PlanTaskSpecificationNormService;
 use Illuminate\Http\Request;
 
 class PlanTaskController extends Controller
@@ -76,26 +76,17 @@ class PlanTaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PlanTask $planTask,$order_name_id,$sender_department_id,$receiver_department_id)
+    public function edit(PlanTask $plan_task)
     {
-        $order_number = '';
-        $order = OrderName
-            ::where('id',$order_name_id)
-            ->first();
-
-        if(isset($order->name)){
-            $order_number = $order->name;
-        }
-
-        return view('administrator::include.plan-tasks.edit',[
-            'item' => $planTask,
-            'order_name_id' => $order_name_id,
-            'sender_department_id' => $sender_department_id,
-            'receiver_department_id' => $receiver_department_id,
-            'order_number' => $order_number,
+       return view('administrator::include.plan-tasks.edit',[
+            'item' => $plan_task,
+            'order_name_id' => $plan_task->order_name_id,
+            'sender_department_id' => $plan_task->sender_department_id,
+            'receiver_department_id' => $plan_task->receiver_department_id,
+            'order_number' => $plan_task->orderName->name,
             'route' => $this->route,
-            'sender_department' => Department::where('id', $sender_department_id)->first()->number,
-            'receiver_department' => Department::where('id', $receiver_department_id)->first()->number,
+            'sender_department' => Department::where('id', $plan_task->sender_department_id)->first()->number,
+            'receiver_department' => Department::where('id', $plan_task->receiver_department_id)->first()->number,
         ]);
     }
 

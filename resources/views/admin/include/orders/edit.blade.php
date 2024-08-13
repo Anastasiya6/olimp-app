@@ -19,7 +19,7 @@
                                 <select name="order_name_id" class="block w-full mt-1 rounded-md">
                                     @foreach($order_names as $order_name)
                                         <option value="{{ $order_name->id }}" @if($order_name->id == $item->order_name_id) selected @endif>
-                                            {{ $orderName->name }}
+                                            {{ $order_name->name }}
                                         </option>
                                     @endforeach
                                 </select>

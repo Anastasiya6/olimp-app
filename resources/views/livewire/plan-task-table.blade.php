@@ -75,6 +75,9 @@
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кіл-ть</span>
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
+                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Загальна кіл-ть</span>
+                            </th>
+                            <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Замовл.</span>
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
@@ -106,6 +109,9 @@
                                     <strong>{{ $item->designations->name??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                    <strong>{{ $item->quantity??'' }}</strong>
+                                </td>
+                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                     <strong>{{ $item->quantity_total??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
@@ -128,7 +134,7 @@
                                     </strong>
                                 </td>
                                 <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                    <a href="{{ route($route.'.edit', ['planTask' => $item, 'order_name_id' => $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}"
+                                    <a href="{{ route($route.'.edit', $item) }}"
                                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                                         Edit
                                     </a>
@@ -153,28 +159,28 @@
         </div>
     </div>
 
-        <x-modal-window name="viewLog" title="">
-            <x-slot:body>
-                <div class="sm:flex sm:justify-center px-6 py-6 text-xl font-semibold">
-                    План з відомості застосування
-                </div>
-                <div class="sm:flex sm:justify-center text-lg px-6 py-6">
-                    Замовлення &nbsp<b>№{{$order_number}}</b>
-                </div>
-                <div class="sm:flex sm:justify-center text-lg px-6 py-6">
-                    З цеху &nbsp<b>{{$sender_department}}</b>
-                </div>
-                <div class="sm:flex sm:justify-center text-lg px-6 py-6">
-                    До цеху &nbsp<b>{{$receiver_department}}</b>
-                </div>
-                <div class="sm:flex sm:justify-center px-6 py-6">
-                    <x-loading-indicator></x-loading-indicator>
-                    <button wire:click="makeFromDisassembly"
-                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                        Зформувати
-                    </button>
-                </div>
-            </x-slot:body>
-        </x-modal-window>
+    <x-modal-window name="viewLog" title="">
+        <x-slot:body>
+            <div class="sm:flex sm:justify-center px-6 py-6 text-xl font-semibold">
+                План з відомості застосування
+            </div>
+            <div class="sm:flex sm:justify-center text-lg px-6 py-6">
+                Замовлення &nbsp<b>№{{$order_number}}</b>
+            </div>
+            <div class="sm:flex sm:justify-center text-lg px-6 py-6">
+                З цеху &nbsp<b>{{$sender_department}}</b>
+            </div>
+            <div class="sm:flex sm:justify-center text-lg px-6 py-6">
+                До цеху &nbsp<b>{{$receiver_department}}</b>
+            </div>
+            <div class="sm:flex sm:justify-center px-6 py-6">
+                <x-loading-indicator></x-loading-indicator>
+                <button wire:click="makeFromDisassembly"
+                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                    Зформувати
+                </button>
+            </div>
+        </x-slot:body>
+    </x-modal-window>
 
 </div>

@@ -21,7 +21,7 @@ class PlanTaskService
                     'designation_id' => $designation->id,
                     'order_designationEntry' => HelpService::getNumbers($request->designation_designation),
                     'order_designationEntry_letters' => HelpService::getLetters($request->designation_designation),
-                    'quantity' => $request->quantity_total,
+                    'quantity' => $request->quantity,
                     'quantity_total' => $request->quantity_total,
                     'category_code' => $request->category_code??0,
                     'type' => $request->type,
@@ -35,6 +35,7 @@ class PlanTaskService
 
     public function update(PlanTask $planTask,Request $request)
     {
+        $planTask->quantity = $request->quantity;
         $planTask->quantity_total = $request->quantity_total;
         $planTask->with_purchased = $request->with_purchased;
         $planTask->save();

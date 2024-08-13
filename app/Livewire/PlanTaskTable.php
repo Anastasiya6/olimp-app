@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\ReportApplicationStatement;
+use Livewire\Attributes\Session;
 use Livewire\Component;
 use App\Models\PlanTask;
 use Livewire\WithPagination;
@@ -16,28 +17,27 @@ class PlanTaskTable extends Component
 
     public $isProcessing = false;
 
+    #[Session]
     public $selectedOrder;
 
     public $order_number;
 
+    #[Session]
     public $sender_department_id;
 
+    #[Session]
     public $receiver_department_id;
 
     public $sender_department;
 
     public $receiver_department;
 
-    public $default_department;
+    public $default_department = Department::DEFAULT_DEPARTMENT;
 
     public $route = 'plan-tasks';
 
-    public function mount($selectedOrder,$sender_department_id,$receiver_department_id)
+    public function mount()
     {
-        $this->selectedOrder = $selectedOrder;
-
-        $this->default_department = Department::DEFAULT_DEPARTMENT;
-
         if(!$this->selectedOrder) {
 
             $order_first = OrderName::where('is_order', 1)->orderBy('name')->first();
@@ -46,9 +46,12 @@ class PlanTaskTable extends Component
                 $this->selectedOrder = $order_first->id;
             }
         }
-        $this->sender_department_id = $sender_department_id ?? Department::DEFAULT_FIRST_DEPARTMENT_ID;
-
-        $this->receiver_department_id = $receiver_department_id ?? Department::DEFAULT_SECOND_DEPARTMENT_ID;
+        if(!$this->sender_department_id){
+            $this->sender_department_id = $sender_department_id ?? Department::DEFAULT_FIRST_DEPARTMENT_ID;
+        }
+        if(!$this->receiver_department_id) {
+            $this->receiver_department_id = $receiver_department_id ?? Department::DEFAULT_SECOND_DEPARTMENT_ID;
+        }
     }
 
     public function deletePlanTask($id)
@@ -123,9 +126,9 @@ class PlanTaskTable extends Component
 
     }
 
-    public function render()
+    protected function planTasks()
     {
-        $plan_tasks = PlanTask
+        return PlanTask
             ::where('order_name_id', $this->selectedOrder)
             ->where('sender_department_id', $this->sender_department_id)
             ->where('receiver_department_id', $this->receiver_department_id)
@@ -133,11 +136,15 @@ class PlanTaskTable extends Component
             ->orderBy('updated_at','desc')
             ->orderBy('order_designationEntry_letters')
             ->orderBy('order_designationEntry')
-            ->paginate(25);
+            ->paginate(25);;
+    }
 
+    public function render()
+    {
         return view('livewire.plan-task-table',[
             'order_names'=> OrderName::where('is_order', 1)->orderBy('name')->get(),
             'departments' => Department::all(),
-            'items' => $plan_tasks]);
+            'items' => $this->planTasks(),
+            ]);
     }
 }

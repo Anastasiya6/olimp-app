@@ -37,13 +37,24 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Кількість</span>
-                                <input type="text" name="quantity_total"
+                                <span class="text-gray-700">Кількість на одну деталь</span>
+                                <input type="text" name="quantity"
                                        class="block w-full mt-1 rounded-md"
-                                       placeholder="" value="{{old('quantity',$item->quantity_total)}}" />
+                                       placeholder="" value="{{old('quantity',$item->quantity)}}" />
                             </label>
                             @error('quantity')
-                            <div class="text-sm text-red-600">{{ $message }}</div>
+                                <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Загальна кількість</span>
+                                <input type="text" name="quantity_total"
+                                       class="block w-full mt-1 rounded-md"
+                                       placeholder="" value="{{old('quantity_total',$item->quantity_total)}}" />
+                            </label>
+                            @error('quantity_total')
+                                <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
                         <input type="hidden" name="sender_department_id" value="{{ $sender_department_id }}">

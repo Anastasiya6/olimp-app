@@ -46,7 +46,7 @@ class OrderController extends Controller
             })
                  ->pluck('report_application_statements.created_at', 'orders.id')
                  ->toArray(),
-            'title' => 'Замовлення']);
+            'title' => 'Розузловання']);
     }
 
     /**

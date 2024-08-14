@@ -19,15 +19,15 @@ class DesignationSearch extends Component
         $this->resetPage();
     }
 
-    public function render()
+    protected function designations()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
 
-        $searchTermChto = '%' . $this->searchTermChto . '%';
+        $searchTermChto = '%' . trim($this->searchTermChto) . '%';
 
         if($searchTerm!='%%' || $searchTermChto!='%%'){
 
-            $items = Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
+            return Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
                 $query->
                 where(function ($query) use ($searchTerm) {
                     $query->where('name', 'like', $searchTerm)
@@ -41,11 +41,17 @@ class DesignationSearch extends Component
 
 
         }else {
-            $items = Designation::where('type',0)
+            return Designation::where('type',0)
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
         }
-        $route = 'designations';
-        return view('livewire.designation-search',compact('items','route'));
+    }
+
+    public function render()
+    {
+        return view('livewire.designation-search',[
+            'items' => $this->designations(),
+            'route'=> 'designations'
+        ]);
     }
 }

@@ -46,17 +46,19 @@ class MaterialSearch extends Component
         }
 
     }
-
-    public function render()
+    protected function materials()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
-
-        $items = Material::where('name', 'like', $searchTerm)->orderBy('updated_at','desc')
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
+        return Material::where('name', 'like', $searchTerm)->orderBy('updated_at','desc')
             ->orWhere('code', 'like', '%' . $searchTerm . '%')
             ->with('unit')
             ->paginate(15);
-
-        $route = 'materials';
-        return view('livewire.material-search',compact('items','route'));
+    }
+    public function render()
+    {
+        return view('livewire.material-search',[
+            'items' => $this->materials(),
+            'route' => 'materials'
+        ]);
     }
 }

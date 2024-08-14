@@ -84,19 +84,20 @@ class DeliveryNoteService
 
         // Добавление данных таблицы
         foreach ($report_application_items as $item) {
+
             if($this->pdf->getY() >= 185) {
                 $this->pdf->Cell(0, 5, 'ЛИСТ '.$this->page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
                 $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
                 $this->page++;
             }
 
-            $this->pdf->MultiCell($this->width[0], $this->height, $item->designationEntry->designation??$item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[0], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[1], $this->height, $item->designationEntry->name??$item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[1], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[2], $this->height, $item->quantity_total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[3], $this->height, isset($delivery_notes_items[$item->designation_entry_id])?$delivery_notes_items[$item->designation_entry_id]:'', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, isset($delivery_notes_items[$item->designation_id])?$delivery_notes_items[$item->designation_id]:'', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }
@@ -124,8 +125,7 @@ class DeliveryNoteService
     {
         $firstQuery = PlanTask
             ::select(
-                'designation_entry_id as designation_id',
-                'designation_entry_id',
+                'designation_id as designation_id',
                 DB::raw('sum(quantity_total) as quantity_total'),
                 DB::raw('"" as quantity'))
             ->where('order_name_id',$this->order_name_id)
@@ -133,21 +133,20 @@ class DeliveryNoteService
             ->where('order_designationEntry_letters','!=','КР')
             ->where('sender_department_id', $this->sender_department)
             ->where('receiver_department_id', [$this->receiver_department])
-            ->groupBy('designation_entry_id')
+            ->groupBy('designation_id')
             //->havingRaw('sender_department_id = ?', [$this->sender_department])
            // ->havingRaw('receiver_department_id = ?', [$this->receiver_department])
-            ->with('designationEntry')
+            ->with('designation')
             ->get();
 
         $secondQuery = DeliveryNote::select(
             'designation_id as designation_id' ,
-            'designation_id as designation_entry_id' ,
             DB::raw('"" as quantity_total'),
             DB::raw('sum(quantity) as quantity')
         )
             ->where('order_name_id', $this->order_name_id)
             ->whereNotIn('designation_id', function($query) {
-                $query->select('designation_entry_id')
+                $query->select('designation_id')
                     ->from('plan_tasks');
             })
             ->where('sender_department_id', $this->sender_department)
@@ -159,8 +158,8 @@ class DeliveryNoteService
         $results = $firstQuery->concat($secondQuery);
 
         return $results->sortBy(function($item) {
-            if (isset($item->designationEntry)) {
-                return $item->designationEntry->designation;
+            if (isset($item->designation)) {
+                return $item->designation->designation;
             } elseif (isset($item->designation)) {
                 return $item->designation->designation;
             } else {

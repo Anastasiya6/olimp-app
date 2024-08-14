@@ -11,6 +11,7 @@ class OrderName extends Model
 
     protected $fillable = [
         'name',
-        'is_order'
+        'is_order',
+        'quantity'
     ];
 }

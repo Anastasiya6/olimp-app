@@ -19,10 +19,10 @@ use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
+use App\Http\Controllers\Admin\Report\PlanTaskDetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\PlanTaskSpecificationNormController;
 use App\Http\Controllers\Admin\Report\ReportWriteOffController;
 use App\Http\Controllers\Admin\Report\ReportWriteOffNoMaterialController;
-use App\Http\Controllers\Admin\Report\SpecificationDeliveryNoteController;
 use App\Http\Controllers\Admin\Report\SpecificationNormController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\WriteOffController;
@@ -78,6 +78,8 @@ Route::get('write-off-no-material/{order_name_id}/{start_date}/{end_date}/{sende
 Route::resource('order-names', OrderNameController::class);
 
 Route::get('plan-task-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
+Route::get('plan-task-detail-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskDetailSpecificationNormController::class,'planTaskDetailSpecificationNorm'])->name('plan-task.detail.specification.norm');
+
 Route::get('plan-task-all/{order_name_id}/{sender_department}/{receiver_department}', [PlanTaskController::class,'planTaskPdf'])->name('plan-tasks.all');
 
 Route::get('plan-task-export/{order_name_id}/{department}', [PlanTaskController::class,'exportExcel'])->name('plan-tasks.export');

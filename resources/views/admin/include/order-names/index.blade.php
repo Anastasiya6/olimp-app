@@ -22,6 +22,9 @@
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Назва замовлення</span>
                                 </th>
                                 <th class="bg-gray-50 px-3 py-3 text-center">
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Комплектів</span>
+                                </th>
+                                <th class="bg-gray-50 px-3 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Є замовленням</span>
                                 </th>
                                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
@@ -35,6 +38,9 @@
                                 <tr class="bg-white">
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>{{ $item->name??'' }}</strong>
+                                    </td>
+                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                        <strong>{{ $item->quantity??'' }}</strong>
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                         <strong>

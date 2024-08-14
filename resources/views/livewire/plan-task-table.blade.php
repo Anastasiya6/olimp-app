@@ -8,6 +8,9 @@
                 <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
                     Специфіковані норми у Pdf
                 </a>
+                <a style="text-decoration: underline;" href="{{ route('plan-task.detail.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
+                    Подетально-специфіковані норми у Pdf
+                </a>
                 <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Excel']) }}" target="_blank">
                     Специфіковані норми в Excel
                 </a>
@@ -103,10 +106,10 @@
                             <tr class="bg-white">
 
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->designations->designation??'' }}</strong>
+                                    <strong>{{ $item->designation->designation??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->designations->name??'' }}</strong>
+                                    <strong>{{ $item->designation->name??'' }}</strong>
                                 </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                                     <strong>{{ $item->quantity??'' }}</strong>

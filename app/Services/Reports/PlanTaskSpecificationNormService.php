@@ -77,15 +77,15 @@ class PlanTaskSpecificationNormService
 
         $records = $this->planTaskRepository->getByOrderDepartment($this->order_name_id,$this->sender_department_id);
 
-        $records = $this->materialService->material($records,1);
+        $records = $this->materialService->material($records,1,'material_id');
 
         if($type_report_in === 'Pdf'){
 
-            $this->getPdf($records->materials);
+            $this->getPdf($records);
 
         }elseif($type_report_in === 'Excel'){
 
-            return $this->getExcel($records->materials);
+            return $this->getExcel($records);
 
         }
 
@@ -99,6 +99,8 @@ class PlanTaskSpecificationNormService
 
         foreach ($materials as $item) {
 
+            //dd($item);
+
             $this->setNewList();
 
             $this->pdf->MultiCell($this->width[0], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
@@ -107,9 +109,9 @@ class PlanTaskSpecificationNormService
 
             $this->pdf->MultiCell($this->width[2], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['norm'].' * 1.2 = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['quantity_norm'].' * 1.2 = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? $item['norm'] * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? $item['quantity_norm'] * 1.2 : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[5], $this->height, $this->department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

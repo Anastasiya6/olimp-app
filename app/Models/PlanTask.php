@@ -30,7 +30,7 @@ class PlanTask extends Model
      *
      * @return BelongsTo
      */
-    public function designations(): BelongsTo
+    public function designation(): BelongsTo
     {
         return $this->belongsTo(Designation::class, 'designation_id');
     }

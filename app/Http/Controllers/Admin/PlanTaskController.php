@@ -35,16 +35,19 @@ class PlanTaskController extends Controller
     public function create($order_name_id,$sender_department_id,$receiver_department_id)
     {
         $order_number = '';
+        $order_name_quantity = 0;
         $order = OrderName
             ::where('id',$order_name_id)
             ->first();
 
         if(isset($order->name)){
             $order_number = $order->name;
+            $order_name_quantity = $order->quantity;
         }
 
         return view('administrator::include.plan-tasks.create',[
             'route' => $this->route,
+            'order_name_quantity' => $order_name_quantity,
             'order_name_id' => $order_name_id,
             'sender_department_id' => $sender_department_id,
             'receiver_department_id' => $receiver_department_id,

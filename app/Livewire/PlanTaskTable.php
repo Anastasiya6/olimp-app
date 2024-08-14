@@ -95,6 +95,17 @@ class PlanTaskTable extends Component
             ->groupBy('designation_entry_id', 'order_name_id','order_designationEntry', 'order_designationEntry_letters','category_code', 'tm')
             ->get();
 
+        $order = OrderName
+            ::where('id',$this->selectedOrder)
+            ->first();
+
+        $order_name_quantity = 0;
+
+        if(isset($order->quantity)){
+            $order_name_quantity = $order->quantity;
+        }
+        $order_name_quantity = $order_name_quantity == 0  ? 1 : $order_name_quantity;
+
        foreach($details as $detail){
 
            $attributes = [
@@ -106,8 +117,8 @@ class PlanTaskTable extends Component
 
            $values = [
                'category_code' => $detail->category_code,
-               'quantity' => $detail->quantity,
-               'quantity_total' => $detail->quantity_total,
+               'quantity' => $detail->quantity_total,
+               'quantity_total' => $detail->quantity_total * $order_name_quantity ,
                'tm' => $detail->tm,
                'sender_department_id' => $this->sender_department_id,
                'receiver_department_id' => $this->receiver_department_id,

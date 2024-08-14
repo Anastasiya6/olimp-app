@@ -14,6 +14,7 @@ class OrderNameService
     {
         OrderName::create([
             'name' => $request->name,
+            'quantity' => $request->quantity,
             'is_order' => $request->is_order,
         ]);
 
@@ -22,6 +23,7 @@ class OrderNameService
     public function update(Request $request, OrderName $orderName)
     {
         $orderName->name = $request->name;
+        $orderName->quantity = $request->quantity;
         $orderName->is_order = $request->is_order;
         $orderName->save();
 

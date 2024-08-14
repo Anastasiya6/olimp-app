@@ -12,7 +12,7 @@ class PlanTaskRepository implements PlanTaskRepositoryInterface
         return PlanTask
             ::where('order_name_id',$order_name_id)
             ->where('sender_department_id',$sender_department_id)
-            ->with('senderDepartment','designationEntry','designationMaterial.material')
+            ->with('designation','designationMaterial.material')
             ->get();
     }
 }

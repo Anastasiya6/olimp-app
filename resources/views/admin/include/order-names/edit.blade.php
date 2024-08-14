@@ -24,6 +24,17 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Комлектів</span>
+                                <input type="text" name="quantity"
+                                       class="block w-full mt-1 rounded-md"
+                                       placeholder="" value="{{old('quantity',$item->quantity)}}" />
+                            </label>
+                            @error('quantity')
+                                <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
                         @include('administrator::include.order-names.checkbox')
                         <x-primary-button type="submit">
                             Оновити

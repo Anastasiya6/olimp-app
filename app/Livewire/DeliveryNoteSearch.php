@@ -49,23 +49,22 @@ class DeliveryNoteSearch extends Component
     public function updateSearch()
     {
         $this->resetPage();
-
     }
 
-    public function render()
+    protected function deliveryNotes()
     {
         $searchTerm = '%' . trim($this->searchTerm) . '%';
 
         if ($searchTerm == '%%') {
 
-            $items = DeliveryNote
+            return DeliveryNote
                 ::with('orderName')
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
 
         } else {
 
-            $items = DeliveryNote
+            return DeliveryNote
                 ::whereHas('designation', function ($query) use ($searchTerm) {
                     $query->where('designation', 'like', $searchTerm)
                         ->orderByRaw("CAST(designation AS SIGNED)");
@@ -74,10 +73,12 @@ class DeliveryNoteSearch extends Component
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
         }
+    }
 
-
+    public function render()
+    {
         return view('livewire.delivery-note-search',[
-            'items'=>$items,
+            'items'=>$this->deliveryNotes(),
             'default_first_department' => Department::DEFAULT_FIRST_DEPARTMENT_ID,
             'default_second_department' => Department::DEFAULT_SECOND_DEPARTMENT_ID,
             'departments' => Department::whereIn('id',array(2,3,5))->get(),

@@ -17,6 +17,8 @@ class PlanTaskTable extends Component
 
     public $isProcessing = false;
 
+    public $searchTerm;
+
     #[Session]
     public $selectedOrder;
 
@@ -139,15 +141,34 @@ class PlanTaskTable extends Component
 
     protected function planTasks()
     {
-        return PlanTask
-            ::where('order_name_id', $this->selectedOrder)
-            ->where('sender_department_id', $this->sender_department_id)
-            ->where('receiver_department_id', $this->receiver_department_id)
-            ->with('designationEntry')
-            ->orderBy('updated_at','desc')
-            ->orderBy('order_designationEntry_letters')
-            ->orderBy('order_designationEntry')
-            ->paginate(25);;
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
+
+        if ($searchTerm == '%%') {
+            return PlanTask
+                ::where('order_name_id', $this->selectedOrder)
+                ->where('sender_department_id', $this->sender_department_id)
+                ->where('receiver_department_id', $this->receiver_department_id)
+                ->with('designationEntry')
+                ->orderBy('updated_at','desc')
+                ->orderBy('order_designationEntry_letters')
+                ->orderBy('order_designationEntry')
+                ->paginate(25);
+
+        }else{
+            return PlanTask
+                ::where('order_name_id', $this->selectedOrder)
+                ->where('sender_department_id', $this->sender_department_id)
+                ->where('receiver_department_id', $this->receiver_department_id)
+                ->whereHas('designation', function ($query) use ($searchTerm) {
+                    $query->where('designation', 'like', $searchTerm)
+                        ->orderByRaw("CAST(designation AS SIGNED)");
+                })
+                ->with('designationEntry')
+                ->orderBy('updated_at','desc')
+                ->orderBy('order_designationEntry_letters')
+                ->orderBy('order_designationEntry')
+                ->paginate(25);
+        }
     }
 
     public function render()

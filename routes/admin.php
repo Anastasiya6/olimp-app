@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderNameController;
 use App\Http\Controllers\Admin\PI0Controller;
 use App\Http\Controllers\Admin\PlanTaskController;
+use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\Report\ApplicationStatementController;
 use App\Http\Controllers\Admin\Report\DeliveryNoteController;
 use App\Http\Controllers\Admin\Report\DeliveryNoteDesignationController;
@@ -76,6 +77,8 @@ Route::get('write-off-no-material/{order_name_id}/{start_date}/{end_date}/{sende
 
 //Route::get('write-off/{items}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
 Route::resource('order-names', OrderNameController::class);
+
+Route::resource('purchases', PurchaseController::class);
 
 Route::get('plan-task-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
 Route::get('plan-task-detail-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskDetailSpecificationNormController::class,'planTaskDetailSpecificationNorm'])->name('plan-task.detail.specification.norm');

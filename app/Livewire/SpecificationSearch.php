@@ -42,10 +42,9 @@ class SpecificationSearch extends Component
     public function updateSearch()
     {
         $this->resetPage();
-
     }
 
-    public function render()
+    protected function specifications()
     {
         if ($this->exactMatch) {
             $searchTerm = '%' . trim($this->searchTerm);
@@ -57,20 +56,35 @@ class SpecificationSearch extends Component
         }
 
         if ($searchTerm == '%%' && $searchTermChto == '%%') {
-            $specifications = Specification::with('designations', 'designationEntry')
+            return Specification::with('designations', 'designationEntry')
                 ->orderBy('updated_at', 'desc')
+                ->with('designations', 'designationEntry')
                 ->paginate(25);
         } else {
-            $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
-                $query->where('designation', 'like', $searchTerm)
-                    ->orderByRaw("CAST(designation AS SIGNED)");
-            })
-                ->whereHas('designationEntry', function ($query) use ($searchTermChto) {
-                    $query->where('designation', 'like', $searchTermChto)
-                        ->orderByRaw("CAST(designation AS SIGNED)");
-                })
+
+            return Specification
+                ::join('designations as designations','specifications.designation_id', '=', 'designations.id')
+                ->join('designations as designationsEntry','specifications.designation_entry_id', '=', 'designationsEntry.id')
+                ->where('designations.designation', 'like', $searchTerm)
+                ->where('designationsEntry.designation', 'like', $searchTermChto)
+                ->select('specifications.*')
+                ->orderBy('designations.designation')
+                ->orderBy('designationsEntry.designation')
                 ->paginate(25);
+            /* $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
+                 $query->where('designation', 'like', $searchTerm);
+             })
+                 ->whereHas('designationEntry', function ($query) use ($searchTermChto) {
+                     $query->where('designation', 'like', $searchTermChto);
+                 })
+                 ->with('designations', 'designationEntry')
+                 ->paginate(25);*/
         }
-        return view('livewire.specification-search',compact('specifications'));
+    }
+
+    public function render()
+    {
+
+        return view('livewire.specification-search',['specifications' => $this->specifications()]);
     }
 }

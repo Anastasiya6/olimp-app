@@ -70,6 +70,7 @@ class SpecificationSearch extends Component
                 ->select('specifications.*')
                 ->orderBy('designations.designation')
                 ->orderBy('designationsEntry.designation')
+                ->with('designations', 'designationEntry')
                 ->paginate(25);
             /* $specifications = Specification::whereHas('designations', function ($query) use ($searchTerm) {
                  $query->where('designation', 'like', $searchTerm);

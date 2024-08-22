@@ -152,8 +152,8 @@ class PlanTaskSpecificationNormService
             $sheet->setCellValue('A' . $row, $item['code_1c']);
             $sheet->setCellValue('B' . $row, $item['material']);
             $sheet->setCellValue('C' . $row, $item['unit']);
-            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['norm'].' * 1.2 = ' : $item['norm']);
-            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['norm'] * 1.2 : '');
+            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['quantity_norm'].' * 1.2 = ' : $item['norm']);
+            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm'] * 1.2 : '');
             $sheet->setCellValue('F' . $row, $this->department_number);
             $row++;
         }

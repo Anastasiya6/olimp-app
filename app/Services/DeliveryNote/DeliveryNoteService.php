@@ -43,6 +43,7 @@ class DeliveryNoteService
       //  dd($request);
         $deliveryNote->sender_department_id = $request->sender_department_id;
         $deliveryNote->document_number = $request->document_number;
+        $deliveryNote->document_date = $request->document_date;
         $deliveryNote->receiver_department_id = $request->receiver_department_id;
         $deliveryNote->order_name_id = $request->order_name_id;
         $deliveryNote->quantity = $request->quantity;

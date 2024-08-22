@@ -20,6 +20,20 @@ class DesignationSearchDropdown extends Component
 
     public $selectedDesignationId = 0;
 
+    public $designation_name = 'designation';
+
+    public $designation_title = 'designation';
+
+    public $designation_hidden = 'designation_id';
+
+    public function mount($designation_hidden,$designation_name,$designation_title)
+    {
+        $this->designation_hidden = $designation_hidden;
+
+        $this->designation_name = $designation_name;
+
+        $this->designation_title = $designation_title;
+    }
 
     public function searchResult()
     {
@@ -31,7 +45,7 @@ class DesignationSearchDropdown extends Component
         }
 
         $designations =
-            Designation::where('designation', 'like', '%'. $this->search .'%')
+            Designation::where('designation', 'like', '%'. trim($this->search) .'%')
                 ->orderBy('designation')
                 ->take(6)->get();
 
@@ -42,7 +56,6 @@ class DesignationSearchDropdown extends Component
 
     public function selectSearch($designation_id,$designation,$name)
     {
-        Log::info('selectSearch');
         $this->selectedDesignation = $designation;
         $this->selectedName = $name;
         $this->selectedDesignationId = $designation_id;

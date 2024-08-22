@@ -101,7 +101,6 @@ class SpecificationSearchDropdown extends Component
 
     public function selectSearch($designation,$name)
     {
-        Log::info('selectSearch');
         $this->selectedDesignation = $designation;
         $this->selectedName = $name;
         $this->searchResults = [];

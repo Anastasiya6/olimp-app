@@ -26,6 +26,15 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
+                                <span class="text-gray-700">Дата документа</span>
+                                <input type="date" name="document_date" value="{{old('document_date',\Carbon\Carbon::parse($item->document_date)->format('Y-m-d') ?? \Carbon\Carbon::now()->format('Y-m-d'))}}" class="block w-full mt-1 rounded-md"/>
+                            </label>
+                            @error('document_date')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-6">
+                            <label class="block">
                                 <span class="text-gray-700">Деталь</span>
                                 <input type="text" name="designation"
                                        class="block w-full mt-1 rounded-md" readonly

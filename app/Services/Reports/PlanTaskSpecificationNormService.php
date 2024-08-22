@@ -57,7 +57,7 @@ class PlanTaskSpecificationNormService
 
     public MaterialService $materialService;
 
-    public function __construct(PlanTaskRepositoryInterface $planTaskRepository,OrderNameRepositoryInterface $orderNameRepository, MaterialService $service)
+    public function __construct(PlanTaskRepositoryInterface $planTaskRepository, OrderNameRepositoryInterface $orderNameRepository, MaterialService $service)
     {
         $this->planTaskRepository = $planTaskRepository;
 

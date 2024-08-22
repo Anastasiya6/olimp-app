@@ -3,16 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DesignationMaterialCreateRequest;
 use App\Http\Requests\DesignationMaterialUpdateRequest;
 use App\Models\Department;
-use App\Models\Designation;
 use App\Models\DesignationMaterial;
-use App\Models\Material;
-use App\Models\ReportApplicationStatement;
-use App\Models\Specification;
 use App\Services\DesignationMaterial\DesignationMaterialService;
-use Illuminate\Http\Request;
 
 class DesignationMaterialController extends Controller
 {
@@ -51,7 +45,6 @@ class DesignationMaterialController extends Controller
      */
     public function store(DesignationMaterialUpdateRequest $request, DesignationMaterialService $service)
     {
-        //dd($request);
         $service->store($request);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 

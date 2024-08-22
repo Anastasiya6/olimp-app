@@ -44,7 +44,7 @@ class WriteOffNoMaterialService
 
     public OrderName $order;
 
-    public $selectedItems;
+    public $selectedItems = [];
 
     private OrderNameRepositoryInterface $orderNameRepository;
 

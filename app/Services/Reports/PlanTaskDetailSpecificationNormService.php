@@ -6,8 +6,6 @@ use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
 use App\Services\HelpService\MaterialService;
 use App\Services\HelpService\PDFService;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PlanTaskDetailSpecificationNormService
 {
@@ -48,7 +46,7 @@ class PlanTaskDetailSpecificationNormService
 
     public MaterialService $materialService;
 
-    public function __construct(PlanTaskRepositoryInterface $planTaskRepository,OrderNameRepositoryInterface $orderNameRepository, MaterialService $service)
+    public function __construct(PlanTaskRepositoryInterface $planTaskRepository, OrderNameRepositoryInterface $orderNameRepository, MaterialService $service)
     {
         $this->planTaskRepository = $planTaskRepository;
 

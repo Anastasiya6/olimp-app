@@ -11,32 +11,28 @@
                 <div class="p-6 bg-white border-b border-gray-200 max-w-lg w-full lg:max-w-xs">
                     <form method="POST" action="{{ route($route.'.store') }}">
                         @csrf
-                        <livewire:designation-search-dropdown :designation_hidden="'designation_id'" :designation_title="'Деталь'" :designation_name="'designation'"/>
+                        <livewire:designation-search-dropdown :designation_hidden="'designation_id'" :designation_title="'Куди'" :designation_name="'designation'"/>
 
-                        <livewire:material-search-dropdown :material_id="null" :material_name="null"/>
+                        <livewire:designation-search-dropdown :designation_hidden="'designation_entry_id'" :designation_title="'Що'" :designation_name="'designation_entry'"/>
 
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Норма</span>
-                                <input type="text" name="norm" class="block w-full mt-1 rounded-md" placeholder=""
-                                       value="{{ old('norm') }}" />
+                                <span class="text-gray-700">Покупна</span>
+                                <input type="text" name="purchase" class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ old('purchase') }}" />
                             </label>
-                            @error('norm')
+                            @error('purchase')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Виберіть цех</span>
-                                <select name="department_id" class="block w-full mt-1 rounded-md">
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}"  @if($department->number==$default_department) selected @endif>
-                                            {{ $department->number }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <span class="text-gray-700">Кількість</span>
+                                <input type="text" name="quantity" class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ old('quantity') }}" />
                             </label>
-                            @error('department_id')
+                            @error('quantity')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

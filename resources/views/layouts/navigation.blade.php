@@ -76,6 +76,9 @@
                         <x-dropdown-link wire:navigate :href="route('order-names.index')">
                             {{ __('Замовлення') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('purchases.index')">
+                            {{ __('Покупні') }}
+                        </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('specification-logs.index')">
                             {{ __('Зміни у специфікації') }}
                         </x-dropdown-link>

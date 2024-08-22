@@ -34,12 +34,12 @@
                 </ul>
             @endif
         </div>
-        <input type="hidden" name="designation_id" value="{{ $selectedDesignationId }}">
+        <input type="hidden" name="{{$designation_hidden}}" value="{{ $selectedDesignationId }}">
         <div>
             <div class="mb-6">
                 <label class="block">
-                    <span class="text-gray-700">Деталь</span>
-                    <input type="text" readonly name="designation" class="block w-full mt-1 rounded-md" placeholder=""
+                    <span class="text-gray-700">{{$designation_title}}</span>
+                    <input type="text" readonly name="{{$designation_name}}" class="block w-full mt-1 rounded-md" placeholder=""
                            value="{{$selectedDesignation}}" />
                 </label>
                 @error('designation')

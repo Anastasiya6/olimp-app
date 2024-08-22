@@ -12,7 +12,7 @@ class WriteOffService
 {
     public $width = array(16,23,35,40,10,15,30,50,10,35,20);
 
-    public $width1 = array(50,230);
+    public $width1 = array(50,150,50);
 
     public $height = 10;
 
@@ -43,10 +43,12 @@ class WriteOffService
     public $header3 = [
         'Номер деталі',
         'Назва деталі',
+        'Кількість'
   ];
     public $header4 = [
         '',
         '',
+        ''
  ];
     public $pdf = null;
 
@@ -72,7 +74,7 @@ class WriteOffService
 
     private OrderNameRepositoryInterface $orderNameRepository;
 
-    public function __construct( OrderNameRepositoryInterface $orderNameRepository, MaterialService $service )
+    public function __construct(OrderNameRepositoryInterface $orderNameRepository, MaterialService $service )
     {
         $this->orderNameRepository = $orderNameRepository;
 
@@ -136,6 +138,8 @@ class WriteOffService
             $this->pdf->MultiCell($this->width1[0], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width1[1], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width1[1], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }

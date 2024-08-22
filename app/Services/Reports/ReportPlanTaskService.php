@@ -49,7 +49,7 @@ class ReportPlanTaskService
            // dd($plan_task);
             $this->pdf->Cell($this->width[0], $this->height, $item->designation->designation);
             $this->pdf->Cell($this->width[1], $this->height, $item->designation->name);
-            $this->pdf->Cell($this->width[2], $this->height, $item->quantity_total);
+            $this->pdf->Cell($this->width[2], $this->height, $item->quantity);
             $this->pdf->Cell($this->width[3], $this->height, $item->orderName->name);
             $this->pdf->Cell($this->width[4], $this->height, $item->senderDepartment->number);
             $this->pdf->Cell($this->width[5], $this->height, $item->receiverDepartment->number);

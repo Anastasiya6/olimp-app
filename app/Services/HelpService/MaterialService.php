@@ -27,7 +27,7 @@ class MaterialService
 
             $array_material = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1);
 
-            $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_material);
+            $this->fillMaterials($item->materials,$item->designation->designation,/*$item->quantity*/1,$array_material);
 
             $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased);
 

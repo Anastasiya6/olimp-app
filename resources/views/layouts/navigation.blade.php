@@ -29,6 +29,9 @@
                 <x-nav-link align="right" width="48" :href="route('order-names.index')">
                     {{ __('Замовлення') }}
                 </x-nav-link>
+                <x-nav-link align="right" width="48" :href="route('orders.index')">
+                    {{ __('Розузловання') }}
+                </x-nav-link>
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
@@ -43,20 +46,17 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('specifications.index')">
-                            {{ __('M0020') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('group-materials.index')">
-                            {{ __('Матеріалокомплекти') }}
-                        </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('designations.index')">
                             {{ __('Вироби') }}
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('pi0s.index')">
                             {{ __('ПИ0') }}
                         </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('orders.index')">
-                            {{ __('Розузловування') }}
+                        <x-dropdown-link wire:navigate :href="route('group-materials.index')">
+                            {{ __('Матеріалокомплекти') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('specifications.index')">
+                            {{ __('M0020') }}
                         </x-dropdown-link>
                         <!-- Authentication -->
                         {{--<form method="POST" action="{{ route('logout') }}">

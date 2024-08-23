@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Report;
 use App\Http\Controllers\Controller;
 use App\Services\Reports\DeliveryNotePlanService;
 
-class DeliveryNoteController extends Controller
+class DeliveryNotePlanController extends Controller
 {
     public function deliveryNotePlan($sender_department,$receiver_department,$order_name_id,DeliveryNotePlanService $service)
     {

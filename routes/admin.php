@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DeliveryNoteController;
 use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DesignationMaterialController;
 use App\Http\Controllers\Admin\DesignationTreeController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\Admin\PI0Controller;
 use App\Http\Controllers\Admin\PlanTaskController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\Report\ApplicationStatementController;
-use App\Http\Controllers\Admin\Report\DeliveryNoteController;
+use App\Http\Controllers\Admin\Report\DeliveryNotePlanController;
 use App\Http\Controllers\Admin\Report\DeliveryNoteDesignationController;
 use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
@@ -89,5 +90,7 @@ Route::get('plan-task-export/{order_name_id}/{department}', [PlanTaskController:
 
 
 Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
-Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNoteController::class,'deliveryNote'])->name('delivery.notes');
+Route::get('delivery-note-plan/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNotePlanController::class,'deliveryNotePlan'])->name('delivery.notes.plan');
+Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNoteController::class,'deliveryNotePlan'])->name('delivery.notes');
+
 Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('delivery.notes.designation');

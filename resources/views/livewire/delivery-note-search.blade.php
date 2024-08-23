@@ -33,8 +33,21 @@
                 </option>
             @endforeach
         </select>
-        <a target="_blank" href="{{ route('delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-            Сформувати звіт
+        <label class="inline-flex items-center" for="departmentCheckbox">Номер документа</label>
+
+        <select wire:model.change="selectedDocumentNumber" style="width: 100px"
+                class="block rounded-md">
+            @foreach($document_numbers as $document_number)
+                <option value="{{ $document_number->document_number }}">
+                    {{ $document_number->document_number }}
+                </option>
+            @endforeach
+        </select>
+        {{--<a target="_blank" href="{{ route('delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+            Здаточні по номеру докум.
+        </a>--}}
+        <a target="_blank" href="{{ route('delivery.notes.plan', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+            Порівняння з планом
         </a>
 
      {{--   <a href="{{ route('specification.delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_number' => $selectedOrder]) }}" class="underline-link" target="_blank">

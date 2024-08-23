@@ -4,8 +4,8 @@ namespace App\Livewire;
 
 use App\Models\DeliveryNote;
 use App\Models\Department;
-use App\Models\Order;
 use App\Models\OrderName;
+use Livewire\Attributes\Session;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,11 +15,17 @@ class DeliveryNoteSearch extends Component
 
     public $searchTerm;
 
+    #[Session]
     public $selectedDepartmentSender;
 
+    #[Session]
     public $selectedDepartmentReceiver;
 
+    #[Session]
     public $selectedOrder;
+
+    #[Session]
+    public $selectedDocumentNumber;
 
     public $route = 'delivery-notes';
 
@@ -32,9 +38,13 @@ class DeliveryNoteSearch extends Component
                 $this->selectedOrder = $order_first->id;
             }
         }
-        $this->selectedDepartmentSender = Department::DEFAULT_FIRST_DEPARTMENT_ID;
 
-        $this->selectedDepartmentReceiver = Department::DEFAULT_SECOND_DEPARTMENT_ID;
+        if(!$this->selectedDepartmentSender) {
+            $this->selectedDepartmentSender = Department::DEFAULT_FIRST_DEPARTMENT_ID;
+        }
+        if(!$this->selectedDepartmentReceiver) {
+            $this->selectedDepartmentReceiver = Department::DEFAULT_SECOND_DEPARTMENT_ID;
+        }
     }
 
     public function deleteDeliveryNote($id)
@@ -49,6 +59,19 @@ class DeliveryNoteSearch extends Component
     public function updateSearch()
     {
         $this->resetPage();
+    }
+
+    protected function departments()
+    {
+        return Department::whereIn('id',array(2,3,5))->get();
+    }
+
+    protected function documentNumbers()
+    {
+        return DeliveryNote::select('document_number')
+            ->where('order_name_id', $this->selectedOrder)
+            ->distinct()
+            ->get();
     }
 
     protected function deliveryNotes()
@@ -82,6 +105,7 @@ class DeliveryNoteSearch extends Component
             'default_first_department' => Department::DEFAULT_FIRST_DEPARTMENT_ID,
             'default_second_department' => Department::DEFAULT_SECOND_DEPARTMENT_ID,
             'departments' => Department::whereIn('id',array(2,3,5))->get(),
+            'document_numbers' => $this->documentNumbers(),
             'order_names' => OrderName::where('is_order',1)->orderBy('name')->get()
         ]);
     }

@@ -11,7 +11,7 @@ use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;
 use Illuminate\Support\Facades\DB;
 
-class DeliveryNoteService
+class DeliveryNotePlanService
 {
     public $width = array(70,100,40,40,10,10);
 

@@ -38,6 +38,19 @@ class MaterialService
         return $this->sortByGroup($records);
     }
 
+    public function getTypeMaterial($type)
+    {
+        if($type == 'purchase'){
+
+            return ["", 1];
+
+        }else{
+
+            return ["* 1.2",1.2];
+
+        }
+    }
+
     private function checkMaterial($designationMaterial,$designation_id, $designation_entry_id, $with_purchased,$quantity)
     {
         if($with_purchased == 1) {
@@ -60,6 +73,7 @@ class MaterialService
             foreach ($designationMaterial as $material) {
 
                 return [
+                    'type' => 'material',
                     'material_id' => $material->material->id,
                     'material' => $material->material->name,
                     'norm' => $material->norm,
@@ -78,6 +92,7 @@ class MaterialService
         if ($purchase) {
 
             return [
+                'type' => 'purchase',
                 'material_id' => $purchase->purchase,
                 'material' => $purchase->purchase,
                 'norm' => 1,
@@ -108,6 +123,7 @@ class MaterialService
 
                     if($this->type_report == 0) {
                         $materials->push((object)[
+                            'type' => $type,
                             'detail' => $specification->designationEntry->designation,
                             'material' => $specification->designationEntry->designation,
                             'norm' => $specification->quantity,
@@ -116,6 +132,7 @@ class MaterialService
                         ]);
                     }elseif($this->type_report == 1) {
                         $this->all_materials[] = array(
+                            'type' => $type,
                             'detail' => $specification->designationEntry->designation,
                             'material_id' => $specification->designationEntry->id . $type,
                             'material' => $specification->designationEntry->designation,
@@ -144,6 +161,7 @@ class MaterialService
         }
         if($this->type_report == 1) {
             $this->all_materials[] = array(
+                'type' => $array_material['type'],
                 'detail' => $designation,
                 'material' => $array_material['material'],
                 'material_id' => $array_material['material_id'],
@@ -156,6 +174,7 @@ class MaterialService
         }elseif($this->type_report == 0) {
 
             $materials->push((object)[
+                'type' => $array_material['type'],
                 'detail' => $designation,
                 'material' => $array_material['material'],
                 'quantity' => $quantity,
@@ -177,6 +196,7 @@ class MaterialService
             if($this->type_group == 'material_id'){
                 return $records->groupBy('material_id')->map(function ($group) {
                     return [
+                        'type' => $group->first()['type'],
                         'material_id' => $group->first()['material_id'],
                         'code_1c' => $group->first()['code_1c'],
                         'material' => $group->first()['material'],
@@ -198,6 +218,7 @@ class MaterialService
                         // Возвращаем детали для каждой детали в группе
                         return [
                             'id' => $details->first()['material_id'],
+                            'type' => $details->first()['type'],
                             'material' => $details->first()['material'],
                             'detail' => $details->first()['detail'],
                             'quantity_norm' => $details->sum('quantity_norm'),

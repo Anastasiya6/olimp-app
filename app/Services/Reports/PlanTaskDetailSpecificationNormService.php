@@ -95,15 +95,17 @@ class PlanTaskDetailSpecificationNormService
             $this->setNewList();
             foreach($group as $item) {
 
+                list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type']);
+
                 $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 $this->pdf->MultiCell($this->width[1], $this->height, $item['detail'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 $this->pdf->MultiCell($this->width[2], $this->height, $item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                $this->pdf->MultiCell($this->width[3], $this->height, $item['quantity_norm'] . ' * 1.2 = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[3], $this->height, $item['quantity_norm'] . $multiplier_str . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                $this->pdf->MultiCell($this->width[4], $this->height, $item['quantity_norm'] * 1.2 , 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[4], $this->height, $item['quantity_norm'] * $multiplier , 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 $this->pdf->MultiCell($this->width[5], $this->height, $this->department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

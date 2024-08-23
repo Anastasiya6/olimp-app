@@ -147,16 +147,17 @@ class DeliveryNoteService
             ->where('order_name_id', $this->order_name_id)
             ->whereNotIn('designation_id', function($query) {
                 $query->select('designation_id')
-                    ->from('plan_tasks');
+                    ->from('plan_tasks')
+                    ->where('order_name_id',$this->order_name_id);
             })
             ->where('sender_department_id', $this->sender_department)
             ->where('receiver_department_id', $this->receiver_department)
             ->groupBy('designation_id')
             ->with('designation')
             ->get();
-        //dd($secondQuery);
-        $results = $firstQuery->concat($secondQuery);
 
+        $results = $firstQuery->concat($secondQuery);
+        //dd($firstQuery,$secondQuery,$results);
         return $results->sortBy(function($item) {
             if (isset($item->designation)) {
                 return $item->designation->designation;

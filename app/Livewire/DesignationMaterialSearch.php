@@ -23,7 +23,7 @@ class DesignationMaterialSearch extends Component
         session()->flash('message', 'Запис успішно видалено.');
     }
 
-    public function render()
+    protected function designationMaterials()
     {
         $searchTerm = '%' . trim($this->searchTerm) . '%';
 
@@ -31,23 +31,29 @@ class DesignationMaterialSearch extends Component
 
         if($searchTerm!='%%' || $searchTermMaterial!='%%'){
 
-            $items = DesignationMaterial::whereHas('designation', function ($query) use ($searchTerm) {
+            return DesignationMaterial::whereHas('designation', function ($query) use ($searchTerm) {
                 $query->where('designation', 'like', "%$searchTerm%");
             })
                 ->whereHas('material', function ($query) use ($searchTermMaterial) {
                     $query->where('name', 'like', "%$searchTermMaterial%");
                 })
                 ->orderBy('updated_at','desc')
+                ->with('designation','material','department')
                 ->paginate(50);
 
         }else{
 
-            $items = DesignationMaterial
+            return DesignationMaterial
                 ::orderBy('updated_at','desc')
+                ->with('designation','material','department')
                 ->paginate(50);
         }
+    }
 
-        $route = 'designation-materials';
-        return view('livewire.designation-material-search',compact('items','route'));
+    public function render()
+    {
+        return view('livewire.designation-material-search',[
+            'items' => $this->designationMaterials(),
+            'route' => 'designation-materials']);
     }
 }

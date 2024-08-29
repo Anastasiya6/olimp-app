@@ -83,7 +83,7 @@ class DeliveryNoteSearch extends Component
         if ($searchTerm == '%%') {
 
             return DeliveryNote
-                ::with('orderName')
+                ::with('orderName','senderDepartment','receiverDepartment','designation')
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
 
@@ -94,7 +94,7 @@ class DeliveryNoteSearch extends Component
                     $query->where('designation', 'like', $searchTerm)
                         ->orderByRaw("CAST(designation AS SIGNED)");
                 })
-                ->with('orderName')
+                ->with('orderName','senderDepartment','receiverDepartment','designation')
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
         }

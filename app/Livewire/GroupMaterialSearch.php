@@ -21,16 +21,22 @@ class GroupMaterialSearch extends Component
         session()->flash('message', 'Запис успішно видалено.');
     }
 
+    protected function groupMaterials()
+    {
+        $searchTerm = '%' . trim($this->searchTerm) . '%';
+
+        return $items = GroupMaterial::whereHas('material', function ($query) use ($searchTerm) {
+            $query->where('name', 'like', $searchTerm)
+                ->orderBy("name");
+        })->with('material','materialEntry')
+            ->paginate(25);
+    }
+
     public function render()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
-
-        $items = GroupMaterial::whereHas('material', function ($query) use ($searchTerm) {
-                $query->where('name', 'like', $searchTerm)
-                    ->orderBy("name");
-                })->paginate(25);
-
-        $route = 'group-materials';
-        return view('livewire.group-material-search',compact('items','route'));
+        return view('livewire.group-material-search',[
+            'items' => $this->groupMaterials(),
+            'route' => 'group-materials'
+        ]);
     }
 }

@@ -25,7 +25,7 @@ class DeliveryNoteSearch extends Component
     public $selectedOrder;
 
     #[Session]
-    public $selectedDocumentNumber;
+    public $selectedDocumentDate;
 
     public $route = 'delivery-notes';
 
@@ -42,8 +42,13 @@ class DeliveryNoteSearch extends Component
         if(!$this->selectedDepartmentSender) {
             $this->selectedDepartmentSender = Department::DEFAULT_FIRST_DEPARTMENT_ID;
         }
+
         if(!$this->selectedDepartmentReceiver) {
             $this->selectedDepartmentReceiver = Department::DEFAULT_SECOND_DEPARTMENT_ID;
+        }
+
+        if(!$this->selectedDocumentDate){
+            $this->selectedDocumentDate = \Carbon\Carbon::now()->format('Y-m-d');
         }
     }
 
@@ -66,12 +71,9 @@ class DeliveryNoteSearch extends Component
         return Department::whereIn('id',array(2,3,5))->get();
     }
 
-    protected function documentNumbers()
+    protected function documentDate()
     {
-        return DeliveryNote::select('document_number')
-            ->where('order_name_id', $this->selectedOrder)
-            ->distinct()
-            ->get();
+        return $this->selectedDocumentDate ?? \Carbon\Carbon::now()->format('Y-m-d');
     }
 
     protected function deliveryNotes()
@@ -105,7 +107,7 @@ class DeliveryNoteSearch extends Component
             'default_first_department' => Department::DEFAULT_FIRST_DEPARTMENT_ID,
             'default_second_department' => Department::DEFAULT_SECOND_DEPARTMENT_ID,
             'departments' => Department::whereIn('id',array(2,3,5))->get(),
-            'document_numbers' => $this->documentNumbers(),
+            'document_date' => $this->documentDate(),
             'order_names' => OrderName::where('is_order',1)->orderBy('name')->get()
         ]);
     }

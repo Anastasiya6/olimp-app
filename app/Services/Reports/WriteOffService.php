@@ -3,7 +3,6 @@
 namespace App\Services\Reports;
 use App\Models\DeliveryNote;
 use App\Models\OrderName;
-use App\Models\Specification;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\MaterialService;
 use App\Services\HelpService\PDFService;
@@ -207,9 +206,9 @@ class WriteOffService
 
                     $this->pdf->MultiCell($this->width[8], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[9], $this->height, $norm->sort == 0 ? $norm->norm .' * '.$norm->quantity.' * '. $item->quantity. $multiplier_str . ' = ' : $norm->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[9], $this->height, $norm->sort == 0 ? $norm->norm .' * '.$norm->quantity.' * '. $item->quantity. $multiplier_str . ' = ' : $norm->norm .' * '. $item->quantity . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[10], $this->height, $norm->sort == 0 ? $norm->norm * $norm->quantity * $item->quantity * $multiplier : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[10], $this->height, $norm->sort == 0 ? $norm->norm * $norm->quantity * $item->quantity * $multiplier : $norm->norm * $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }

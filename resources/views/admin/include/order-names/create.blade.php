@@ -24,7 +24,7 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Комплектів</span>
+                                <span class="text-gray-700">Кількість комлектів</span>
                                 <input type="text" name="quantity"
                                        class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('quantity')}}" />

@@ -22,7 +22,7 @@
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Назва замовлення</span>
                                 </th>
                                 <th class="bg-gray-50 px-3 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Комплектів</span>
+                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кількість комлектів</span>
                                 </th>
                                 <th class="bg-gray-50 px-3 py-3 text-center">
                                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Є замовленням</span>

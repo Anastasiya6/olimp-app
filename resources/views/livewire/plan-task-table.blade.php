@@ -17,7 +17,7 @@
             </div>
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-6 px-6">
 
-                <label for="exactMatchCheckbox">Вибрати замовлення</label>
+                <label for="exactMatchCheckbox">Замовлення</label>
                 <select wire:model="selectedOrder" style="width: 150px" wire:change="updateSearch" id="exactMatchCheckbox" name="order_id" class="block w-full mt-1 rounded-md">
                     @foreach($order_names as $order_name)
                         <option value="{{ $order_name->id }}">

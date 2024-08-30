@@ -91,14 +91,14 @@ class WriteOffSearch extends Component
         $this->dispatch('close-modal',name:'viewLog');
     }
 
-    public function render()
+    protected function deliveryNotes()
     {
         $items = DeliveryNote::withFilters( $this->startDate,
-                                            $this->endDate,
-                                            $this->selectedOrder,
-                                            $this->selectedDepartmentSender,
-                                            $this->selectedDepartmentReceiver)
-            ->with('designationMaterial.material')
+            $this->endDate,
+            $this->selectedOrder,
+            $this->selectedDepartmentSender,
+            $this->selectedDepartmentReceiver)
+            ->with('designationMaterial.material','designation','orderName','senderDepartment','receiverDepartment')
             ->orderBy('document_number')
             ->get();
 
@@ -114,12 +114,17 @@ class WriteOffSearch extends Component
             }
             $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty());
             if($item->material && $this->flag == 0){
-               $this->selectedItems[] = $item->id;
+                $this->selectedItems[] = $item->id;
             }
         }
 
+        return $items;
+    }
+
+    public function render()
+    {
         return view('livewire.write-off-search',[
-            'items'=>$items,
+            'items'=>$this->deliveryNotes(),
             'default_first_department' => Department::DEFAULT_FIRST_DEPARTMENT_ID,
             'default_second_department' => Department::DEFAULT_SECOND_DEPARTMENT_ID,
             'departments' => Department::whereIn('id',array(2,3,5))->get(),

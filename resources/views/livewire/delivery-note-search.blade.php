@@ -50,7 +50,7 @@
         </label>
 
         <a target="_blank" href="{{ route('delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder, 'document_date' => $selectedDocumentDate ]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-            Здаточні по номеру докум.
+            Здаточні по даті докум.
         </a>
         <a target="_blank" href="{{ route('delivery.notes.plan', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
             Порівняння з планом

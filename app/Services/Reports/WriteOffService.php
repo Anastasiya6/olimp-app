@@ -132,7 +132,7 @@ class WriteOffService
     {
         foreach ($records as $item) {
 
-            $this->setNewList();
+            $this->setNewList($this->header3,$this->header4,$this->width1);
 
             $this->pdf->MultiCell($this->width1[0], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -151,7 +151,7 @@ class WriteOffService
     {
         foreach ($records as $item) {
 
-            $this->setNewList();
+            $this->setNewList($this->header1,$this->header2,$this->width);
 
             $this->pdf->MultiCell($this->width[0], $this->height, $item->document_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -177,7 +177,7 @@ class WriteOffService
 
                     $first++;
 
-                    $this->setNewList();
+                    $this->setNewList($this->header1,$this->header2,$this->width);
 
                     if ($first > 1) {
 
@@ -220,11 +220,11 @@ class WriteOffService
         $this->pdf->Output('write_off_delivery_note_'.$this->order->name.'.pdf', 'I');
     }
 
-    private function setNewList()
+    private function setNewList($header1, $header2,$width)
     {
         if($this->pdf->getY() >= 180) {
             $this->pdf->Cell(0, 10, 'ЛИСТ '.$this->page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
-            $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
+            $this->pdf = PDFService::getHeaderPdf($this->pdf, $header1, $header2, $width);
             $this->page++;
         }
     }
@@ -251,7 +251,7 @@ class WriteOffService
 
         foreach ($materials as $item) {
 
-            $this->setNewList();
+            $this->setNewList($this->header1,$this->header2,$this->width);
 
             list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type']);
 

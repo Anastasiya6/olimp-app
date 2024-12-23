@@ -130,7 +130,7 @@ class MaterialService
                         $materials->push((object)[
                             'type' => $type,
                             'detail' => $specification->designationEntry->designation,
-                            'material' => $specification->designationEntry->designation,
+                            'material' => $specification->designationEntry->name,
                             'norm' => $specification->quantity,
                             'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                             'sort' => $type == 'kr' ? 1 : 2
@@ -140,7 +140,7 @@ class MaterialService
                             'type' => $type,
                             'detail' => $specification->designationEntry->designation,
                             'material_id' => $specification->designationEntry->id . $type,
-                            'material' => $specification->designationEntry->designation,
+                            'material' => $specification->designationEntry->name,
                             'norm' => $specification->quantity,
                             'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
                             'code_1c' => '',

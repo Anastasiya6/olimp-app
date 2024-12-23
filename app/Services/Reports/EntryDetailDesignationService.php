@@ -66,9 +66,41 @@ class EntryDetailDesignationService
 
         $this->node($designation->id,0,1);
 
+        $this->addFooter();
+
         $pdf_path = storage_path('app/public/entry_detail_'.$designation->designation.'.pdf');
         // $this->pdf->Output($pdf_path, 'F');
         $this->pdf->Output($pdf_path, 'I');
+    }
+
+    public function addFooter(){
+
+        $this->addEmptyString(3);
+
+        $this->pdf->MultiCell($this->width[0], $this->height, 'ТЕХНОЛОГ ЦЕХУ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+        $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+        $this->pdf->Ln();
+
+        $this->addEmptyString(2);
+
+        $this->pdf->MultiCell($this->width[0], $this->height, 'НАЧАЛЬНИК ЦЕХУ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+        $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+    }
+
+    public function addEmptyString($count){
+
+        for($i=1;$i<$count;$i++) {
+
+            $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->Ln();
+        }
     }
 
     public function node($designation_id,$level,$quantity_node,$route=0,$tm_last=0,$designation='',$designation_name='',$pred_quantity_node=0)

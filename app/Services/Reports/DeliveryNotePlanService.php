@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class DeliveryNotePlanService
 {
-    public $width = array(70,100,40,40,10,10);
+    public $width = array(60,100,40,40,40,10,10);
 
     public $height = 10;
 
@@ -21,11 +21,13 @@ class DeliveryNotePlanService
     // Заголовок таблицы
     public $header1 = ['Номер деталі',
                         'Найменування деталі',
-                        'К-ть по',
+                        'Застосовність',
+                        'Загальна',
                         'К-ть по'];
     public $header2 = ['',
                         '',
-                        'плану',
+                        '',
+                        'к-ть',
                         'здаточним'];
     public $pdf = null;
 
@@ -95,9 +97,11 @@ class DeliveryNotePlanService
 
             $this->pdf->MultiCell($this->width[1], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[2], $this->height, $item->quantity_total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[3], $this->height, isset($delivery_notes_items[$item->designation_id])?$delivery_notes_items[$item->designation_id]:'', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item->quantity_total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width[5], $this->height, isset($delivery_notes_items[$item->designation_id])?$delivery_notes_items[$item->designation_id]:'', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }
@@ -126,14 +130,16 @@ class DeliveryNotePlanService
         $firstQuery = PlanTask
             ::select(
                 'designation_id as designation_id',
-                DB::raw('sum(quantity_total) as quantity_total'),
-                DB::raw('"" as quantity'))
+                'quantity_total',
+                'quantity')
+              //  DB::raw('sum(quantity_total) as quantity_total'),
+                //DB::raw('sum(quantity) as quantity'))
             ->where('order_name_id',$this->order_name_id)
             ->where('order_designationEntry_letters','!=','ПИ')
             ->where('order_designationEntry_letters','!=','КР')
             ->where('sender_department_id', $this->sender_department)
             ->where('receiver_department_id', [$this->receiver_department])
-            ->groupBy('designation_id')
+            //->groupBy('designation_id')
             //->havingRaw('sender_department_id = ?', [$this->sender_department])
            // ->havingRaw('receiver_department_id = ?', [$this->receiver_department])
             ->with('designation')
@@ -157,7 +163,7 @@ class DeliveryNotePlanService
             ->get();
 
         $results = $firstQuery->concat($secondQuery);
-        //dd($firstQuery,$secondQuery,$results);
+
         return $results->sortBy(function($item) {
             if (isset($item->designation)) {
                 return $item->designation->designation;

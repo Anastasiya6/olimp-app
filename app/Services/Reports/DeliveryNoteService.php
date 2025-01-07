@@ -78,6 +78,8 @@ class DeliveryNoteService
 
         $delivery_notes_items = $this->getDeliveryNotesItems();
 
+      //  dd($delivery_notes_items);
+
         $this->getPdf($delivery_notes_items,$delivery_notes_items);
 
     }
@@ -102,7 +104,7 @@ class DeliveryNoteService
 
             $this->pdf->MultiCell($this->width[2], $this->height, $item->document_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[3], $this->height, \Carbon\Carbon::parse($item->document_number)->format('d.m.Y'), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, \Carbon\Carbon::parse($item->document_date)->format('d.m.Y'), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[4], $this->height, $item->orderName->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\DeliveryNote;
 use App\Models\Department;
+use App\Models\Designation;
 use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\Specification;
@@ -112,10 +113,18 @@ class WriteOffSearch extends Component
             if($item->designationMaterial->isEmpty()){
                 $item->material = 0;
             }
-            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty());
-            if($item->material && $this->flag == 0){
+            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty(),1);
+          //  Log::info('WriteOff');
+            //Log::info(print_r($item,1));
+            $item->designationName = $item->material['designation_entry_id'];
+            if($item->material['status'] == 1 && $this->flag == 0){
+
                 $this->selectedItems[] = $item->id;
+            }elseif($item->designationName ){
+                $name = Designation::where('id',$item->designationName)->first();
+                $item->designationName = $name->designation??"";//$item->designation->name;
             }
+            $item->material = $item->material['status'];
         }
 
         return $items;

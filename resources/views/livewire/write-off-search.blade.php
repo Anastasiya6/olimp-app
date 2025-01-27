@@ -128,6 +128,7 @@
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
                         <strong>
                             <div class="py-4">
+                                <p>{{$item->designationName}}</p>
                                 <input type="checkbox" disabled  name="material" @if($item->material) checked @endif id="exactMatchCheckbox" value="1">
                             </div>
                         </strong>

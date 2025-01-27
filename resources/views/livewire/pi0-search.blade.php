@@ -29,6 +29,9 @@
                 <th class="bg-gray-50 px-6 py-3 text-left">
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Од.вимір.</span>
                 </th>
+                <th class="bg-gray-50 px-6 py-3 text-left">
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Код 1С</span>
+                </th>
                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                 </th>
             </tr>
@@ -49,6 +52,9 @@
                     </td>
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->unit->unit??'' }}</strong>
+                    </td>
+                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
+                        <strong>{{ $item->code_1c??'' }}</strong>
                     </td>
                     <td class="px-16 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                         <a href="{{ route('pi0s.edit', $item) }}"

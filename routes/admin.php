@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DeliveryNoteController;
 use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DesignationMaterialController;
 use App\Http\Controllers\Admin\DesignationTreeController;
+use App\Http\Controllers\Admin\ExpressionController;
 use App\Http\Controllers\Admin\GroupMaterialController;
 use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Admin\Report\DeliveryNoteDesignationController;
 use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
+use App\Http\Controllers\Admin\Report\NotInApplicationStatement;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
 use App\Http\Controllers\Admin\Report\PlanTaskDetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\PlanTaskSpecificationNormController;
@@ -77,6 +79,7 @@ Route::get('entry-detail/{order_name_id}', [EntryDetailController::class,'entryD
 Route::get('entry-detail-designation/{designation_number}/{department}', [EntryDetailDesignationController::class,'entryDetailDesignation'])->name('entry.detail.designation');
 Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}/{type_report}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
 Route::get('write-off-no-material/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}', [ReportWriteOffNoMaterialController::class,'writeOffNoMaterial'])->name('report.write.off.no.material');
+Route::get('not-in-application-statement', [NotInApplicationStatement::class,'notInApplicationStatement'])->name('report.not.in.application.statement');
 
 //Route::get('write-off/{items}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
 Route::resource('order-names', OrderNameController::class);
@@ -95,4 +98,5 @@ Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMate
 Route::get('delivery-note-plan/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNotePlanController::class,'deliveryNotePlan'])->name('delivery.notes.plan');
 Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}/{document_date}', [DeliveryNoteDocumentController::class,'deliveryNote'])->name('delivery.notes');
 
+Route::post('/check-brackets', [ExpressionController::class, 'checkBrackets']);
 Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('delivery.notes.designation');

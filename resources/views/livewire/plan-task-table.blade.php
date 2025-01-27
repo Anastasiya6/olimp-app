@@ -70,6 +70,9 @@
                     <table class="min-w-full border divide-y divide-gray-200">
                         <thead>
                         <tr>
+                            <th class="bg-gray-50 px-6 py-3 text-left">
+                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Мате-ріал</span>
+                            </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Деталь</span>
                             </th>
@@ -77,7 +80,7 @@
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Найменування деталі</span>
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кіл-ть</span>
+                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Застосовність</span>
                             </th>
                             <th class="bg-gray-50 px-3 py-3 text-center">
                                 <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Загальна кіл-ть</span>
@@ -106,7 +109,13 @@
 
                         @foreach($items as $item)
                             <tr class="bg-white">
-
+                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                                    <strong>
+                                        <div class="py-4">
+                                            <input type="checkbox" disabled  name="material" @if($item->material) checked @endif id="exactMatchCheckbox" value="1">
+                                        </div>
+                                    </strong>
+                                </td>
                                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                                     <strong>{{ $item->designation->designation??'' }}</strong>
                                 </td>
@@ -156,8 +165,8 @@
                         @endforeach
                         </tbody>
                     </table>
-                    <div class="py-4">
-                        {{ $items->appends(request()->input())->links() }}
+                   <div class="py-4">
+                         {{ $items->appends(request()->input())->links() }}
                     </div>
                 </div>
             </div>

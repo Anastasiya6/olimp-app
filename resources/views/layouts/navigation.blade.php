@@ -125,9 +125,9 @@
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('purchases.index')">
                             {{ __('Покупні деталі в здаточних') }}
-                            <x-dropdown-link wire:navigate :href="route('plan-tasks.index')">
-                                {{ __('План') }}
-                            </x-dropdown-link>
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('plan-tasks.index')">
+                            {{ __('План') }}
                         </x-dropdown-link>
                         <!-- Authentication -->
                         {{--<form method="POST" action="{{ route('logout') }}">

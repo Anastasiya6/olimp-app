@@ -19,7 +19,8 @@ class Designation extends Model
         'designation_number',
         'designation_from_rascex',
         'designation_from_excel',
-        'type_unit_id'
+        'type_unit_id',
+        'code_1с'
     ];
     // Включите временные метки
     public $timestamps = true;
@@ -28,12 +29,6 @@ class Designation extends Model
     {
         return $this->belongsTo(TypeUnit::class, 'type_unit_id');
     }
-
-    // Дети текущего элемента (исходящие связи)
-    /*public function childrenSpecifications()
-    {
-        return $this->hasMany(Specification::class, 'designation_id');
-    }*/
 
     // Дети текущего элемента через модель Designation
     public function children()
@@ -51,13 +46,6 @@ class Designation extends Model
     {
         return $this->hasMany(DesignationMaterial::class, 'designation_id','id');
     }
-
-
-    // Родители текущего элемента (входящие связи)
-   /* public function parentSpecifications()
-    {
-        return $this->hasMany(Specification::class, 'designation_entry_id');
-    }*/
 
     // Родители текущего элемента через модель Designation
     public function parents()

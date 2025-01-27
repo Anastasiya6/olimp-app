@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 use App\Models\Designation;
 use App\Models\PlanTask;
+use App\Services\HelpService\NoMaterialService;
 use App\Services\HelpService\PDFService;
 
 class ReportPlanTaskService
@@ -12,16 +13,18 @@ class ReportPlanTaskService
 
     public $max_height = 10;
 
-    public $width = array(60,100,30,30,30,30);
+    public $width = array(10,60,100,30,30,25,25);
 
-    public $header1 = [ 'Номер',
+    public $header1 = [ 'Є',
+                        'Номер',
                         'Найменування',
                         "К-ть",
                         'Замовлення',
                         'Цех',
                         'Цех'
                     ];
-    public $header2 = [ 'деталі',
+    public $header2 = [ 'матер.',
+                        'деталі',
                         'деталі',
                         "",
                         '',
@@ -39,20 +42,26 @@ class ReportPlanTaskService
         $plan_tasks = PlanTask
             ::where('order_name_id', $order_name_id)
             ->where('sender_department_id', $sender_department)
-            ->where('receiver_department_id', $receiver_department)
+            //->where('receiver_department_id', $receiver_department)
             ->with('designationEntry')
             ->orderBy('order_designationEntry_letters')
             ->orderBy('order_designationEntry')
             ->get();
+
         foreach ($plan_tasks as $item) {
-           //this->newList();
-           // dd($plan_task);
-            $this->pdf->Cell($this->width[0], $this->height, $item->designation->designation);
-            $this->pdf->Cell($this->width[1], $this->height, $item->designation->name);
-            $this->pdf->Cell($this->width[2], $this->height, $item->quantity);
-            $this->pdf->Cell($this->width[3], $this->height, $item->orderName->name);
-            $this->pdf->Cell($this->width[4], $this->height, $item->senderDepartment->number);
-            $this->pdf->Cell($this->width[5], $this->height, $item->receiverDepartment->number);
+
+            if($item->designationMaterial->isEmpty()){
+                $item->material = 0;
+            }
+            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty());
+
+            $this->pdf->Cell($this->width[0], $this->height, $item->material == 0 ? '-': '+');
+            $this->pdf->Cell($this->width[1], $this->height, $item->designation->designation);
+            $this->pdf->Cell($this->width[2], $this->height, $item->designation->name);
+            $this->pdf->Cell($this->width[3], $this->height, $item->quantity);
+            $this->pdf->Cell($this->width[4], $this->height, $item->orderName->name);
+            $this->pdf->Cell($this->width[5], $this->height, $item->senderDepartment->number);
+            $this->pdf->Cell($this->width[6], $this->height, $item->receiverDepartment->number);
             $this->pdf->Ln();
 
         }

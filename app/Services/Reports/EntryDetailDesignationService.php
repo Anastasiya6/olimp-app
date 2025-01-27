@@ -75,19 +75,27 @@ class EntryDetailDesignationService
 
     public function addFooter(){
 
-        $this->addEmptyString(3);
-
-        $this->pdf->MultiCell($this->width[0], $this->height, 'ТЕХНОЛОГ ЦЕХУ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-
+        //$this->pdf->Ln();
+        $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
         $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+        $this->pdf->MultiCell($this->width[2], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+        $this->pdf->MultiCell($this->width[3], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+        $this->pdf->MultiCell($this->width[4], $this->height, 'ТЕХНОЛОГ ЦЕХУ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+        $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
         $this->pdf->Ln();
 
-        $this->addEmptyString(2);
-
-        $this->pdf->MultiCell($this->width[0], $this->height, 'НАЧАЛЬНИК ЦЕХУ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-
+        $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
         $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+        $this->pdf->MultiCell($this->width[2], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+        $this->pdf->MultiCell($this->width[3], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+
+        $this->pdf->MultiCell($this->width[4], $this->height, 'НАЧАЛЬНИК ЦЕХУ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+        $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
     }
 

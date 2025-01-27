@@ -132,6 +132,7 @@ class MaterialService
                             'detail' => $specification->designationEntry->designation,
                             'material' => $specification->designationEntry->name,
                             'norm' => $specification->quantity,
+                            'code_1c' => $specification->designationEntry->code_1c ,
                             'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                             'sort' => $type == 'kr' ? 1 : 2
                         ]);
@@ -143,7 +144,7 @@ class MaterialService
                             'material' => $specification->designationEntry->name,
                             'norm' => $specification->quantity,
                             'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
-                            'code_1c' => '',
+                            'code_1c' => $specification->designationEntry->code_1c ,
                             'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                             'sort' => $type == 'kr' ? 1 : 2);
                        // dd($this->all_materials);

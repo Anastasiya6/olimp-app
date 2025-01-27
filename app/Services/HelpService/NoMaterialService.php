@@ -28,9 +28,10 @@ class NoMaterialService
         }else{
 
             if (!$material) {
-                return 0;
+                return 0;//['status' => 0, 'designation_entry_id' => $designation_id];
             }
         }
-        return 1;
+        return 1;//['status' => 1, 'designation_entry_id' => null];
     }
+
 }

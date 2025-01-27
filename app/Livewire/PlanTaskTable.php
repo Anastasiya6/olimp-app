@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Models\DeliveryNote;
 use App\Models\Department;
 use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\ReportApplicationStatement;
+use App\Services\HelpService\NoMaterialService;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 use App\Models\PlanTask;
@@ -37,6 +39,10 @@ class PlanTaskTable extends Component
     public $default_department = Department::DEFAULT_DEPARTMENT;
 
     public $route = 'plan-tasks';
+
+    public $flag = 0;
+
+    //public $selectedItems = [];
 
     public function mount()
     {
@@ -82,6 +88,8 @@ class PlanTaskTable extends Component
 
     public function updateSearch()
     {
+        $this->flag = 0;
+
         $this->resetPage();
     }
 
@@ -138,8 +146,30 @@ class PlanTaskTable extends Component
         $this->dispatch('close-modal',name:'viewLog');
 
     }
-
+/**/
     protected function planTasks()
+    {
+        $items = $this->getPlanTasks();
+
+        /*if($this->flag == 0){
+            $this->selectedItems = [];
+        }*/
+        foreach($items as $item){
+
+            $item->material = 1;
+
+            if($item->designationMaterial->isEmpty()){
+                $item->material = 0;
+            }
+            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty());
+            /*if($item->material && $this->flag == 0){
+                $this->selectedItems[] = $item->id;
+            }*/
+        }
+        return $items;
+    }
+
+    protected function getPlanTasks()
     {
         $searchTerm = '%' . trim($this->searchTerm) . '%';
 
@@ -152,6 +182,7 @@ class PlanTaskTable extends Component
                 ->orderBy('updated_at','desc')
                 ->orderBy('order_designationEntry_letters')
                 ->orderBy('order_designationEntry')
+                //->get();
                 ->paginate(25);
 
         }else{
@@ -167,6 +198,7 @@ class PlanTaskTable extends Component
                 ->orderBy('updated_at','desc')
                 ->orderBy('order_designationEntry_letters')
                 ->orderBy('order_designationEntry')
+                //->get();
                 ->paginate(25);
         }
     }

@@ -39,13 +39,14 @@ class PI0Controller extends Controller
      */
     public function store(DesignationCreateRequest $request)
     {
-        $designation = Designation::create([
-            'designation' => $request->designation,
-            'name' => $request->name,
-            'gost' => $request->gost,
-            'type' => 1,
-            'type_unit_id' => $request->type_unit_id,
-        ]);
+        $designation = new Designation();
+        $designation->designation = $request->designation;
+        $designation->name = $request->name;
+        $designation->gost = $request->gost;
+        $designation->type = 1;
+        $designation->type_unit_id = $request->type_unit_id;
+        $designation->code_1c = $request->code_1c;
+        $designation->save();
 
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
@@ -85,6 +86,7 @@ class PI0Controller extends Controller
         $pi0->name = $request->name;
         $pi0->gost = $request->gost;
         $pi0->type_unit_id = $request->type_unit_id;
+        $pi0->code_1c = $request->code_1c;
         $pi0->save();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 

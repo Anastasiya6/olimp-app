@@ -3,7 +3,10 @@
 namespace App\Services\Reports;
 
 use App\Models\DeliveryNote;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
+use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;
+use Illuminate\Support\Facades\Log;
 
 class NotInApplicationStatementService
 {
@@ -26,22 +29,46 @@ class NotInApplicationStatementService
 
     public $pdf = null;
 
-    public function notInApplicationStatement()
+    private $orderNameRepository;
+
+    private $departmentRepository;
+
+    public $sender_department_number;
+
+    public $order_name_id;
+
+    public function __construct(DepartmentRepositoryInterface $departmentRepository, OrderNameRepositoryInterface $orderNameRepository)
     {
+        $this->orderNameRepository = $orderNameRepository;
+
+        $this->departmentRepository = $departmentRepository;
+    }
+
+    public function notInApplicationStatement($sender_department, $order_name_id)
+    {
+        $this->order_name_id = $this->orderNameRepository->getByOrderFirst($order_name_id)?->id;
+
+        $this->sender_department_number = $this->departmentRepository->getByDepartmentFirst($sender_department)?->id;
+
+        if(!$this->order_name_id || !$this->sender_department_number){
+            exit;
+        }
+
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Відсутні у відомості застосування');
+
         $records = DeliveryNote::select('designation_id', 'designations.designation','designations.name','order_names.name as order_name')
             ->distinct() // Унікальні записи
             ->join('order_names', 'order_names.id', '=', 'delivery_notes.order_name_id') // JOIN з order_names
             ->join('designations', 'designations.id', '=', 'delivery_notes.designation_id')
+            ->where('order_names.id',$this->order_name_id)
+            ->where('sender_department_id', $this->sender_department_number)
             ->whereNotIn('designation_id', function ($query) {
                 $query->select('designation_entry_id')
                     ->from('report_application_statements'); // Підзапит
             })
-            ->orderBy('order_names.name') // Сортування за іменем
             ->orderBy('designations.designation')
-            ->orderBy('designation_id') // Сортування за designation_id
             ->get();
-       // dd($records);
+
         foreach ($records as $record) {
 
             $this->pdf->Cell($this->width[0], $this->height, $record->designation);

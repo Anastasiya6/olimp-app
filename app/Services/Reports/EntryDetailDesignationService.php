@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 use App\Models\Specification;
 use App\Services\HelpService\PDFService;
+use App\Services\HelpService\SpecificationService;
 use App\Services\HelpService\StatementService;
 
 class EntryDetailDesignationService
@@ -138,7 +139,7 @@ class EntryDetailDesignationService
 
                 $tm = StatementService::getTm($specification);
 
-                $route = $this->getRoute($specification,$tm);
+                $route = SpecificationService::getRoute($specification,$tm,$this->department);
 
                 if($route == 0 || $route == $this->department) {
 
@@ -241,18 +242,6 @@ class EntryDetailDesignationService
             $this->pdf->Cell(0, 5, $this->department_str.' '.'ЛИСТ ' . $this->page, 0, 1, 'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
             $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
             $this->page++;
-        }
-    }
-    private function getRoute($specification,$tm)
-    {
-        if (str_starts_with($specification->designationEntry->designation, 'КР') || $specification->designationEntry->type == 1) {
-            // Строка начинается с 'КР' или это ПИ0
-
-            return $this->department == 0 ? 0 : substr($tm, -2);
-
-        }else {
-
-            return $this->department == 0 ? 0 : substr($specification->designationEntry->route, 0, 2);
         }
     }
 }

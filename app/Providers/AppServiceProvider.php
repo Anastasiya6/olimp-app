@@ -6,6 +6,8 @@ use App\Models\DesignationMaterial;
 use App\Models\Specification;
 use App\Observers\DesignationMaterialObserver;
 use App\Observers\SpecificationObserver;
+use App\Repositories\DepartmentRepository;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
 use App\Repositories\Interfaces\ReportApplicationStatementRepositoryInterface;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ReportApplicationStatementRepositoryInterface::class, ReportApplicationStatementRepository::class);
         $this->app->bind(PlanTaskRepositoryInterface::class, PlanTaskRepository::class);
         $this->app->bind(OrderNameRepositoryInterface::class, OrderNameRepository::class);
+        $this->app->bind(DepartmentRepositoryInterface::class, DepartmentRepository::class);
 
 
     }

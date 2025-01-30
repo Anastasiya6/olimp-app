@@ -11,7 +11,7 @@ class WriteOffService
 {
     public $width = array(16,23,35,40,10,15,30,50,10,35,20);
 
-    public $width1 = array(50,150,50);
+    public $width1 = array(16,50,150,50);
 
     public $height = 10;
 
@@ -40,11 +40,13 @@ class WriteOffService
                         '',
                         ''];
     public $header3 = [
+        'Номер',
         'Номер деталі',
         'Назва деталі',
         'Кількість'
   ];
     public $header4 = [
+        'докумен.',
         '',
         '',
         ''
@@ -80,7 +82,7 @@ class WriteOffService
         $this->materialService = $service;
     }
 
-    public function writeOff($ids,$order_name_id,$start_date,$end_date,$sender_department,$receiver_department,$type_report = 0)
+    public function writeOff($ids,$order_name_id,$start_date,$end_date,$sender_department_id,$receiver_department_id,$type_report = 0)
     {
         $this->ids = json_decode($ids);
 
@@ -92,9 +94,9 @@ class WriteOffService
 
         $this->end_date = $end_date;
 
-        $this->sender_department_id = $sender_department;
+        $this->sender_department_id = $sender_department_id;
 
-        $this->receiver_department_id = $receiver_department;
+        $this->receiver_department_id = $receiver_department_id;
 
         $records = $this->getRecords();
 
@@ -134,11 +136,13 @@ class WriteOffService
 
             $this->setNewList($this->header3,$this->header4,$this->width1);
 
-            $this->pdf->MultiCell($this->width1[0], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width1[0], $this->height, $item->document_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width1[1], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width1[1], $this->height, $item->designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width1[1], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width1[2], $this->height, $item->designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width1[3], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }
@@ -171,8 +175,9 @@ class WriteOffService
 
             if($item->materials) {
 
-                $materials = $item->materials->sortBy('material')->sortBy('sort');
 
+                $materials = $item->materials->sortBy('material')->sortBy('sort');
+               // dd($materials);
                 foreach ($materials as $norm) {
 
                     $first++;
@@ -237,7 +242,7 @@ class WriteOffService
             ->with('designationMaterial.material','orderName')
             ->get();
 
-        return $this->materialService->material($records,$this->type_report,'material_id');
+        return $this->materialService->material($records,$this->type_report,$this->sender_department_id,'material_id');
 
     }
 

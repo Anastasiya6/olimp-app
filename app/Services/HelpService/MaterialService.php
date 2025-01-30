@@ -4,6 +4,8 @@ namespace App\Services\HelpService;
 
 use App\Models\Purchase;
 use App\Models\Specification;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
 class MaterialService
 {
@@ -13,8 +15,20 @@ class MaterialService
 
     public $type_group = null;
 
-    public function material($records,$type_report,$type_group = null)
+    public $sender_department_number;
+
+    private DepartmentRepositoryInterface $departmentRepository;
+
+    public function __construct(DepartmentRepositoryInterface $departmentRepository)
     {
+        $this->departmentRepository = $departmentRepository;
+
+    }
+
+    public function material($records,$type_report,$sender_department_id,$type_group = null)
+    {
+        $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($sender_department_id)?->number;
+
         $this->type_report = $type_report;
 
         $this->all_materials = [];
@@ -22,6 +36,9 @@ class MaterialService
         $this->type_group = $type_group;
 
         foreach($records as $item){
+
+        //    if($item->material)
+               // dd($item);
 
             $item->materials = collect();
 
@@ -71,7 +88,7 @@ class MaterialService
     {
         $array = array();
         if($designationMaterial->isNotEmpty()) {
-
+               // dd($designationMaterial);
             foreach ($designationMaterial as $material) {
                 $array[] = [
                     'type' => 'material',
@@ -113,6 +130,7 @@ class MaterialService
     {
         $specifications = Specification
             ::where('designation_id', $designation_id)
+            ->join('designations', 'designations.id', '=', 'designation_entry_id')
             ->with(['designations', 'designationEntry', 'designationMaterial.material.unit'])
             ->get();
 
@@ -120,34 +138,40 @@ class MaterialService
 
             foreach ($specifications as $specification) {
 
-                if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
-                    if($this->type_group == 'detail'){
-                        continue;
-                    }
-                    $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
+                $tm = StatementService::getTm($specification);
 
-                    if($this->type_report == 0) {
-                        $materials->push((object)[
-                            'type' => $type,
-                            'detail' => $specification->designationEntry->designation,
-                            'material' => $specification->designationEntry->name,
-                            'norm' => $specification->quantity,
-                            'code_1c' => $specification->designationEntry->code_1c ,
-                            'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                            'sort' => $type == 'kr' ? 1 : 2
-                        ]);
-                    }elseif($this->type_report == 1) {
-                        $this->all_materials[] = array(
-                            'type' => $type,
-                            'detail' => $specification->designationEntry->designation,
-                            'material_id' => $specification->designationEntry->id . $type,
-                            'material' => $specification->designationEntry->name,
-                            'norm' => $specification->quantity,
-                            'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
-                            'code_1c' => $specification->designationEntry->code_1c ,
-                            'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                            'sort' => $type == 'kr' ? 1 : 2);
-                       // dd($this->all_materials);
+                $route = SpecificationService::getRoute($specification,$tm,$this->sender_department_number);
+
+                if($route == 0 || $route == $this->sender_department_number) {
+                    if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
+                        if ($this->type_group == 'detail') {
+                            continue;
+                        }
+                        $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
+
+                        if ($this->type_report == 0) {
+                            $materials->push((object)[
+                                'type' => $type,
+                                'detail' => $specification->designationEntry->designation,
+                                'material' => $specification->designationEntry->name,
+                                'norm' => $specification->quantity,
+                                'code_1c' => $specification->designationEntry->code_1c,
+                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                'sort' => $type == 'kr' ? 1 : 2
+                            ]);
+                        } elseif ($this->type_report == 1) {
+                            $this->all_materials[] = array(
+                                'type' => $type,
+                                'detail' => $specification->designationEntry->designation,
+                                'material_id' => $specification->designationEntry->id . $type,
+                                'material' => $specification->designationEntry->name,
+                                'norm' => $specification->quantity,
+                                'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
+                                'code_1c' => $specification->designationEntry->code_1c,
+                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                'sort' => $type == 'kr' ? 1 : 2);
+
+                        }
                     }
                 }
 
@@ -245,5 +269,17 @@ class MaterialService
             }
         }
         return $records;
+    }
+    private function getRoute($specification,$tm)
+    {
+        if (str_starts_with($specification->designationEntry->designation, 'КР') || $specification->designationEntry->type == 1) {
+            // Строка начинается с 'КР' или это ПИ0
+
+            return $this->sender_department_number == 0 ? 0 : substr($tm, -2);
+
+        }else {
+
+            return $this->sender_department_number == 0 ? 0 : substr($specification->designationEntry->route, 0, 2);
+        }
     }
 }

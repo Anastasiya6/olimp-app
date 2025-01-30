@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\ReportApplicationStatement;
 use App\Services\HelpService\NoMaterialService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 use App\Models\PlanTask;
@@ -151,9 +152,8 @@ class PlanTaskTable extends Component
     {
         $items = $this->getPlanTasks();
 
-        /*if($this->flag == 0){
-            $this->selectedItems = [];
-        }*/
+        $selected_department_number = Department::where('id',$this->sender_department_id)->first()?->number;
+
         foreach($items as $item){
 
             $item->material = 1;
@@ -161,10 +161,8 @@ class PlanTaskTable extends Component
             if($item->designationMaterial->isEmpty()){
                 $item->material = 0;
             }
-            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty());
-            /*if($item->material && $this->flag == 0){
-                $this->selectedItems[] = $item->id;
-            }*/
+            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty(),1,$selected_department_number);
+
         }
         return $items;
     }

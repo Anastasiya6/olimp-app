@@ -7,9 +7,9 @@ use App\Services\Reports\NotInApplicationStatementService;
 
 class NotInApplicationStatement extends Controller
 {
-    public function notInApplicationStatement(NotInApplicationStatementService $service){
+    public function notInApplicationStatement($sender_department, $order_name_id,  NotInApplicationStatementService $service){
 
-        $service->notInApplicationStatement();
+        $service->notInApplicationStatement( $sender_department, $order_name_id);
 
     }
 

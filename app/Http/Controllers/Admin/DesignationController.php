@@ -37,11 +37,12 @@ class DesignationController extends Controller
      */
     public function store(DesignationCreateRequest $request)
     {
-        $designation = Designation::create([
-            'designation' => $request->designation,
-            'name' => $request->name,
-            'route' => $request->route,
-        ]);
+        $designation = new Designation();
+        $designation->designation = $request->designation;
+        $designation->name = $request->name;
+        $designation->route = $request->route;
+        $designation->code_1c = $request->code_1c;
+        $designation->save();
 
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
@@ -79,6 +80,7 @@ class DesignationController extends Controller
         $designation->designation = $request->designation;
         $designation->name = $request->name;
         $designation->route = $request->route;
+        $designation->code_1c = $request->code_1c;
         $designation->save();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 

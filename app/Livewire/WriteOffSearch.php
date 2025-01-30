@@ -106,6 +106,8 @@ class WriteOffSearch extends Component
         if($this->flag == 0){
             $this->selectedItems = [];
         }
+        $selected_department_number = Department::where('id',$this->selectedDepartmentSender)->first()?->number;
+
         foreach($items as $item){
 
             $item->material = 1;
@@ -113,9 +115,8 @@ class WriteOffSearch extends Component
             if($item->designationMaterial->isEmpty()){
                 $item->material = 0;
             }
-            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty(),1);
-          //  Log::info('WriteOff');
-            //Log::info(print_r($item,1));
+            $item->material = NoMaterialService::noMaterial($item->designation_id,$item->designationMaterial->isNotEmpty(),1,$selected_department_number);
+
             $item->designationName = $item->material['designation_entry_id'];
             if($item->material['status'] == 1 && $this->flag == 0){
 

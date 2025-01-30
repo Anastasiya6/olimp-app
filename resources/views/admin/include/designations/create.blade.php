@@ -41,6 +41,16 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Код 1С</span>
+                                <input type="text" name="code_1c" class="block w-full mt-1 rounded-md" placeholder=""
+                                       value="{{ old('code_1c') }}" />
+                            </label>
+                            @error('code_1c')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <x-primary-button type="submit">
                             Зберегти
                         </x-primary-button>

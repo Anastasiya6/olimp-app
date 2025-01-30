@@ -66,7 +66,7 @@ class PlanTaskDetailSpecificationNormService
 
         $records = $this->planTaskRepository->getByOrderDepartment($this->order_name_id,$this->sender_department_id);
 
-        $records = $this->materialService->material($records,1,'detail');
+        $records = $this->materialService->material($records,1,$this->sender_department_id,'detail');
 
         if($type_report_in === 'Pdf'){
 

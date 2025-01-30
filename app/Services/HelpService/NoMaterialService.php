@@ -13,13 +13,13 @@ class NoMaterialService
             ::where('designation_id', $designation_id)
             ->with(['designations', 'designationEntry', 'designationMaterial'])
             ->get();
-        $test= new Test();
+        /*$test= new Test();
         $test->designation_id = $designation_id;
         $test->material = $material;
         $test->type = $type;
         $test->route = $sender_department_number;
         $test->comment = $specifications->isNotEmpty() ? 1 : 0;
-        $test->save();
+        $test->save();*/
 
         if ($specifications->isNotEmpty()) {
             foreach ($specifications as $specification) {

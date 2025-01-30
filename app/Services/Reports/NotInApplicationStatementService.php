@@ -48,7 +48,7 @@ class NotInApplicationStatementService
     {
         $this->order_name_id = $this->orderNameRepository->getByOrderFirst($order_name_id)?->id;
 
-        $this->sender_department_number = $this->departmentRepository->getByDepartmentFirst($sender_department)?->id;
+        $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($sender_department)?->id;
 
         if(!$this->order_name_id || !$this->sender_department_number){
             exit;

@@ -30,8 +30,8 @@ class DesignationSearch extends Component
             return Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
                 $query->
                 where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', $searchTerm)
-                        ->orWhereNull('name');
+                    $query->where('name', 'like', $searchTerm);
+                       // ->orWhereNull('name');
                 })
                     ->where('designation', 'like', $searchTermChto)
                     ->where('type', 0)

@@ -38,9 +38,9 @@ class ApplicationStatementService
 
     public $page = 2;
 
-    public function applicationStatement($filter,$order_name_id)
+    public function applicationStatement($filter,$order_name_id,$department)
     {
-        $data =  ApplicationStatementPrintService::queryAppStatement($filter,$order_name_id);
+        $data =  ApplicationStatementPrintService::queryAppStatement($filter,$order_name_id,$department);
 
 
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'');

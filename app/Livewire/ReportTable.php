@@ -11,7 +11,7 @@ use Livewire\Component;
 
 class ReportTable extends Component
 {
-    public $selectedDepartment;
+    public $selectedDepartment = [];
 
     #[Session]
     public $selectedDepartmentEntry;
@@ -25,7 +25,9 @@ class ReportTable extends Component
 
     public function mount()
     {
-        $this->selectedDepartment = Department::DEFAULT_DEPARTMENT;
+        if($this->designation_number == '')
+            $this->designation_number = 'ААМВ685614100';
+       // $this->selectedDepartment = 0;//Department::DEFAULT_DEPARTMENT;
 
         $this->selectedDepartmentEntry = Department::DEFAULT_DEPARTMENT;
 
@@ -92,7 +94,7 @@ class ReportTable extends Component
             ->paginate(25);*/
         $departments = Department::all();
         $default_department = Department::DEFAULT_DEPARTMENT;
-
+        //dd($items);
         return view('livewire.report-table',compact('items','departments','default_department'));
     }
 }

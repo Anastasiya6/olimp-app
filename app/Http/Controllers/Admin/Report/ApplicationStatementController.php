@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 
 class ApplicationStatementController extends Controller
 {
-    public function applicationStatement($filter,$order_number,applicationStatementService $service)
+    public function applicationStatement($filter,$order_number,$department,applicationStatementService $service)
     {
-        $service->applicationStatement($filter,$order_number);
+        $service->applicationStatement($filter,$order_number,$department);
     }
 }

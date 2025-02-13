@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class ApplicationStatementPrintService
 {
 
-    static public function queryAppStatement($filter = 0,$order_name_id=0)
+    static public function queryAppStatement($filter = 0,$order_name_id=0,$department=0)
     {
         $add_order = '';
 
@@ -21,11 +21,19 @@ class ApplicationStatementPrintService
         }else{
             $where = "WHERE order_name_id='$order_name_id'";
         }
+
+        if($department != 0 && $filter != 2){
+            $where = $where.' AND SUBSTR(tm, 1, 2) ='.$department;
+        }
+
         if($filter == 1) {
             $add_order = 'designations1.designation LIKE "КР%" ASC,';
             $where = $where.' AND
                                 designations1.designation NOT LIKE "ПИ0%"';
         }elseif($filter == 2){
+            if($department != 0){
+                $where = $where.' AND SUBSTR(tm, LENGTH(tm) - 1, 2) ='.$department;
+            }
             $where = $where.' AND
                                 designations1.designation LIKE "ПИ0%"';
         }

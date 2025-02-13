@@ -48,16 +48,30 @@ class DetailSpecificationNormService
 
     public function getData($department,$order_name_id)
     {
-         $items = ReportApplicationStatement
-             ::where('order_name_id',$order_name_id)
-             /*->whereHas('designation', function ($query) use ($department){
-             $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
-         })*/
-           ->has('designationMaterial.material')
-           ->with('designationEntry','designationMaterial.material')
-           ->orderBy('order_designationEntry_letters')
-           ->orderBy('order_designationEntry')
-           ->get();
+        if($department != 0){
+            $items = ReportApplicationStatement
+                ::where('order_name_id',$order_name_id)
+                ->whereRaw("SUBSTR(tm, 1, 2) = '$department'")
+                /*->whereHas('designation', function ($query) use ($department){
+                $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
+            })*/
+                ->has('designationMaterial.material')
+                ->with('designationEntry','designationMaterial.material')
+                ->orderBy('order_designationEntry_letters')
+                ->orderBy('order_designationEntry')
+                ->get();
+        }else {
+            $items = ReportApplicationStatement
+                ::where('order_name_id', $order_name_id)
+                /*->whereHas('designation', function ($query) use ($department){
+                $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
+            })*/
+                ->has('designationMaterial.material')
+                ->with('designationEntry', 'designationMaterial.material')
+                ->orderBy('order_designationEntry_letters')
+                ->orderBy('order_designationEntry')
+                ->get();
+        }
 
         $data = $items->flatMap(function ($item) {
             return $item->designationMaterial->map(function ($designationMaterial) use ($item) {

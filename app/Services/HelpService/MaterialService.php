@@ -120,7 +120,7 @@ class MaterialService
                 'norm' => 1,
                 'quantity' => $quantity,
                 'unit' => '',
-                'code_1c' => ''
+                'code_1c' => $purchase->code_1c
             ]);
         }
 

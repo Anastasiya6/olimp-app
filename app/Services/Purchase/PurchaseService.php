@@ -14,7 +14,8 @@ class PurchaseService
             'designation_id' => $request->designation_id,
             'designation_entry_id' => $request->designation_entry_id,
             'quantity' => $request->quantity,
-            'purchase' => $request->purchase
+            'purchase' => $request->purchase,
+            'code_1c' => $request->code_1c
         ]);
     }
 
@@ -22,6 +23,7 @@ class PurchaseService
     {
         $purchase->quantity = $request->quantity;
         $purchase->purchase = $request->purchase;
+        $purchase->code_1c = $request->code_1c;
         //$purchase->designation_id = $request->designation;
         //$purchase->designation_entry_id = $request->designation_entry;
 

@@ -213,6 +213,11 @@ class EntryDetailDesignationService
 
     public function getInfoMaterial()
     {
+        if(!$this->checkDesignationDepartment()){
+            $this->pdf->Ln();
+            return;
+        }
+
         $not_first_material = 0;
 
         if($this->designation->designationMaterial->isNotEmpty()) {
@@ -234,6 +239,17 @@ class EntryDetailDesignationService
         }else{
             $this->pdf->Ln();
         }
+    }
+
+    private function checkDesignationDepartment()
+    {
+        if($this->department == 0){
+            return true;
+        }
+        if($this->designation->route == $this->department){
+            return true;
+        }
+        return false;
     }
 
     public function newList()

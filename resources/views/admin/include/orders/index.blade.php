@@ -74,12 +74,12 @@
                                         <livewire:disassembly :order_name_id="$item->order_name_id" />
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 1, 'order_name_id' => $item->order_name_id]) }}" target="_blank">
+                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 1, 'order_name_id' => $item->order_name_id, 'department' => 0]) }}" target="_blank">
                                             Pdf
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 2, 'order_name_id' => $item->order_name_id]) }}" target="_blank">
+                                        <a style="text-decoration: underline;" href="{{ route('application.statement', [ 'filter' => 2, 'order_name_id' => $item->order_name_id, 'department' => 0]) }}" target="_blank">
                                             Pdf
                                         </a>
                                     </td>

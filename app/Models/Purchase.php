@@ -14,7 +14,8 @@ class Purchase extends Model
         'quantity',
         'designation_id',
         'designation_entry_id',
-        'purchase'
+        'purchase',
+        'code_1c'
     ];
 
     /**

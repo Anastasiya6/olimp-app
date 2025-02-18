@@ -61,10 +61,12 @@ class NotInApplicationStatementService
             ->join('order_names', 'order_names.id', '=', 'delivery_notes.order_name_id') // JOIN з order_names
             ->join('designations', 'designations.id', '=', 'delivery_notes.designation_id')
             ->where('order_names.id',$this->order_name_id)
+            ->where('order_name_id',$this->order_name_id)
             ->where('sender_department_id', $this->sender_department_number)
             ->whereNotIn('designation_id', function ($query) {
                 $query->select('designation_entry_id')
-                    ->from('report_application_statements'); // Підзапит
+                    ->from('report_application_statements')
+                    ->where('order_name_id',$this->order_name_id);// Підзапит
             })
             ->orderBy('designations.designation')
             ->get();

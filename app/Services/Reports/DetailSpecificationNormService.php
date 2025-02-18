@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 use App\Models\GroupMaterial;
 use App\Models\ReportApplicationStatement;
+use App\Repositories\Interfaces\DetailSpecificationRepositoryInterface;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;
 
@@ -19,7 +20,7 @@ class DetailSpecificationNormService
 
     public $header2 = [ '',
                         '',
-                        '',
+                        'на DSE',
                         '',
                         'на один',
                         ''];
@@ -32,46 +33,33 @@ class DetailSpecificationNormService
 
     private $orderNameRepository;
 
-    public function __construct(OrderNameRepositoryInterface $orderNameRepository)
+    private $detailSpecificationRepository;
+
+    public function __construct(OrderNameRepositoryInterface $orderNameRepository, detailSpecificationRepositoryInterface $detailSpecificationRepository)
     {
 
         $this->orderNameRepository = $orderNameRepository;
+
+        $this->detailSpecificationRepository = $detailSpecificationRepository;
     }
 
-    public function detailSpecificationNorm($department,$order_name_id)
+    public function detailSpecificationNorm($order_name_id,$department)
     {
-        $data = $this->getData($department,$order_name_id);
+        $items = $this->getData($order_name_id,$department);
 
-        $this->getPdf($data,$department,$order_name_id);
+        $pki_kr_items = $this->detailSpecificationRepository->getByOrderDepartmentPkiKrItems($order_name_id,$department);
+
+        $itemsCollection = collect($items);
+
+        $combinedData = $itemsCollection->merge($pki_kr_items);
+
+        $this->getPdf($combinedData,$department,$order_name_id);
 
     }
 
-    public function getData($department,$order_name_id)
+    public function getData($order_name_id,$department): array
     {
-        if($department != 0){
-            $items = ReportApplicationStatement
-                ::where('order_name_id',$order_name_id)
-                ->whereRaw("SUBSTR(tm, 1, 2) = '$department'")
-                /*->whereHas('designation', function ($query) use ($department){
-                $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
-            })*/
-                ->has('designationMaterial.material')
-                ->with('designationEntry','designationMaterial.material')
-                ->orderBy('order_designationEntry_letters')
-                ->orderBy('order_designationEntry')
-                ->get();
-        }else {
-            $items = ReportApplicationStatement
-                ::where('order_name_id', $order_name_id)
-                /*->whereHas('designation', function ($query) use ($department){
-                $query-> whereRaw("SUBSTRING(route, 1, 2) = '$department'");
-            })*/
-                ->has('designationMaterial.material')
-                ->with('designationEntry', 'designationMaterial.material')
-                ->orderBy('order_designationEntry_letters')
-                ->orderBy('order_designationEntry')
-                ->get();
-        }
+        $items = $this->detailSpecificationRepository->getByOrderDepartment($order_name_id,$department);
 
         $data = $items->flatMap(function ($item) {
             return $item->designationMaterial->map(function ($designationMaterial) use ($item) {
@@ -85,57 +73,9 @@ class DetailSpecificationNormService
                 ];
             });
         });
+        $groupedData = $this->detailSpecificationRepository->groupData($data);
 
-        $groupedData = $data->groupBy('id')->map(function ($group) {
-            // Группируем внутри каждой группы по названию материала
-            //return $group->groupBy('material_name')->map(function ($materialDetails, $materialName) {
-                // Группируем далее по наименованию детали
-            return $group->groupBy('detail_name')->map(function ($details) {
-                // Возвращаем детали для каждой детали в группе
-                return [
-                    'id' => $details->first()['id'],
-                    'material_name' => $details->first()['material_name'],
-                    'detail_name' => $details->first()['detail_name'],
-                    'quantity_total' => $details->sum('quantity_total'),
-                    'unit' => $details->first()['unit'],
-                    'norm' => $details->first()['norm'],
-                ];
-            });
-        });
-
-
-        $new_array = array();
-        foreach($groupedData as $material_id=>$groupedData_material){
-           // dd($groupedData_material);
-            $group_materials = GroupMaterial::where('material_id',$material_id)->get();
-            if($group_materials->count() > 0) {
-
-                $group_materials->load('materialEntry');
-
-                foreach ($group_materials as $group) {
-
-                    foreach($groupedData_material as $detail){
-                        $detail['norm'] = $detail['norm']*$group->norm;
-                        $detail['unit'] = $group->materialEntry->unit->unit;
-                        $new_array[$group->materialEntry->name.$group->material_entry_id."_Group"][$group->materialEntry->name][] = $detail;
-                    }
-                    usort($new_array[$group->materialEntry->name . $group->material_entry_id . "_Group"][$group->materialEntry->name], function ($a, $b) {
-                        return strcmp($a['detail_name'], $b['detail_name']);
-                    });
-                }
-
-            }else{
-                foreach($groupedData_material as $detail){
-                    $new_array[$detail['material_name'].$material_id][$detail['material_name']][] = $detail;
-                }
-                usort($new_array[$detail['material_name'].$material_id][$detail['material_name']], function ($a, $b) {
-                    return strcmp($a['detail_name'], $b['detail_name']);
-                });
-            }
-        }
-        ksort($new_array);
-
-        return $new_array;
+        return $this->detailSpecificationRepository->addGroupMaterial($groupedData);
     }
 
     public function getPdf($data,$department,$order_name_id)

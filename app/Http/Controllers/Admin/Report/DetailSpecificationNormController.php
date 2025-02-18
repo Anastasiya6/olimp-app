@@ -7,8 +7,8 @@ use App\Services\Reports\DetailSpecificationNormService;
 
 class DetailSpecificationNormController extends Controller
 {
-    public function detailSpecificationNorm($department,$order_name_id,DetailSpecificationNormService $service)
+    public function detailSpecificationNorm($order_name_id,$department,DetailSpecificationNormService $service)
     {
-        $service->detailSpecificationNorm($department,$order_name_id);
+        $service->detailSpecificationNorm($order_name_id,$department);
     }
 }

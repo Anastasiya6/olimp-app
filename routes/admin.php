@@ -77,7 +77,7 @@ use Illuminate\Support\Facades\Route;
     Route::get('specification-material-norm/{order_name_id}/{department}', [SpecificationNormController::class,'specificationNorm'])->name('specification.material');
     Route::get('detail-specification-material-norm/{order_name_id}/{department}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
     Route::get('entry-detail/{order_name_id}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
-    Route::get('entry-detail-designation/{designation_number}/{department}', [EntryDetailDesignationController::class,'entryDetailDesignation'])->name('entry.detail.designation');
+    Route::get('entry-detail-designation/{designation_number?}/{department}', [EntryDetailDesignationController::class,'entryDetailDesignation'])->name('entry.detail.designation');
     Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}/{type_report}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
     Route::get('write-off-no-material/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}', [ReportWriteOffNoMaterialController::class,'writeOffNoMaterial'])->name('report.write.off.no.material');
     Route::get('not-in-application-statement/{sender_department}/{order_name_id}', [NotInApplicationStatement::class,'notInApplicationStatement'])->name('report.not.in.application.statement');

@@ -11,7 +11,7 @@ class WriteOffService
 {
     public $width = array(16,23,35,40,10,15,30,50,10,35,20);
 
-    public $width1 = array(16,50,150,50);
+    public $width1 = array(16,50,100,30);
 
     public $height = 10;
 
@@ -123,7 +123,7 @@ class WriteOffService
             /*Report by details*/
         }elseif($this->type_report == 2){
 
-            $this->pdf = PDFService::getPdf($this->header3,$this->header4,$this->width1,'ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name);
+            $this->pdf = PDFService::getPdf($this->header3,$this->header4,$this->width1,'ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name,'P');
 
             $this->getDetailPdf($records);
 
@@ -134,7 +134,7 @@ class WriteOffService
     {
         foreach ($records as $item) {
 
-            $this->setNewList($this->header3,$this->header4,$this->width1);
+            $this->setNewList($this->header3,$this->header4,$this->width1,270);
 
             $this->pdf->MultiCell($this->width1[0], $this->height, $item->document_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -225,9 +225,9 @@ class WriteOffService
         $this->pdf->Output('write_off_delivery_note_'.$this->order->name.'.pdf', 'I');
     }
 
-    private function setNewList($header1, $header2,$width)
+    private function setNewList($header1, $header2,$width,$height=180)
     {
-        if($this->pdf->getY() >= 180) {
+        if($this->pdf->getY() >= $height) {
             $this->pdf->Cell(0, 10, 'ЛИСТ '.$this->page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
             $this->pdf = PDFService::getHeaderPdf($this->pdf, $header1, $header2, $width);
             $this->page++;

@@ -11,7 +11,7 @@ use App\Services\HelpService\PDFService;
 
 class WriteOffNoMaterialService
 {
-    public $width = array(25,25,50,150,30);
+    public $width = array(25,25,45,90,10);
 
     public $height = 10;
 
@@ -73,7 +73,7 @@ class WriteOffNoMaterialService
 
         $this->order = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ВІДСУТНІ МАТЕРІАЛИ НА ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ВІДСУТНІ МАТЕРІАЛИ НА ЗДАТОЧНІ З '.$start_date_str.' ПО '.$end_date_str,' ЗАМОВЛЕННЯ №'.$this->order->name,'P');
 
         $this->getDetailPdf($this->selectedItems);
 
@@ -103,7 +103,7 @@ class WriteOffNoMaterialService
 
     private function setNewList()
     {
-        if($this->pdf->getY() >= 180) {
+        if($this->pdf->getY() >= 270) {
             $this->pdf->Cell(0, 10, 'ЛИСТ '.$this->page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
             $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
             $this->page++;

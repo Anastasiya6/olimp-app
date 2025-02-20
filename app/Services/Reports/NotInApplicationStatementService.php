@@ -15,7 +15,7 @@ class NotInApplicationStatementService
 
     public $max_height = 10;
 
-    public $width = array(70,150,30);
+    public $width = array(60,110,30);
 
     public $header1 = [ 'Номер',
                         "Назва",
@@ -54,7 +54,7 @@ class NotInApplicationStatementService
             exit;
         }
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Відсутні у відомості застосування');
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Відсутні у відомості застосування','','P');
 
         $records = DeliveryNote::select('designation_id', 'designations.designation','designations.name','order_names.name as order_name')
             ->distinct() // Унікальні записи
@@ -89,7 +89,7 @@ class NotInApplicationStatementService
 
     public function newList()
     {
-        if ($this->pdf->getY() >= 185) {
+        if ($this->pdf->getY() >= 275) {
             $this->pdf->Cell(0, 5, 'ЛИСТ ' . $this->page, 0, 1, 'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
             $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
             $this->page++;

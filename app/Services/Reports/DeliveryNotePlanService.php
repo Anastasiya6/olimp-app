@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class DeliveryNotePlanService
 {
-    public $width = array(60,100,40,40,40,10,10);
+    public $width = array(45,63,30,30,30,10,10);
 
     public $height = 10;
 
@@ -86,12 +86,12 @@ class DeliveryNotePlanService
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
         //dd($order_number);
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ПЛАНОМ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ПЛАНОМ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name,'P');
 
         // Добавление данных таблицы
         foreach ($report_application_items as $item) {
          //   dd($item);
-            if($this->pdf->getY() >= 185) {
+            if($this->pdf->getY() >= 275) {
                 $this->pdf->Cell(0, 5, 'ЛИСТ '.$this->page,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
                 $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
                 $this->page++;

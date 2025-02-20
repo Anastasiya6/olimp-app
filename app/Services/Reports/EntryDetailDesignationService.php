@@ -246,7 +246,8 @@ class EntryDetailDesignationService
         if($this->department == 0){
             return true;
         }
-        if($this->designation->route == $this->department){
+
+        if(substr($this->designation->route,0,2) == $this->department){
             return true;
         }
         return false;

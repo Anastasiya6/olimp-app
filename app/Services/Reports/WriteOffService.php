@@ -258,7 +258,7 @@ class WriteOffService
 
             $this->setNewList($this->header1,$this->header2,$this->width);
 
-            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type']);
+            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
 
             $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

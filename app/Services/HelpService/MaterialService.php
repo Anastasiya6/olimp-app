@@ -55,15 +55,19 @@ class MaterialService
         return $this->sortByGroup($records);
     }
 
-    public function getTypeMaterial($type)
+    public function getTypeMaterial($type,$material='')
     {
         if($type == 'purchase'){
 
             return ["", 1];
 
         }else{
+            if(str_starts_with($material, 'Лист')) {
 
-            return ["* 1.2",1.2];
+                return ["* 1.2",1.2];
+            }
+
+            return ["* 1.1",1.1];
 
         }
     }

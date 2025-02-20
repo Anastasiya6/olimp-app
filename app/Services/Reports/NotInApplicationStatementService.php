@@ -15,7 +15,7 @@ class NotInApplicationStatementService
 
     public $max_height = 10;
 
-    public $width = array(60,110,30);
+    public $width = array(45,110,30);
 
     public $header1 = [ 'Номер',
                         "Назва",

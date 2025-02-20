@@ -25,20 +25,28 @@ class DesignationSearch extends Component
 
         $searchTermChto = '%' . trim($this->searchTermChto) . '%';
 
-        if($searchTerm!='%%' || $searchTermChto!='%%'){
-
-            return Designation::where(function ($query) use ($searchTerm, $searchTermChto) {
-                $query->
-                where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', $searchTerm);
-                       // ->orWhereNull('name');
-                })
+        if( $searchTerm!='%%' && $searchTermChto!='%%') {
+            return Designation
+                    ::where('name', 'like', $searchTerm)
                     ->where('designation', 'like', $searchTermChto)
                     ->where('type', 0)
-                    ->orderByRaw("CAST(designation AS SIGNED)");
-            })
-                ->paginate(50);
+                    ->orderByRaw("CAST(designation AS SIGNED)")
+                    ->paginate(50);
 
+        }elseif($searchTerm!='%%'){ //by name not empty
+            return Designation
+                    ::where('name', 'like', $searchTerm)
+                    ->where('type', 0)
+                    ->orderByRaw("CAST(designation AS SIGNED)")
+                    ->paginate(50);
+
+        }elseif($searchTermChto!='%%'){ //by designation not empty
+
+            return Designation
+                    ::where('designation', 'like', $searchTermChto)
+                    ->where('type', 0)
+                    ->orderByRaw("CAST(designation AS SIGNED)")
+                ->paginate(50);
 
         }else {
             return Designation::where('type',0)

@@ -61,6 +61,9 @@
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Подетально-специфік. норми витрат</span>
             </th>
             <th class="bg-gray-50 px-6 py-3 text-left">
+                <span class="font-medium leading-4 tracking-wider text-gray-500">Цехові списки</span>
+            </th>
+            <th class="bg-gray-50 px-6 py-3 text-left">
                 <span class="font-medium leading-4 tracking-wider text-gray-500">Відсутні норми матер-в</span>
             </th>
            {{-- <th class="bg-gray-50 px-6 py-3 text-left">
@@ -117,6 +120,12 @@
                     <a href="{{ route('detail.specification.material', ['department' => $selectedDepartment[$item->order_name_id]??0 , 'order_name_id' => $item->order_name_id]) }}" class="underline-link" target="_blank">
                         Подет.<br>
                         спец.
+                    </a>
+                </td>
+                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                    <a href="{{ route('department.list', ['filter' => 3,'department' => $selectedDepartment[$item->order_name_id]??0 , 'order_name_id' => $item->order_name_id]) }}" class="underline-link" target="_blank">
+                        Цехові<br>
+                        списки
                     </a>
                 </td>
                 <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">

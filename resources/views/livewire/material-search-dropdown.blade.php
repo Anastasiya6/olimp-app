@@ -16,10 +16,11 @@
                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
                    placeholder="Пошук матеріалу..." type="search" autocomplete="off">
             @if (strlen($search) > 1)
-                <ul class="absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200">
+                <ul class="absolute z-50 bg-white border border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200 max-h-[200px]  overflow-y-auto">
+{{--                "absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200">--}}
                     @forelse ($searchResults as $result)
                         <li>
-                            <a href="#" wire:click.prevent="selectSearch('{{ $result->id }}', '{{$result->name }}')"
+                            <a href="#" wire:click.prevent="selectSearch('{{ $result->id }}', '{{$result->name }}',  '{{$result->unit->unit }}')"
                                wire:key="{{ $result->id }}"
                                class="flex items-center px-4 py-4 hover:bg-gray-200 transition ease-in-out duration-150">
                                 <div class="ml-4 leading-tight">
@@ -49,42 +50,21 @@
                 @enderror
             </div>
         </div>
+        @if($showUnit)
+            <div>
+                <div class="mb-6">
+                    <label class="block">
+                        <span class="text-gray-700">Од.вимір.</span>
+                        <input type="text" readonly name="unit" class="block w-full mt-1 rounded-md" placeholder=""
+                               value="{{$selectedMaterialUnit}}" />
+                    </label>
+                    @error('unit')
+                    <div class="text-sm text-red-600">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        @endif
     </div>
-    <style type="text/css">
-        .search-box .clear{
-            clear:both;
-            margin-top: 20px;
-        }
 
-        .search-box ul{
-            list-style: none;
-            padding: 0px;
-            width: 250px;
-            position: absolute;
-            margin: 0;
-            background: white;
-        }
-
-        .search-box ul li{
-            background: lavender;
-            padding: 4px;
-            margin-bottom: 1px;
-        }
-
-        .search-box ul li:nth-child(even){
-            background: cadetblue;
-            color: white;
-        }
-
-        .search-box ul li:hover{
-            cursor: pointer;
-        }
-
-        .search-box input[type=text]{
-            padding: 5px;
-            width: 250px;
-            letter-spacing: 1px;
-        }
-    </style>
 </div>
 

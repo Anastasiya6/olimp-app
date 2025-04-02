@@ -21,7 +21,7 @@ class PlanTaskSpecificationNormService
         'Найменування матеріалів',
         'Од.вимірювання',
         'Норма витрат на виріб',
-        'Разом * 1.2',
+        'Разом * коеф.',
         'Цех'];
 
     private array $widthExcel = array(15,60,8,15,15,5);
@@ -31,7 +31,7 @@ class PlanTaskSpecificationNormService
         'Найменування матеріалів',
         'Од.',
         'Норма витрат на виріб',
-        'Разом * 1.2',
+        'Разом * коеф.',
         'Цех'];
     public $header2 = ['',
         '',
@@ -101,7 +101,7 @@ class PlanTaskSpecificationNormService
 
             $this->setNewList();
 
-            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type']);
+            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
 
             $this->pdf->MultiCell($this->width[0], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -149,11 +149,17 @@ class PlanTaskSpecificationNormService
         // Заполнение данными
         $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
         foreach ($materials as $item) {
+            if(str_starts_with($item['material'], 'Лист') ||  str_starts_with($item['material'], 'Плита')){
+                $koef = 1.2;
+            }else{
+                $koef = 1.1;
+            }
+
             $sheet->setCellValue('A' . $row, $item['code_1c']);
             $sheet->setCellValue('B' . $row, $item['material']);
             $sheet->setCellValue('C' . $row, $item['unit']);
-            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['quantity_norm'].' * 1.2 = ' : $item['norm']);
-            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm'] * 1.2 : '');
+            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['quantity_norm'].' * '.$koef.' = ' : $item['norm']);
+            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm'] * $koef : '');
             $sheet->setCellValue('F' . $row, $this->department_number);
             $row++;
         }

@@ -19,7 +19,7 @@
                 <ul class="absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200">
                     @forelse ($searchResults as $result)
                         <li>
-                            <a href="#" wire:click.prevent="selectSearch('{{ $result->id }}', '{{ $result->designation }}', '{{ $result->name }}')"
+                            <a href="#" wire:click.prevent="selectSearch('{{ $result->id }}', '{{ $result->designation }}', '{{ addslashes($result->name) }}')"
                                wire:key="{{ $result->id }}"
                                class="flex items-center px-4 py-4 hover:bg-gray-200 transition ease-in-out duration-150">
                                 <div class="ml-4 leading-tight">
@@ -48,41 +48,6 @@
             </div>
         </div>
     </div>
-    <style type="text/css">
-        .search-box .clear{
-            clear:both;
-            margin-top: 20px;
-        }
 
-        .search-box ul{
-            list-style: none;
-            padding: 0px;
-            width: 250px;
-            position: absolute;
-            margin: 0;
-            background: white;
-        }
-
-        .search-box ul li{
-            background: lavender;
-            padding: 4px;
-            margin-bottom: 1px;
-        }
-
-        .search-box ul li:nth-child(even){
-            background: cadetblue;
-            color: white;
-        }
-
-        .search-box ul li:hover{
-            cursor: pointer;
-        }
-
-        .search-box input[type=text]{
-            padding: 5px;
-            width: 250px;
-            letter-spacing: 1px;
-        }
-    </style>
 </div>
 

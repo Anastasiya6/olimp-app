@@ -4,6 +4,7 @@ namespace App\Services\HelpService;
 
 use App\Models\Specification;
 use App\Models\Test;
+use Illuminate\Support\Facades\Log;
 
 class NoMaterialService
 {
@@ -21,6 +22,7 @@ class NoMaterialService
         $test->comment = $specifications->isNotEmpty() ? 1 : 0;
         $test->save();*/
 
+      //  Log::info('specifications'.$specifications.' '.$designation_id.' '.$material);
         if ($specifications->isNotEmpty()) {
             foreach ($specifications as $specification) {
 
@@ -44,13 +46,12 @@ class NoMaterialService
                 }
             }
         }else{
-
             if (!$material) {
                 return $type == 0 ? 0 : ['status' => 0, 'designation_entry_id' => $designation_id];
                 //return 0;
             }
         }
-        return $type == 0 ? 1 : ['status' => 1, 'designation_entry_id' => ''];
+        return $type == 0 ? 1 : ['status' => 1, 'designation_entry_id' => $designation_id];
         //return 1;
     }
 }

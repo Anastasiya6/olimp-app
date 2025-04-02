@@ -26,7 +26,7 @@ class GroupMaterialEntrySearchDropdown extends Component
         $materials =
             Material::where('name', 'like', '%'. $this->search .'%')
                 ->orderBy('name')
-                ->take(6)->get();
+                ->take(30)->get();
 
         $this->searchResults = $materials;
     }

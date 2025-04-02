@@ -112,6 +112,9 @@
                 <th class="bg-gray-50 px-6 py-3 text-left">
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп.</span>
                 </th>
+                <th class="bg-gray-50 px-6 py-3 text-left">
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп. матеріал.</span>
+                </th>
                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                 </th>
             </tr>
@@ -132,9 +135,6 @@
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ \Carbon\Carbon::parse($item->document_date)->format('d.m.Y')??'' }}</strong>
                     </td>
-                    {{--<td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ \Carbon\Carbon::parse($item->created_at)->format('d.m.Y')??'' }}</strong>
-                    </td>--}}
                     <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->orderName->name??'' }}</strong>
                     </td>
@@ -152,6 +152,13 @@
                         <strong>
                             <div class="py-4">
                                 <input type="checkbox" disabled  name="with_purchased" @if($item->with_purchased) checked @endif id="exactMatchCheckbox" value="1">
+                            </div>
+                        </strong>
+                    </td>
+                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
+                        <strong>
+                            <div class="py-4">
+                                <input type="checkbox" disabled  name="with_material_purchased" @if($item->with_material_purchased) checked @endif id="exactMatchCheckbox" value="1">
                             </div>
                         </strong>
                     </td>

@@ -91,6 +91,7 @@
                             @enderror
                         </div>
                         @include('administrator::include.delivery-notes.checkbox')
+                        @include('administrator::include.delivery-notes.checkbox')
                         <x-primary-button type="submit">
                             Зберегти
                         </x-primary-button>

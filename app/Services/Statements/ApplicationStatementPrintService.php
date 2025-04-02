@@ -14,6 +14,9 @@ class ApplicationStatementPrintService
 
     static public function queryAppStatement($filter = 0,$order_name_id=0,$department=0)
     {
+     //   dd($filter,$order_name_id,$department);
+        //$filter = 2 - vidomist zastosuv pokupni
+        //$filter = 3 - cehovi spiski
         $add_order = '';
 
         if($order_name_id == 0){
@@ -21,12 +24,13 @@ class ApplicationStatementPrintService
         }else{
             $where = "WHERE order_name_id='$order_name_id'";
         }
-
-        if($department != 0 && $filter != 2){
+        if($department != 0 && $filter == 3){
+            $where = $where.' AND tm LIKE "%' . $department . '%"';
+        }elseif($department != 0 && $filter != 2){
             $where = $where.' AND SUBSTR(tm, 1, 2) ='.$department;
         }
 
-        if($filter == 1) {
+        if($filter == 1 || $filter == 3) {
             $add_order = 'designations1.designation LIKE "КР%" ASC,';
             $where = $where.' AND
                                 designations1.designation NOT LIKE "ПИ0%"';

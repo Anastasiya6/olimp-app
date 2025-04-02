@@ -20,7 +20,7 @@
                     @forelse ($searchResults as $result)
                         <li>
                             <a href="#"
-                               wire:click.prevent="selectSearch('{{ $result->designation }}', '{{ $result->name }}')"
+                               wire:click.prevent="selectSearch('{{ $result->designation }}', '{{addslashes($result->name) }}')"
                                wire:key="{{ $result->id }}"
                                 class="flex items-center px-4 py-4 hover:bg-gray-200 transition ease-in-out duration-150">
                                 <div class="ml-4 leading-tight">

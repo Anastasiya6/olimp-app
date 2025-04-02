@@ -51,6 +51,7 @@ class ReportApplicationStatementRepository implements ReportApplicationStatement
                 });
             })->sortBy('id');
         }
+
         return $data->groupBy('id')->flatMap(function ($items) {
             return $items->groupBy('department')->map(function ($departmentItems) {
                 return [
@@ -59,8 +60,8 @@ class ReportApplicationStatementRepository implements ReportApplicationStatement
                     'unit' => $departmentItems->first()['unit'], // Берем единицу измерения из первого элемента группы
                     'department' => $departmentItems->first()['department'], // Берем цех из первого элемента группы
                     'code_1c' => $departmentItems->first()['code_1c'],
-                    'norm' => $departmentItems->sum('norm'), // Суммируем количество по всем элементам группы
-                    'norm_with_koef' => $departmentItems->sum('norm') * 1.2,
+                    'norm' => round($departmentItems->sum('norm'),3), // Суммируем количество по всем элементам группы
+                    'norm_with_koef' => round($departmentItems->sum('norm') * ((str_starts_with($departmentItems->first()['name'], 'Лист') || str_starts_with($departmentItems->first()['name'], 'Плита')) ? 1.2 : 1.1),3),
                     'sort' => 0
                 ];
             })->values(); // Преобразуем коллекцию в массив значений

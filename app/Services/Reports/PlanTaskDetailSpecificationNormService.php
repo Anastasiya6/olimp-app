@@ -20,7 +20,7 @@ class PlanTaskDetailSpecificationNormService
         'Номер деталі',
         'Од.',
         'Норма витрат на виріб',
-        'Разом * 1.2',
+        'Разом * коеф.',
         'Цех'];
     public $header2 = ['',
         '',
@@ -95,7 +95,7 @@ class PlanTaskDetailSpecificationNormService
             $this->setNewList();
             foreach($group as $item) {
 
-                list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type']);
+                list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$material);
 
                 $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

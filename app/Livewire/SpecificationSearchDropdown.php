@@ -53,7 +53,7 @@ class SpecificationSearchDropdown extends Component
         $designations =
             Designation::where('designation', 'like', '%'. $this->search .'%')
             ->orderBy('designation')
-            ->take(6)->get();
+            ->take(30)->get();
 
         $this->newDesignation = false;
 

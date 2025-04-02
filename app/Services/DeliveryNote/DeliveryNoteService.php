@@ -31,7 +31,9 @@ class DeliveryNoteService
                     'order_name_id' => $request->order_name_id,
                     'sender_department_id' => $request->sender_department_id,
                     'receiver_department_id' => $request->receiver_department_id,
-                    'with_purchased' => $request->with_purchased
+                    'with_purchased' => $request->with_purchased,
+                    'with_material_purchased' => $request->with_material_purchased
+
 
                 ]
             );
@@ -48,6 +50,7 @@ class DeliveryNoteService
         $deliveryNote->order_name_id = $request->order_name_id;
         $deliveryNote->quantity = $request->quantity;
         $deliveryNote->with_purchased = $request->with_purchased;
+        $deliveryNote->with_material_purchased = $request->with_material_purchased;
         $deliveryNote->save();
     }
 

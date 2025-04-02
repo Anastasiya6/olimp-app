@@ -17,13 +17,21 @@ class MaterialSearchDropdown extends Component
 
     public $selectedMaterialId = 0;
 
-    public function mount($material_id,$material_name)
+    public $selectedMaterialUnit;
+
+    public $showUnit = 0;
+
+    public function mount($material_id,$material_name,$material_unit=null,$show_unit=0)
     {
         if($material_id != null && $material_name != null){
 
             $this->selectedMaterialId = $material_id;
 
             $this->selectedMaterial = $material_name;
+
+            $this->showUnit = $show_unit;
+
+            $this->selectedMaterialUnit = $material_unit;
         }
     }
 
@@ -40,18 +48,17 @@ class MaterialSearchDropdown extends Component
         $materials =
             Material::where('name', 'like', '%'. $this->search .'%')
                 ->orderBy('name')
-                ->take(6)->get();
+                ->take(30)->get();
 
         $this->searchResults = $materials;
 
     }
 
-    public function selectSearch($material_id,$material)
+    public function selectSearch($material_id,$material,$unit)
     {
-        Log::info('selectSearch');
-        Log::info($material);
         $this->selectedMaterial = $material;
         $this->selectedMaterialId = $material_id;
+        $this->selectedMaterialUnit = $unit;
         $this->searchResults = [];
         $this->search = $material;
     }

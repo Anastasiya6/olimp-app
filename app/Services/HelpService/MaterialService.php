@@ -2,10 +2,10 @@
 
 namespace App\Services\HelpService;
 
+use App\Models\MaterialPurchase;
 use App\Models\Purchase;
 use App\Models\Specification;
 use App\Repositories\Interfaces\DepartmentRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 
 class MaterialService
 {
@@ -15,7 +15,9 @@ class MaterialService
 
     public $type_group = null;
 
-    public $sender_department_number;
+    public int $sender_department_number;
+
+    public int $sender_department_id;
 
     private DepartmentRepositoryInterface $departmentRepository;
 
@@ -29,6 +31,8 @@ class MaterialService
     {
         $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($sender_department_id)?->number;
 
+        $this->sender_department_id = $sender_department_id;
+
         $this->type_report = $type_report;
 
         $this->all_materials = [];
@@ -37,16 +41,13 @@ class MaterialService
 
         foreach($records as $item){
 
-        //    if($item->material)
-               // dd($item);
-
             $item->materials = collect();
 
-            $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1);
+            $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1,$item->with_material_purchased);
 
             $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials);
 
-            $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased);
+            $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased,$item->with_material_purchased);
 
         }
 
@@ -55,14 +56,15 @@ class MaterialService
         return $this->sortByGroup($records);
     }
 
-    public function getTypeMaterial($type,$material='')
+    public function getTypeMaterial($type,$material=''): array
     {
-        if($type == 'purchase'){
+
+        if($type == 'detail' || $type == 'purchase' ) {
 
             return ["", 1];
 
         }else{
-            if(str_starts_with($material, 'Лист')) {
+            if(str_starts_with($material, 'Лист') || str_starts_with($material, 'Плита')) {
 
                 return ["* 1.2",1.2];
             }
@@ -72,7 +74,7 @@ class MaterialService
         }
     }
 
-    private function checkMaterial($designationMaterial,$designation_id, $designation_entry_id, $with_purchased,$quantity)
+    private function checkMaterial($designationMaterial,$designation_id, $designation_entry_id, $with_purchased,$quantity,$with_material_purchased)
     {
         if($with_purchased == 1) {
 
@@ -81,6 +83,14 @@ class MaterialService
             if(!empty($purchase)){
 
                 return $purchase;
+            }
+        }elseif($with_material_purchased == 1) {
+
+            $material_purchase = $this->getMaterialPurchase($designation_id, $designation_entry_id,$quantity);
+
+            if(!empty($material_purchase)){
+
+                return $material_purchase;
             }
         }
 
@@ -92,20 +102,30 @@ class MaterialService
     {
         $array = array();
         if($designationMaterial->isNotEmpty()) {
-               // dd($designationMaterial);
             foreach ($designationMaterial as $material) {
-                $array[] = [
-                    'type' => 'material',
-                    'material_id' => $material->material->id,
-                    'material' => $material->material->name,
-                    'norm' => $material->norm,
-                    'quantity' => $quantity,
-                    'unit' => $material->material->unit->unit ?? "",
-                    'code_1c' => $material->material->code_1c
-                ];
-
+                if($this->sender_department_id != $material->department_id ){
+                    $material->load('designation');
+                    $array[] = [
+                        'type' => 'detail',
+                        'material_id' => $material->designation->id,
+                        'material' => $material->designation->name,
+                        'norm' => 1,
+                        'quantity' => $quantity,
+                        'unit' => "",
+                        'code_1c' => ""
+                    ];
+                }else {
+                    $array[] = [
+                        'type' => 'material',
+                        'material_id' => $material->material->id,
+                        'material' => $material->material->name,
+                        'norm' => $material->norm,
+                        'quantity' => $quantity,
+                        'unit' => $material->material->unit->unit ?? "",
+                        'code_1c' => $material->material->code_1c
+                    ];
+                }
             }
-
             return $array;
         }
 
@@ -130,7 +150,26 @@ class MaterialService
 
         return array();
     }
-    private function node($materials,$designation_id,$quantity,$with_purchased)
+    private function getMaterialPurchase($designation_id, $designation_entry_id,$quantity)
+    {
+        $material_purchase = MaterialPurchase::where('designation_id', $designation_id)->where('designation_entry_id', $designation_entry_id)->first();
+
+        if ($material_purchase) {
+
+            return array([
+                'type' => 'material_purchase',
+                'material_id' => $material_purchase->material_id,
+                'material' => $material_purchase->material->name,
+                'norm' => $material_purchase->norm,
+                'quantity' => $quantity,
+                'unit' => $material_purchase->material->unit->unit,
+                'code_1c' => $material_purchase->code_1c
+            ]);
+        }
+
+        return array();
+    }
+    private function node($materials,$designation_id,$quantity,$with_purchased,$with_material_purchased)
     {
         $specifications = Specification
             ::where('designation_id', $designation_id)
@@ -179,11 +218,11 @@ class MaterialService
                     }
                 }
 
-                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity);
+                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased);
 
                 $this->fillMaterials($materials,$specification->designations->designation,$quantity,$array_material);
 
-                $this->node($materials,$specification->designation_entry_id,$quantity,$with_purchased);
+                $this->node($materials,$specification->designation_entry_id,$quantity,$with_purchased,$with_material_purchased);
 
             }
         }
@@ -192,6 +231,7 @@ class MaterialService
 
     private function fillMaterials($materials,$designation,$quantity,$array_materials)
     {
+
         if (empty($array_materials)) {
             return;
         }
@@ -286,4 +326,5 @@ class MaterialService
             return $this->sender_department_number == 0 ? 0 : substr($specification->designationEntry->route, 0, 2);
         }
     }
+
 }

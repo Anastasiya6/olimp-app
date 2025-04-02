@@ -187,9 +187,9 @@ class MaterialService
 
                 if($route == 0 || $route == $this->sender_department_number) {
                     if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
-                        if ($this->type_group == 'detail') {
+                       /* if ($this->type_group == 'detail') {
                             continue;
-                        }
+                        }*/
                         $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
 
                         if ($this->type_report == 0) {

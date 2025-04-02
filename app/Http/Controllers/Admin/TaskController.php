@@ -9,6 +9,7 @@ use App\Models\DeliveryNote;
 use App\Models\Department;
 use App\Models\Order;
 use App\Models\OrderName;
+use App\Models\Task;
 use App\Services\DeliveryNote\DeliveryNoteService;
 use App\Services\Task\TaskService;
 use Illuminate\Http\Request;
@@ -62,15 +63,12 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DeliveryNote $deliveryNote)
+    public function edit(Task $task)
     {
-        $orders = OrderName::where('is_order',1)->orderBy('name')->get();
-
-        return view('administrator::include.delivery-notes.edit',[
+        return view('administrator::include.tasks.edit',[
             'route' => $this->route,
             'departments' => Department::all(),
-            'item' => $deliveryNote,
-            'order_names' => $orders
+            'item' => $task,
         ]);
 
     }
@@ -78,9 +76,9 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DeliveryNote $deliveryNote, DeliveryNoteService $service)
+    public function update(Request $request, Task $task, TaskService $service)
     {
-        $service->update($request,$deliveryNote);
+        $service->update($request,$task);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services\Reports;
 use App\Models\Department;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
 use App\Services\HelpService\MaterialService;
@@ -38,15 +39,21 @@ class PlanTaskDetailSpecificationNormService
 
     public $sender_department_id;
 
-    public $department_number;
+    public $receiver_department_id;
+
+    public $sender_department_number;
+
+    public $receiver_department_number;
 
     private PlanTaskRepositoryInterface $planTaskRepository;
 
     private OrderNameRepositoryInterface $orderNameRepository;
 
+    private DepartmentRepositoryInterface $departmentRepository;
+
     public MaterialService $materialService;
 
-    public function __construct(PlanTaskRepositoryInterface $planTaskRepository, OrderNameRepositoryInterface $orderNameRepository, MaterialService $service)
+    public function __construct(PlanTaskRepositoryInterface $planTaskRepository, OrderNameRepositoryInterface $orderNameRepository, MaterialService $service,DepartmentRepositoryInterface $departmentRepository)
     {
         $this->planTaskRepository = $planTaskRepository;
 
@@ -54,17 +61,23 @@ class PlanTaskDetailSpecificationNormService
 
         $this->materialService = $service;
 
+        $this->departmentRepository = $departmentRepository;
+
     }
 
-    public function detailSpecificationNorm($order_name_id,$sender_department_id,$type_report_in)
+    public function detailSpecificationNorm($order_name_id,$sender_department_id,$receiver_department_id,$type_report_in)
     {
         $this->sender_department_id = $sender_department_id;
 
+        $this->receiver_department_id = $receiver_department_id;
+
         $this->order_name_id = $order_name_id;
 
-        $this->department_number = Department::find($this->sender_department_id)->number;
+        $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->sender_department_id)?->number;
 
-        $records = $this->planTaskRepository->getByOrderDepartment($this->order_name_id,$this->sender_department_id);
+        $this->receiver_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->receiver_department_id)?->number;
+
+        $records = $this->planTaskRepository->getByOrderDepartments($this->order_name_id,$this->sender_department_id,$this->receiver_department_id);
 
         $records = $this->materialService->material($records,1,$this->sender_department_id,'detail');
 
@@ -79,10 +92,9 @@ class PlanTaskDetailSpecificationNormService
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАМОВЛЕННЯ №'.$order_number->name);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
 
         foreach ($materials as $material=>$group) {
-
 
             $this->pdf->MultiCell($this->width[0], $this->height, $material, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
             $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
@@ -107,7 +119,7 @@ class PlanTaskDetailSpecificationNormService
 
                 $this->pdf->MultiCell($this->width[4], $this->height, $item['quantity_norm'] * $multiplier , 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                $this->pdf->MultiCell($this->width[5], $this->height, $this->department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[5], $this->height, $this->sender_department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 $this->pdf->Ln();
                 $this->setNewList();

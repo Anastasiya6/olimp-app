@@ -99,8 +99,8 @@ use Illuminate\Support\Facades\Route;
     Route::resource('purchases', PurchaseController::class);
     Route::resource('material-purchases', MaterialPurchaseController::class);
 
-    Route::get('plan-task-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
-    Route::get('plan-task-detail-specification-norm/{order_name_id}/{department}/{type_report_in}', [PlanTaskDetailSpecificationNormController::class,'planTaskDetailSpecificationNorm'])->name('plan-task.detail.specification.norm');
+    Route::get('plan-task-specification-norm/{order_name_id}/{sender_department}/{receiver_department}/{type_report_in}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
+    Route::get('plan-task-detail-specification-norm/{order_name_id}/{sender_department}/{receiver_department}/{type_report_in}', [PlanTaskDetailSpecificationNormController::class,'planTaskDetailSpecificationNorm'])->name('plan-task.detail.specification.norm');
 
     Route::get('plan-task-all/{order_name_id}/{sender_department}/{receiver_department}', [PlanTaskController::class,'planTaskPdf'])->name('plan-tasks.all');
 

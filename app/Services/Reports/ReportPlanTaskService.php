@@ -42,7 +42,9 @@ class ReportPlanTaskService
         $plan_tasks = PlanTask
             ::where('order_name_id', $order_name_id)
             ->where('sender_department_id', $sender_department)
-            //->where('receiver_department_id', $receiver_department)
+            ->when($receiver_department!= 0, function ($query) use ($receiver_department) {
+                return $query->where('receiver_department_id', $receiver_department);
+            })
             ->with('designationEntry')
             ->orderBy('order_designationEntry_letters')
             ->orderBy('order_designationEntry')

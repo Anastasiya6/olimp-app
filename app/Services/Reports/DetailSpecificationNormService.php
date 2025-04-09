@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Services\Reports;
-use App\Models\GroupMaterial;
-use App\Models\ReportApplicationStatement;
 use App\Repositories\Interfaces\DetailSpecificationRepositoryInterface;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\PDFService;

@@ -113,7 +113,7 @@
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп.</span>
                 </th>
                 <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп. матеріал.</span>
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Заміна матеріал.</span>
                 </th>
                 <th class="w-56 bg-gray-50 px-6 py-3 text-left">
                 </th>

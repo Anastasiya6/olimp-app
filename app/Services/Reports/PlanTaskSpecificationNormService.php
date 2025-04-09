@@ -2,6 +2,7 @@
 
 namespace App\Services\Reports;
 use App\Models\Department;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Repositories\Interfaces\PlanTaskRepositoryInterface;
 use App\Services\HelpService\MaterialService;
@@ -49,15 +50,21 @@ class PlanTaskSpecificationNormService
 
     public $sender_department_id;
 
-    public $department_number;
+    public $receiver_department_id;
+
+    public $sender_department_number;
+
+    public $receiver_department_number;
 
     private PlanTaskRepositoryInterface $planTaskRepository;
 
     private OrderNameRepositoryInterface $orderNameRepository;
 
+    private DepartmentRepositoryInterface $departmentRepository;
+
     public MaterialService $materialService;
 
-    public function __construct(PlanTaskRepositoryInterface $planTaskRepository, OrderNameRepositoryInterface $orderNameRepository, MaterialService $service)
+    public function __construct(PlanTaskRepositoryInterface $planTaskRepository, OrderNameRepositoryInterface $orderNameRepository, MaterialService $service,DepartmentRepositoryInterface $departmentRepository)
     {
         $this->planTaskRepository = $planTaskRepository;
 
@@ -65,17 +72,23 @@ class PlanTaskSpecificationNormService
 
         $this->materialService = $service;
 
+        $this->departmentRepository = $departmentRepository;
+
     }
 
-    public function specificationNorm($order_name_id,$sender_department_id,$type_report_in)
+    public function specificationNorm($order_name_id,$sender_department_id,$receiver_department_id,$type_report_in)
     {
         $this->sender_department_id = $sender_department_id;
 
+        $this->receiver_department_id = $receiver_department_id;
+
         $this->order_name_id = $order_name_id;
 
-        $this->department_number = Department::find($this->sender_department_id)->number;
+        $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->sender_department_id)?->number;
 
-        $records = $this->planTaskRepository->getByOrderDepartment($this->order_name_id,$this->sender_department_id);
+        $this->receiver_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->receiver_department_id)?->number;
+
+        $records = $this->planTaskRepository->getByOrderDepartments($this->order_name_id,$this->sender_department_id,$this->receiver_department_id);
 
         $records = $this->materialService->material($records,1, $this->sender_department_id, 'material_id');
 
@@ -94,8 +107,9 @@ class PlanTaskSpecificationNormService
     private function getPdf($materials)
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' ЗАМОВЛЕННЯ №'.$order_number->name);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
 
         foreach ($materials as $item) {
 
@@ -113,7 +127,7 @@ class PlanTaskSpecificationNormService
 
             $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? $item['quantity_norm'] * $multiplier : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[5], $this->height, $this->department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[5], $this->height, $this->sender_department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }
@@ -160,7 +174,7 @@ class PlanTaskSpecificationNormService
             $sheet->setCellValue('C' . $row, $item['unit']);
             $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['quantity_norm'].' * '.$koef.' = ' : $item['norm']);
             $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm'] * $koef : '');
-            $sheet->setCellValue('F' . $row, $this->department_number);
+            $sheet->setCellValue('F' . $row, $this->sender_department_number);
             $row++;
         }
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);

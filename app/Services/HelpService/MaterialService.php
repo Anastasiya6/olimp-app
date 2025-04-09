@@ -78,13 +78,14 @@ class MaterialService
     {
         if($with_purchased == 1) {
 
-            $purchase = $this->getPurchase($designation_id, $designation_entry_id,$quantity);
+            $purchase = $this->getPurchase($designation_id, $designation_entry_id, $quantity);
 
             if(!empty($purchase)){
 
                 return $purchase;
             }
-        }elseif($with_material_purchased == 1) {
+        }
+        if($with_material_purchased == 1) {
 
             $material_purchase = $this->getMaterialPurchase($designation_id, $designation_entry_id,$quantity);
 
@@ -93,6 +94,7 @@ class MaterialService
                 return $material_purchase;
             }
         }
+
 
         return $this->getMaterial($designationMaterial,$quantity);
 
@@ -187,9 +189,7 @@ class MaterialService
 
                 if($route == 0 || $route == $this->sender_department_number) {
                     if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
-                       /* if ($this->type_group == 'detail') {
-                            continue;
-                        }*/
+
                         $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
 
                         if ($this->type_report == 0) {
@@ -203,17 +203,31 @@ class MaterialService
                                 'sort' => $type == 'kr' ? 1 : 2
                             ]);
                         } elseif ($this->type_report == 1) {
-                            $this->all_materials[] = array(
-                                'type' => $type,
-                                'detail' => $specification->designationEntry->designation,
-                                'material_id' => $specification->designationEntry->id . $type,
-                                'material' => $specification->designationEntry->name,
-                                'norm' => $specification->quantity,
-                                'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
-                                'code_1c' => $specification->designationEntry->code_1c,
-                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                                'sort' => $type == 'kr' ? 1 : 2);
+                            if($this->type_group == 'detail'){
 
+                                $this->all_materials[] = array(
+                                    'type' => $type,
+                                    'detail' => $specification->designations->designation,
+                                    'material' =>$specification->designationEntry->designation,
+                                    'material_id' => $specification->designationEntry->name,
+                                    'norm' => $specification->quantity,
+                                    'quantity_norm' => $specification->quantity * $quantity,
+                                    'unit' =>   $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                    'code_1c' => $specification->designationEntry->code_1c,
+                                    'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+                            }else{
+
+                                $this->all_materials[] = array(
+                                    'type' => $type,
+                                    'detail' => $specification->designationEntry->designation,
+                                    'material_id' => $specification->designationEntry->id . $type,
+                                    'material' => $specification->designationEntry->name,
+                                    'norm' => $specification->quantity,
+                                    'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
+                                    'code_1c' => $specification->designationEntry->code_1c,
+                                    'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                    'sort' => $type == 'kr' ? 1 : 2);
+                            }
                         }
                     }
                 }
@@ -270,6 +284,7 @@ class MaterialService
 
     private function sortByGroup($records)
     {
+//        dd($records);
         if($this->type_report == 1) {
 
             $records = collect($records->materials);
@@ -292,28 +307,38 @@ class MaterialService
 
             }elseif($this->type_group == 'detail'){
 
-                return $records->groupBy('material')->map(function ($group) {
-                    // Группируем внутри каждой группы по названию материала
-                    //return $group->groupBy('material_name')->map(function ($materialDetails, $materialName) {
-                    // Группируем далее по наименованию детали
-                    return $group->groupBy('detail')->map(function ($details) {
-                        // Возвращаем детали для каждой детали в группе
-                        return [
-                            'id' => $details->first()['material_id'],
-                            'type' => $details->first()['type'],
-                            'material' => $details->first()['material'],
-                            'detail' => $details->first()['detail'],
-                            'quantity_norm' => $details->sum('quantity_norm'),
-                            'unit' => $details->first()['unit'],
-                            'norm' => $details->first()['norm'],
-                            'sort' => $details->first()['sort'],
-                        ];
-                    })->sortBy('detail'); // Сортировка по 'detail' внутри группы
-                })->sortKeys();
+                $details = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 0)->values());
+
+                $pki = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 1)->values());
+
+                return $details->merge($pki);;
             }
         }
         return $records;
     }
+
+    public function getSortItems($items)
+    {
+        return $items->groupBy('material')->map(function ($group) {
+            // Группируем внутри каждой группы по названию материала
+            //return $group->groupBy('material_name')->map(function ($materialDetails, $materialName) {
+            // Группируем далее по наименованию детали
+            return $group->groupBy('detail')->map(function ($details) {
+                // Возвращаем детали для каждой детали в группе
+                return [
+                    'id' => $details->first()['material_id'],
+                    'type' => $details->first()['type'],
+                    'material' => $details->first()['material'],
+                    'detail' => $details->first()['detail'],
+                    'quantity_norm' => $details->sum('quantity_norm'),
+                    'unit' => $details->first()['unit'],
+                    'norm' => $details->first()['norm'],
+                    'sort' => $details->first()['sort'],
+                ];
+            })->sortBy('detail'); // Затем сортируем по sort (0 в начале, 1 в конце)
+        })->sortKeys();
+    }
+
     private function getRoute($specification,$tm)
     {
         if (str_starts_with($specification->designationEntry->designation, 'КР') || $specification->designationEntry->type == 1) {

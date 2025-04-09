@@ -9,8 +9,7 @@ class DepartmentRepository implements DepartmentRepositoryInterface
 {
     public function getByDepartmentIdFirst($id)
     {
-        return Department
-            ::where('id',$id)
-            ->first();
+        return $id != 0 ? Department::where('id', $id)->first() : null;
+
     }
 }

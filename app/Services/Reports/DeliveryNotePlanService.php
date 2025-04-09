@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class DeliveryNotePlanService
 {
-    public $width = array(45,63,30,30,30,10,10);
+    public $width = array(45,63,30,30,30,30,30);
 
     public $height = 10;
 

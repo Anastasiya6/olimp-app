@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Designation;
+use App\Models\DesignationMaterial;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -26,13 +27,23 @@ class DesignationSearchDropdown extends Component
 
     public $designation_hidden = 'designation_id';
 
-    public function mount($designation_hidden,$designation_name,$designation_title)
+    public function mount($designation_hidden,$designation_name,$designation_title, $last_record = '')
     {
         $this->designation_hidden = $designation_hidden;
 
         $this->designation_name = $designation_name;
 
         $this->designation_title = $designation_title;
+
+        if ($last_record && class_exists($last_record)) {
+            $record = $last_record::with('designation')->orderBy('id', 'desc')->first();
+
+            if ($record && $record->designation) {
+                $this->selectedDesignation = $record->designation->designation;
+                $this->selectedDesignationId = $record->designation->id;
+                $this->search = $this->selectedDesignation;
+            }
+        }
     }
 
     public function searchResult()

@@ -21,7 +21,7 @@ class MaterialSearchDropdown extends Component
 
     public $showUnit = 0;
 
-    public function mount($material_id,$material_name,$material_unit=null,$show_unit=0)
+    public function mount($material_id,$material_name,$material_unit=null,$show_unit=0, $last_record = '')
     {
         if($material_id != null && $material_name != null){
 
@@ -32,6 +32,16 @@ class MaterialSearchDropdown extends Component
             $this->showUnit = $show_unit;
 
             $this->selectedMaterialUnit = $material_unit;
+        }
+
+        if ($last_record && class_exists($last_record)) {
+            $record = $last_record::with('material')->orderBy('id', 'desc')->first();
+
+            if ($record && $record->designation) {
+                $this->selectedMaterial = $record->material->name;
+                $this->selectedMaterialId = $record->material->id;
+                $this->search = $this->selectedMaterial;
+            }
         }
     }
 

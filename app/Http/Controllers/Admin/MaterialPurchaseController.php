@@ -17,7 +17,7 @@ class MaterialPurchaseController extends Controller
     public function index()
     {
         return view('administrator::include.material-purchases.index',[
-            'title' => 'Покупні матеріали',
+            'title' => 'Заміна матеріалів',
             'route' => $this->route,
             'livewire_search' => 'material-purchase-search'
         ]);

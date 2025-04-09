@@ -175,7 +175,9 @@ class PlanTaskTable extends Component
             return PlanTask
                 ::where('order_name_id', $this->selectedOrder)
                 ->where('sender_department_id', $this->sender_department_id)
-                ->where('receiver_department_id', $this->receiver_department_id)
+                ->when($this->receiver_department_id != 0, function ($query) {
+                    return $query->where('receiver_department_id', $this->receiver_department_id);
+                })
                 ->with('designationEntry')
                 ->orderBy('updated_at','desc')
                 ->orderBy('order_designationEntry_letters')
@@ -187,7 +189,9 @@ class PlanTaskTable extends Component
             return PlanTask
                 ::where('order_name_id', $this->selectedOrder)
                 ->where('sender_department_id', $this->sender_department_id)
-                ->where('receiver_department_id', $this->receiver_department_id)
+                ->when($this->receiver_department_id != 0, function ($query) {
+                    return $query->where('receiver_department_id', $this->receiver_department_id);
+                })
                 ->whereHas('designation', function ($query) use ($searchTerm) {
                     $query->where('designation', 'like', $searchTerm)
                         ->orderByRaw("CAST(designation AS SIGNED)");

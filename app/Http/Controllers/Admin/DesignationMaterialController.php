@@ -34,7 +34,7 @@ class DesignationMaterialController extends Controller
      */
     public function create()
     {
-        return view('administrator::include.designation-material.create', [
+       return view('administrator::include.designation-material.create', [
             'departments' => Department::all(),
             'default_department' => Department::DEFAULT_DEPARTMENT,
             'route' => $this->route]);

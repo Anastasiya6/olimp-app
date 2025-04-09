@@ -7,7 +7,7 @@ use App\Services\HelpService\PDFService;
 
 class TaskService
 {
-    public $width = array(35,50,10,15,90,10,45,30);
+    public $width = array(35,50,10,30,80,10,40,30);
 
     public $width1 = array(16,50,100,30);
 
@@ -74,23 +74,22 @@ class TaskService
 
         /*Report by detail-specification*/
         if($this->type_report == 0) {
-            //dd(0);
-            $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПЕРЕЛІК ДЕТАЛЕЙ ',' ');
+
+            $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Подетальні-специфіковані ',' ');
 
             $this->getDetailSpecificationPdf($records);
 
         /*Report together by materials*/
         }elseif($this->type_report == 1){
 
-            $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПЕРЕЛІК ДЕТАЛЕЙ','');
+            $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Разом по матеріалам','');
 
             $this->getMaterialPdf($records);
 
             /*Report by details*/
         }elseif($this->type_report == 2){
-            dd('ss');
 
-            $this->pdf = PDFService::getPdf($this->header3,$this->header4,$this->width1,'ПЕРЕЛІК ДЕТАЛЕЙ ',' ','P');
+            $this->pdf = PDFService::getPdf($this->header3,$this->header4,$this->width1,'Завдання ',' ','P');
 
             $this->getDetailPdf($records);
 
@@ -186,12 +185,16 @@ class TaskService
 
     private function getRecords()
     {
-        $records = Task
-            ::whereIn('id',$this->ids)
-            ->with('designationMaterial.material','designationMaterial.designation')
-            ->get();
+        if($this->ids){
+            $records = Task
+                ::whereIn('id',$this->ids)
+                ->with('designationMaterial.material','designationMaterial.designation')
+                ->get();
 
-        return $this->getMaterials($records);
+            return $this->getMaterials($records);
+        }
+
+        return array();
     }
 
     private function getMaterials($records)

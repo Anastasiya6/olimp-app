@@ -146,7 +146,7 @@
                             {{ __('Покупні деталі в здаточних') }}
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('material-purchases.index')">
-                            {{ __('Покупні матеріали в здаточних') }}
+                            {{ __('Заміна матеріалів в здаточних') }}
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('plan-tasks.index')">
                             {{ __('План') }}

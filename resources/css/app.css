@@ -15,7 +15,7 @@
         background: white;
         max-height: 200px; /* Устанавливаем максимальную высоту */
         overflow-y: auto; /* Добавляем вертикальный скролл */
-        border: 1px solid #ccc; /* Добавляем рамку для красоты */
+        /*border: 1px solid #ccc; !* Добавляем рамку для красоты *!*/
     }
     .search-box ul li {
         background: lavender;
@@ -29,9 +29,9 @@
     .search-box ul li:hover {
         cursor: pointer;
     }
-    .search-box input[type="text"] {
-        padding: 5px;
-        width: 250px;
-        letter-spacing: 1px;
-    }
+    /*.search-box input[type="text"] {*/
+    /*    padding: 5px;*/
+    /*    width: 250px;*/
+    /*    letter-spacing: 1px;*/
+    /*}*/
 }

@@ -5,13 +5,13 @@
                 <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
                     План у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
                     Специфіковані норми у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.detail.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.detail.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
                     Подетально-специфіковані норми у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'department' => $sender_department_id, 'type_report_in' => 'Excel']) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Excel']) }}" target="_blank">
                     Специфіковані норми в Excel
                 </a>
             </div>
@@ -38,7 +38,10 @@
 
                 <label for="exactMatchCheckbox">До цеху</label>
                 <select wire:model="receiver_department_id" wire:change="updateSearch" style="width: 100px" name="department_id2" class="block w-full mt-1 rounded-md">
-                     @foreach($departments as $department)
+                    <option value="0">
+                        Всі цеха
+                    </option>
+                    @foreach($departments as $department)
                         <option value="{{ $department->id }}"
                             @if($department->id == $receiver_department_id) selected @endif>
                             {{ $department->number }}

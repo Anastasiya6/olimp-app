@@ -36,6 +36,23 @@ class DetailSpecificationRepository implements DetailSpecificationRepositoryInte
         }
     }
 
+    public function getByOrderDepartments($order_name_id,$sender_department,$receiver_department){
+
+        return ReportApplicationStatement
+            ::where('order_name_id',$order_name_id)
+            ->whereRaw("SUBSTR(tm, 1, 2) = '$sender_department'")
+            ->when($receiver_department != 0, function ($query) use ($receiver_department) {
+                return $query->whereRaw("SUBSTR(tm, -2) = '$receiver_department'");
+            })
+            ->has('designationMaterial.material')
+            ->with('designationEntry','designationMaterial.material')
+            ->orderBy('order_designationEntry_letters')
+            ->orderBy('order_designationEntry')
+            ->get();
+
+    }
+
+
     public function getByOrderDepartmentPkiKr($order_name_id,$department)
     {
         if($department != 0) {

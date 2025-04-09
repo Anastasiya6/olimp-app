@@ -16,12 +16,11 @@
                            wire:keyup="searchResult"
                            autocomplete="off"
                            id="search"
-                           class="block w-full py-3 px-4 pl-10 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
+                           class="block w-full py-3 px-4 pl-10 border bg-gray-200 border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
                            placeholder="Пошук матеріалу..." type="search" autocomplete="off">
                 </label>
                 @if (strlen($search) > 1)
-                    <ul class="absolute z-50 bg-white border border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200 max-h-[200px]  overflow-y-auto">
-    {{--                "absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200">--}}
+                    <ul class="absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200 max-h-[200px]  overflow-y-auto">
                         @forelse ($searchResults as $result)
                             <li>
                                 <a href="#" wire:click.prevent="selectSearch('{{ $result->id }}', '{{$result->name }}',  '{{$result->unit->unit }}')"

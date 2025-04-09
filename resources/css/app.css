@@ -19,7 +19,7 @@
     }
     .search-box ul li {
         background: lavender;
-        padding: 4px;
+        padding: 2px;
         margin-bottom: 1px;
     }
     .search-box ul li:nth-child(even) {

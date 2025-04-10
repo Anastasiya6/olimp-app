@@ -284,7 +284,6 @@ class MaterialService
 
     private function sortByGroup($records)
     {
-//        dd($records);
         if($this->type_report == 1) {
 
             $records = collect($records->materials);
@@ -297,6 +296,7 @@ class MaterialService
                         'material_id' => $group->first()['material_id'],
                         'code_1c' => $group->first()['code_1c'],
                         'material' => $group->first()['material'],
+                        'detail' => $group->first()['detail'],
                         'norm' => $group->sum('norm'),
                         'quantity_norm' => $group->sum('quantity_norm'),
                         'quantity_norm_quantity_detail' => $group->sum('quantity_norm_quantity_detail'),

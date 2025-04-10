@@ -115,7 +115,7 @@
                     @endforeach
                     <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
                     <input type="hidden" name="type_report" value="0">
-                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Подет.-специфіковані
                     </button>
                 </form>
@@ -128,8 +128,23 @@
                     @endforeach
                     <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
                     <input type="hidden" name="type_report" value="1">
-                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                    <input type="hidden" name="type_report_in" value="pdf">
+                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Разом по матеріалам
+                    </button>
+                </form>
+
+                <!-- Форма для "Разом по матеріалам" -->
+                <form action="{{ route('report.task.material') }}" method="POST">
+                    @csrf
+                    @foreach($selectedDetails as $item)
+                        <input type="hidden" name="ids[]" value="{{ $item->id }}">
+                    @endforeach
+                    <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
+                    <input type="hidden" name="type_report" value="1">
+                    <input type="hidden" name="type_report_in" value="Excel">
+                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                        Разом по матер. Excel
                     </button>
                 </form>
 
@@ -141,7 +156,7 @@
                     @endforeach
                     <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
                     <input type="hidden" name="type_report" value="2">
-                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                    <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Нема матеріалів
                     </button>
                 </form>

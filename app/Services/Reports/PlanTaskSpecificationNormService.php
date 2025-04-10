@@ -125,7 +125,7 @@ class PlanTaskSpecificationNormService
 
             $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['quantity_norm']. $multiplier_str . ' = ' : $item['norm'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? $item['quantity_norm'] * $multiplier : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[5], $this->height, $this->sender_department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -163,17 +163,13 @@ class PlanTaskSpecificationNormService
         // Заполнение данными
         $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
         foreach ($materials as $item) {
-            if(str_starts_with($item['material'], 'Лист') ||  str_starts_with($item['material'], 'Плита')){
-                $koef = 1.2;
-            }else{
-                $koef = 1.1;
-            }
+            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
 
             $sheet->setCellValue('A' . $row, $item['code_1c']);
             $sheet->setCellValue('B' . $row, $item['material']);
             $sheet->setCellValue('C' . $row, $item['unit']);
-            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['quantity_norm'].' * '.$koef.' = ' : $item['norm']);
-            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm'] * $koef : '');
+            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['quantity_norm'].' * '.$multiplier.' = ' : $item['norm']);
+            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : '');
             $sheet->setCellValue('F' . $row, $this->sender_department_number);
             $row++;
         }

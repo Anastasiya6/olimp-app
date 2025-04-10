@@ -2,8 +2,11 @@
 
 namespace App\Services\Reports;
 use App\Models\Task;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use App\Services\HelpService\MaterialService;
 use App\Services\HelpService\PDFService;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class TaskService
 {
@@ -43,6 +46,17 @@ class TaskService
         '',
         ''
  ];
+    private array $headerExcel = [
+        'Код 1С',
+        'Найменування деталі',
+        'Найменування матеріалів',
+        'Од.вимірювання',
+        'Норма витрат на виріб',
+        'Разом * коеф.',
+        'Цех'];
+
+    private array $widthExcel = array(15,30,60,8,15,15,5);
+
     public $pdf = null;
 
     public $page = 2;
@@ -55,20 +69,28 @@ class TaskService
 
     public $type_report = 0;
 
+    public $sender_department_number;
+
     public $ids;
 
-    public function __construct( MaterialService $service )
+    private DepartmentRepositoryInterface $departmentRepository;
+
+    public function __construct( MaterialService $service, DepartmentRepositoryInterface $departmentRepository )
     {
         $this->materialService = $service;
+
+        $this->departmentRepository = $departmentRepository;
     }
 
-    public function task($ids,$sender_department_id,$type_report = 0)
+    public function task($ids,$sender_department_id,$type_report = 0,$type_report_in = 'pdf')
     {
         $this->ids = $ids;
 
         $this->type_report = $type_report;
 
         $this->sender_department_id = $sender_department_id;
+
+        $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->sender_department_id)?->number;
 
         $records = $this->getRecords();
 
@@ -84,7 +106,15 @@ class TaskService
 
             $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Разом по матеріалам','');
 
-            $this->getMaterialPdf($records);
+            if($type_report_in == 'pdf'){
+
+                $this->getMaterialPdf($records);
+
+            }else{
+
+                return $this->getMaterialExcel($records);
+
+            }
 
             /*Report by details*/
         }elseif($this->type_report == 2){
@@ -115,6 +145,58 @@ class TaskService
 
         // Выводим PDF в браузер
         $this->pdf->Output('task_no_detail_pdf', 'I');
+    }
+
+    private function getMaterialExcel($materials)
+    {
+        // Новый объект Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Заголовки
+        $sheet->setCellValue('A1', $this->headerExcel[0]);
+        $sheet->setCellValue('B1', $this->headerExcel[1]);
+        $sheet->setCellValue('C1', $this->headerExcel[2]);
+        $sheet->setCellValue('D1', $this->headerExcel[3]);
+        $sheet->setCellValue('E1', $this->headerExcel[4]);
+        $sheet->setCellValue('F1', $this->headerExcel[5]);
+        $sheet->setCellValue('G1', $this->headerExcel[6]);
+
+        // Устанавливаем стили для заголовков
+        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
+
+
+        $sheet->getColumnDimension('A')->setWidth($this->widthExcel[0]);
+        $sheet->getColumnDimension('B')->setWidth($this->widthExcel[1]);
+        $sheet->getColumnDimension('C')->setWidth($this->widthExcel[2]);
+        $sheet->getColumnDimension('D')->setWidth($this->widthExcel[3]);
+        $sheet->getColumnDimension('E')->setWidth($this->widthExcel[4]);
+        $sheet->getColumnDimension('F')->setWidth($this->widthExcel[5]);
+        $sheet->getColumnDimension('G')->setWidth($this->widthExcel[6]);
+
+        // Заполнение данными
+        $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
+        foreach ($materials as $item) {
+            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
+
+            $sheet->setCellValue('A' . $row, $item['code_1c']);
+            $sheet->setCellValue('B' . $row, $item['detail']);
+            $sheet->setCellValue('C' . $row, $item['material']);
+            $sheet->setCellValue('D' . $row, $item['unit']);
+            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm_quantity_detail']. $multiplier_str .' = ' : $item['quantity_norm_quantity_detail']);
+            $sheet->setCellValue('F' . $row, $item['sort'] == 0 ? round($item['quantity_norm_quantity_detail'] * $multiplier,3) : '');
+            $sheet->setCellValue('G' . $row, $this->sender_department_number);
+            $row++;
+        }
+// Вирівнювання всіх комірок по лівому краю
+        $sheet->getStyle('A1:G' . ($row - 1))
+            ->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+        // Сохраните файл
+        $writer = new Xlsx($spreadsheet);
+        $fileName = "task.xlsx";
+        $writer->save($fileName);
+        return $fileName;
     }
 
     private function getDetailSpecificationPdf($records)
@@ -161,7 +243,7 @@ class TaskService
 
                     $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? $norm->norm .' * '.$norm->quantity.' * '. $item->quantity. $multiplier_str . ' = ' : $norm->norm .' * '. $item->quantity . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? $norm->norm * $norm->quantity * $item->quantity * $multiplier : $norm->norm * $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $multiplier,3) : round($norm->norm * $item->quantity,3), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }
@@ -211,6 +293,8 @@ class TaskService
 
         $this->pdf->SetFont('dejavusans', '', 10);
 
+        //dd($materials);
+
         foreach ($materials as $item) {
 
             $this->setNewList($this->header1,$this->header2,$this->width);
@@ -219,7 +303,7 @@ class TaskService
 
             $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[1], $this->height, $item['detail'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[2], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -231,7 +315,7 @@ class TaskService
 
             $this->pdf->MultiCell($this->width[6], $this->height, $item['sort'] == 0 ? $item['quantity_norm_quantity_detail']. $multiplier_str .' = ' : $item['quantity_norm_quantity_detail'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? $item['quantity_norm_quantity_detail'] * $multiplier : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? round($item['quantity_norm_quantity_detail'] * $multiplier,3) : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }

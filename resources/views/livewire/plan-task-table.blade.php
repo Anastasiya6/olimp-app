@@ -5,13 +5,13 @@
                 <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
                     План у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Pdf', 'with_purchased' => $with_purchased, 'with_material_purchased' => $with_material_purchased]) }}" target="_blank">
                     Специфіковані норми у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.detail.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Pdf']) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.detail.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Pdf','with_purchased' => $with_purchased, 'with_material_purchased' => $with_material_purchased]) }}" target="_blank">
                     Подетально-специфіковані норми у Pdf
                 </a>
-                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Excel']) }}" target="_blank">
+                <a style="text-decoration: underline;" href="{{ route('plan-task.specification.norm',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id, 'receiver_department' => $receiver_department_id, 'type_report_in' => 'Excel','with_purchased' => $with_purchased, 'with_material_purchased' => $with_material_purchased]) }}" target="_blank">
                     Специфіковані норми в Excel
                 </a>
             </div>
@@ -60,13 +60,24 @@
                 @endif
 
             </div>
-            <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white p-6">
-
-                <a href="{{ route($route.'.create',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}"
-                    class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                    Створити
-                </a>
-                <div class="gap-4 sm:flex py-3">
+            <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white px-6">
+                <div class="flex justify-between items-center py-4 gap-4">
+                    <a href="{{ route($route.'.create',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}"
+                       class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                        Створити
+                    </a>
+                    <div class="flex items-center gap-4 items-center">
+                        <div class="py-4">
+                            <input type="checkbox" wire:model="with_purchased" id="with_purchased" wire:change="updateSearch">
+                            <label for="with_purchased" class="ml-1 font-semibold text-gray-800 text-base">З покупними</label>
+                        </div>
+                        <div class="py-4">
+                            <input type="checkbox" wire:model="with_material_purchased" id="with_material_purchased" wire:change="updateSearch">
+                            <label for="with_material_purchased" class="ml-1 font-semibold text-gray-800 text-base">Заміна матеріалів</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-4">
                     <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по номеру деталі"/>
                 </div>
                 <div class="min-w-full align-middle">

@@ -8,8 +8,8 @@ use App\Services\Reports\PlanTaskSpecificationNormService;
 
 class PlanTaskDetailSpecificationNormController extends Controller
 {
-    public function planTaskDetailSpecificationNorm($order_name_id,$sender_department,$receiver_department,$type_report_in,PlanTaskDetailSpecificationNormService $service)
+    public function planTaskDetailSpecificationNorm($order_name_id,$sender_department,$receiver_department,$type_report_in,$with_purchased,$with_material_purchased,PlanTaskDetailSpecificationNormService $service)
     {
-        $fileName = $service->detailSpecificationNorm($order_name_id,$sender_department,$receiver_department,$type_report_in);
+        $fileName = $service->detailSpecificationNorm($order_name_id,$sender_department,$receiver_department,$type_report_in,$with_purchased,$with_material_purchased);
     }
 }

@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\Report\SpecificationNormController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\WriteOffController;
+use App\Livewire\Login;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,6 +54,9 @@ use Illuminate\Support\Facades\Route;
 })->name('home');*/
 
 //Route::get('/', [IndexController::class, 'index'])->name('home');
+
+//Route::get('/login',Login::class)->name('login');
+
 //Route::middleware('auth')->group(function () {
 
     Route::get('/', [IndexController::class, 'index'])->name('admin.home');
@@ -60,6 +64,7 @@ use Illuminate\Support\Facades\Route;
     Route::resource('designations', DesignationController::class);
     Route::resource('departments', DepartmentController::class);
 
+   // Route::get('tasks}', [TaskController::class, 'index'])->name('tasks.index');
     Route::resource('tasks', TaskController::class);
     Route::get('tasks/{sender_department}/create', 'App\Http\Controllers\Admin\TaskController@create')->name('tasks.create');
 
@@ -99,8 +104,8 @@ use Illuminate\Support\Facades\Route;
     Route::resource('purchases', PurchaseController::class);
     Route::resource('material-purchases', MaterialPurchaseController::class);
 
-    Route::get('plan-task-specification-norm/{order_name_id}/{sender_department}/{receiver_department}/{type_report_in}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
-    Route::get('plan-task-detail-specification-norm/{order_name_id}/{sender_department}/{receiver_department}/{type_report_in}', [PlanTaskDetailSpecificationNormController::class,'planTaskDetailSpecificationNorm'])->name('plan-task.detail.specification.norm');
+    Route::get('plan-task-specification-norm/{order_name_id}/{sender_department}/{receiver_department}/{type_report_in}/{with_purchased}/{with_material_purchased}', [PlanTaskSpecificationNormController::class,'planTaskSpecificationNorm'])->name('plan-task.specification.norm');
+    Route::get('plan-task-detail-specification-norm/{order_name_id}/{sender_department}/{receiver_department}/{type_report_in}/{with_purchased}/{with_material_purchased}', [PlanTaskDetailSpecificationNormController::class,'planTaskDetailSpecificationNorm'])->name('plan-task.detail.specification.norm');
 
     Route::get('plan-task-all/{order_name_id}/{sender_department}/{receiver_department}', [PlanTaskController::class,'planTaskPdf'])->name('plan-tasks.all');
 

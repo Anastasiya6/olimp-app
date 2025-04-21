@@ -41,6 +41,10 @@ class PlanTaskTable extends Component
 
     public $route = 'plan-tasks';
 
+    public $with_purchased = 0;
+
+    public $with_material_purchased = 0;
+
     public $flag = 0;
 
     //public $selectedItems = [];
@@ -90,7 +94,8 @@ class PlanTaskTable extends Component
     public function updateSearch()
     {
         $this->flag = 0;
-
+        $this->with_purchased = (int) $this->with_purchased;
+        $this->with_material_purchased = (int) $this->with_material_purchased;
         $this->resetPage();
     }
 
@@ -123,7 +128,7 @@ class PlanTaskTable extends Component
                'order_name_id' => $detail->order_name_id,
                'order_id' => $detail->order_id,
                'designation_id' => $detail->designation_entry_id,
-               'tm' => $detail->tm
+               //'tm' => $detail->tm
            ];
 
            $values = [

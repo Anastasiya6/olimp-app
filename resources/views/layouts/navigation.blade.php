@@ -109,17 +109,6 @@
                         <x-dropdown-link wire:navigate :href="route('materials.index')">
                             {{ __('Матеріали') }}
                         </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        {{--<form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>--}}
                     </x-slot>
                 </x-dropdown>
                 <x-dropdown align="right" width="48">
@@ -177,8 +166,12 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('tasks.index')">
-                            {{ __('Завдання') }}
+
+                        <x-dropdown-link wire:navigate :href="route('tasks.index', ['type' => 'department'])">
+                            Завдання цех
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('tasks.index', ['type' => 'technologist'])">
+                            {{ __('Завдання технолог') }}
                         </x-dropdown-link>
                     </x-slot>
                 </x-dropdown>
@@ -217,7 +210,19 @@
                         </form>--}}
                     </x-slot>
                 </x-dropdown>
+                <!-- Authentication -->
+
+
             </div>
+            <div class="hidden sm:flex sm:items-center"> <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+
+                    <x-dropdown-link :href="route('logout')"
+                                     onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                        {{ __('Log Out') }}
+                    </x-dropdown-link>
+                </form></div>
 
         </div>
     </div>

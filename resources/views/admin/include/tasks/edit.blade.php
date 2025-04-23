@@ -13,6 +13,7 @@
                     <form method="POST" action="{{ route($route.'.update',$item->id) }}">
                         @csrf
                         @method('put')
+                        <input type="hidden" name="type" value="{{ $type }}">
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Деталь</span>

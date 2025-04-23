@@ -10,7 +10,7 @@ class ReportTaskController extends Controller
 {
     public function task(Request $request,TaskService $service)
     {
-        $fileName = $service->task($request->ids,$request->sender_department,$request->type_report,$request->type_report_in);
+        $fileName = $service->task($request);
 
         if($request->type_report_in == 'Excel'){
 

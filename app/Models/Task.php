@@ -14,6 +14,7 @@ class Task extends Model
         'designation_id',
         'quantity',
         'department_id',
+        'type'
     ];
 
     public function designation(): \Illuminate\Database\Eloquent\Relations\BelongsTo

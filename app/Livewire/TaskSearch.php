@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Task;
 use App\Services\HelpService\NoMaterialService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Session;
 use Livewire\Component;
@@ -22,10 +23,16 @@ class TaskSearch extends Component
 
     public $selectedDetails = [];
 
+    public $without_coefficient = 0;
+
     public $selectedItems = [];
 
-    public function mount()
+    public $type;
+
+    public function mount(Request $request)
     {
+        $this->type = $request->type??0;
+
         if(!$this->selectedDepartmentSender) {
             $this->selectedDepartmentSender = Department::DEFAULT_FIRST_DEPARTMENT_ID;
         }
@@ -42,7 +49,10 @@ class TaskSearch extends Component
 
     public function deleteAllTask($department_id)
     {
-        $task = Task::where('department_id',$department_id)->delete();
+        $task = Task
+            ::where('department_id',$department_id)
+            ->where('type',$this->type)
+            ->delete();
 
         // Отправить сообщение об успешном удалении
         session()->flash('message', 'Запис успішно видалено.');
@@ -60,6 +70,8 @@ class TaskSearch extends Component
 
     public function updateSearch()
     {
+        $this->without_coefficient = (int) $this->without_coefficient;
+
         $this->resetPage();
     }
 
@@ -67,9 +79,13 @@ class TaskSearch extends Component
     {
         $items = Task
                 ::where('department_id', $this->selectedDepartmentSender)
+                ->where('type',$this->type)
                 ->orderBy('updated_at','desc')
                 ->get();
-        $selected_department_number = Department::where('id',$this->selectedDepartmentSender)->first()?->number;
+        $selected_department_number = Department
+                                            ::where('id',$this->selectedDepartmentSender)
+                                            ->first()
+                                            ?->number;
 
         foreach($items as $item) {
 

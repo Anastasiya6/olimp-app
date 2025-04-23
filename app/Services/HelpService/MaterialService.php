@@ -171,7 +171,7 @@ class MaterialService
 
         return array();
     }
-    private function node($materials,$designation_id,$quantity,$with_purchased,$with_material_purchased)
+    private function node($materials,$designation_id,$quantity,$with_purchased,$with_material_purchased,$pred_quantity_node=1)
     {
         $specifications = Specification
             ::where('designation_id', $designation_id)
@@ -198,6 +198,7 @@ class MaterialService
                                 'detail' => $specification->designationEntry->designation,
                                 'material' => $specification->designationEntry->name,
                                 'norm' => $specification->quantity,
+                                'pred_quantity_node' => $pred_quantity_node,
                                 'code_1c' => $specification->designationEntry->code_1c,
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                                 'sort' => $type == 'kr' ? 1 : 2
@@ -211,6 +212,7 @@ class MaterialService
                                     'material' =>$specification->designationEntry->designation,
                                     'material_id' => $specification->designationEntry->name,
                                     'norm' => $specification->quantity,
+                                    'pred_quantity_node' => $pred_quantity_node,
                                     'quantity_norm' => $specification->quantity * $quantity,
                                     'unit' =>   $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                                     'code_1c' => $specification->designationEntry->code_1c,
@@ -223,6 +225,7 @@ class MaterialService
                                     'material_id' => $specification->designationEntry->id . $type,
                                     'material' => $specification->designationEntry->name,
                                     'norm' => $specification->quantity,
+                                    'pred_quantity_node' => $pred_quantity_node,
                                     'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
                                     'code_1c' => $specification->designationEntry->code_1c,
                                     'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
@@ -234,18 +237,17 @@ class MaterialService
 
                 $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased);
 
-                $this->fillMaterials($materials,$specification->designations->designation,$quantity,$array_material);
+                $this->fillMaterials($materials,$specification->designationEntry->designation,$quantity,$array_material,$pred_quantity_node);
 
-                $this->node($materials,$specification->designation_entry_id,$quantity,$with_purchased,$with_material_purchased);
+                $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$quantity);
 
             }
         }
         return $materials;
     }
 
-    private function fillMaterials($materials,$designation,$quantity,$array_materials)
+    private function fillMaterials($materials,$designation,$quantity,$array_materials,$pred_quantity_node=1)
     {
-
         if (empty($array_materials)) {
             return;
         }
@@ -260,7 +262,8 @@ class MaterialService
                     'material' => $array_material['material'],
                     'material_id' => $array_material['material_id'],
                     'norm' => $array_material['norm'],
-                    'quantity_norm' => $quantity * $array_material['norm'],
+                    'pred_quantity_node' => $pred_quantity_node,
+                    'quantity_norm' => $array_material['quantity'] * $quantity * $array_material['norm'] * $pred_quantity_node,
                     'quantity_norm_quantity_detail' => $array_material['quantity'] * $quantity * $array_material['norm'],
                     'unit' => $array_material['unit'] ?? "",
                     'code_1c' => $array_material['code_1c'],
@@ -272,6 +275,7 @@ class MaterialService
                     'detail' => $designation,
                     'material' => $array_material['material'],
                     'quantity' => $array_material['quantity'],
+                    'pred_quantity_node' => $pred_quantity_node,
                     'norm' => $array_material['norm'],
                     'unit' => $array_material['unit'] ?? "",
                     'sort' => 0

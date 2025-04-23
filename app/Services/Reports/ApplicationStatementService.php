@@ -42,7 +42,6 @@ class ApplicationStatementService
     {
         $data =  ApplicationStatementPrintService::queryAppStatement($filter,$order_name_id,$department);
 
-
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'');
 
         $previous_chto = '';
@@ -84,7 +83,10 @@ class ApplicationStatementService
         $this->pdf->Cell(0, 5, '',0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
 
         $this->pdf->Cell(0, 5, 'ВІДОМІСТЬ ЗАСТОСУВАННЯ',0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
-        $this->pdf->Ln();
+        $this->pdf->Cell(0, 5, '',0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+
+        $this->pdf->Cell(0, 5, 'ЦЕХ '.$department,0,1,'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+
         $this->pdf->Ln();
         $this->pdf->Ln();
         $this->pdf->Ln();

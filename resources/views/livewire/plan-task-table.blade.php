@@ -66,7 +66,7 @@
                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Створити
                     </a>
-                    <div class="flex items-center gap-4 items-center">
+                    <div class="flex items-center gap-4">
                         <div class="py-4">
                             <input type="checkbox" wire:model="with_purchased" id="with_purchased" wire:change="updateSearch">
                             <label for="with_purchased" class="ml-1 font-semibold text-gray-800 text-base">З покупними</label>

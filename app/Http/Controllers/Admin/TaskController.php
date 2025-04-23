@@ -20,10 +20,13 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $type = $request->type;
         return view('administrator::include.tasks.index', [
             'route' => $this->route,
+            'type' => $type,
+            'title_type' => $type == 'department' ? 'цех': 'технолог',
             'livewire_search' => 'task-search',
         ]);
     }
@@ -31,10 +34,11 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($sender_department_id)
+    public function create($sender_department_id,$type)
     {
         return view('administrator::include.tasks.create', [
             'departments' => Department::all(),
+            'type' => $type,
             'sender_department_id' => $sender_department_id,
             'sender_department' => Department::where('id', $sender_department_id)->first()->number,
             'route' => $this->route]);
@@ -45,10 +49,9 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request, TaskService $service)
     {
-        //dd($request);
         $service->store($request);
 
-        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
+        return redirect()->route($this->route.'.index',['type'=>$request->type])->with('status', 'Дані успішно збережено');
 
     }
 
@@ -63,10 +66,11 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Task $task)
+    public function edit($type,Task $task)
     {
         return view('administrator::include.tasks.edit',[
             'route' => $this->route,
+            'type' => $type,
             'departments' => Department::all(),
             'item' => $task,
         ]);
@@ -79,7 +83,7 @@ class TaskController extends Controller
     public function update(Request $request, Task $task, TaskService $service)
     {
         $service->update($request,$task);
-        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
+        return redirect()->route($this->route.'.index',['type'=>$request->type])->with('status', 'Дані успішно збережено');
     }
 
     /**

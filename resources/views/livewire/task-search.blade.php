@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="sm:flex sm:justify-between px-3 py-3">
-            <a href="{{ route($route.'.create',['sender_department' => $selectedDepartmentSender]) }}"
+            <a href="{{ route($route.'.create',['sender_department' => $selectedDepartmentSender,'type' => $type]) }}"
                class="mb-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                 Створити
             </a>
@@ -84,7 +84,7 @@
                             </strong>
                         </td>
                         <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                            <a href="{{ route($route.'.edit', $item) }}"
+                            <a href="{{ route($route.'.edit', ['type' => $type,'task' => $item])  }}"
                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                                 Edit
                             </a>
@@ -103,8 +103,12 @@
     </div>
     <x-modal-window name="viewLog" title="">
         <x-slot:body>
-            <div class="sm:flex sm:justify-center text-xl font-semibold">
+            <div class="flex sm:justify-center text-xl font-semibold">
                 Завдання
+            </div>
+            <div class="flex items-center justify-end px-3 py-3">
+                <input type="checkbox" wire:model="without_coefficient" id="without_coefficient" wire:change="updateSearch">
+                <label for="with_purchased" class="ml-1 font-semibold text-gray-800 text-base">Без коеф.</label>
             </div>
             <div class="sm:flex sm:justify-between px-3 py-3">
                 <!-- Форма для "Подет.-специфіковані" -->
@@ -114,6 +118,7 @@
                         <input type="hidden" name="ids[]" value="{{ $item->id }}">
                     @endforeach
                     <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
+                    <input type="hidden" name="without_coefficient" value="{{$without_coefficient}}">
                     <input type="hidden" name="type_report" value="0">
                     <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Подет.-специфіковані
@@ -128,13 +133,14 @@
                     @endforeach
                     <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
                     <input type="hidden" name="type_report" value="1">
+                    <input type="hidden" name="without_coefficient" value="{{$without_coefficient}}">
                     <input type="hidden" name="type_report_in" value="pdf">
                     <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Разом по матеріалам
                     </button>
                 </form>
 
-                <!-- Форма для "Разом по матеріалам" -->
+                <!-- Форма для "Разом по матеріалам Excel" -->
                 <form action="{{ route('report.task.material') }}" method="POST">
                     @csrf
                     @foreach($selectedDetails as $item)
@@ -142,6 +148,7 @@
                     @endforeach
                     <input type="hidden" name="sender_department" value="{{ $selectedDepartmentSender }}">
                     <input type="hidden" name="type_report" value="1">
+                    <input type="hidden" name="without_coefficient" value="{{$without_coefficient}}">
                     <input type="hidden" name="type_report_in" value="Excel">
                     <button type="submit" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-xs font-semibold uppercase text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                         Разом по матер. Excel

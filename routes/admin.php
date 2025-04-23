@@ -65,8 +65,13 @@ use Illuminate\Support\Facades\Route;
     Route::resource('departments', DepartmentController::class);
 
    // Route::get('tasks}', [TaskController::class, 'index'])->name('tasks.index');
-    Route::resource('tasks', TaskController::class);
-    Route::get('tasks/{sender_department}/create', 'App\Http\Controllers\Admin\TaskController@create')->name('tasks.create');
+    //Route::resource('tasks', TaskController::class);
+    //Route::get('tasks/{sender_department}/create', 'App\Http\Controllers\Admin\TaskController@create')->name('tasks.create');
+    Route::get('tasks/{type}', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('tasks/{type}/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+    Route::get('tasks/{sender_department}/{type}/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
 
     Route::resource('pi0s', PI0Controller::class);
     Route::resource('delivery-notes', \App\Http\Controllers\Admin\DeliveryNoteController::class);

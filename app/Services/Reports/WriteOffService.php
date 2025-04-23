@@ -198,9 +198,9 @@ class WriteOffService
 
                     $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? $norm->norm .' * '.$norm->quantity.' * '. $item->quantity. $multiplier_str . ' = ' : $norm->norm .' * '. $item->quantity . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? $norm->norm .' * '.$norm->quantity.' * '. $item->quantity.' * '. $norm->pred_quantity_node. $multiplier_str . ' = ' : $norm->norm .' * '. $item->quantity . ' * '. $norm->pred_quantity_node . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $multiplier,3) : round($norm->norm * $item->quantity,3), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $norm->pred_quantity_node * $multiplier,3) : round($norm->norm * $item->quantity * $norm->pred_quantity_node,3), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }

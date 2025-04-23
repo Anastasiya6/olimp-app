@@ -71,6 +71,8 @@ class TaskService
 
     public $sender_department_number;
 
+    public $without_coefficient;
+
     public $ids;
 
     private DepartmentRepositoryInterface $departmentRepository;
@@ -82,15 +84,29 @@ class TaskService
         $this->departmentRepository = $departmentRepository;
     }
 
-    public function task($ids,$sender_department_id,$type_report = 0,$type_report_in = 'pdf')
+    public function task($parameters)
     {
-        $this->ids = $ids;
+       // dd($parameters);
+        $type_report_in = $parameters?->type_report_in??'pdf';
 
-        $this->type_report = $type_report;
+        $this->without_coefficient = $parameters?->without_coefficient??0;
 
-        $this->sender_department_id = $sender_department_id;
+        $this->ids = $parameters?->ids;
+
+        $this->type_report = $parameters?->type_report??0;
+
+        $this->sender_department_id = $parameters?->sender_department??0;
 
         $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->sender_department_id)?->number;
+
+        if($this->without_coefficient == 1) {
+
+            if($type_report_in == 'pdf'){
+                $this->header1[7] = $this->header1[6];
+            }else{
+                $this->headerExcel[5] = 'Норма';
+            }
+        }
 
         $records = $this->getRecords();
 
@@ -235,15 +251,25 @@ class TaskService
 
                     }
 
-                    list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($norm->type,$norm->material);
-
                     $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->material, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                     $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? $norm->norm .' * '.$norm->quantity.' * '. $item->quantity. $multiplier_str . ' = ' : $norm->norm .' * '. $item->quantity . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    if($this->without_coefficient == 1) {
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $multiplier,3) : round($norm->norm * $item->quantity,3), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                        $multiplier_str = '';
+
+                        $multiplier = 1;
+
+                    }else{
+
+                        list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($norm->type,$norm->material);
+
+                    }
+
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? $norm->norm . ' * ' . $norm->quantity . ' * ' . $item->quantity .' * '. $norm->pred_quantity_node. $multiplier_str . ' = ' : $norm->norm . ' * ' . $item->quantity . ' * '.$norm->pred_quantity_node . ' = ', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $norm->pred_quantity_node * $multiplier,3) : round($norm->norm * $item->quantity * $norm->pred_quantity_node,3), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }
@@ -293,13 +319,9 @@ class TaskService
 
         $this->pdf->SetFont('dejavusans', '', 10);
 
-        //dd($materials);
-
         foreach ($materials as $item) {
 
             $this->setNewList($this->header1,$this->header2,$this->width);
-            //dd($item['type']);
-            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
 
             $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -313,9 +335,16 @@ class TaskService
 
             $this->pdf->MultiCell($this->width[5], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[6], $this->height, $item['sort'] == 0 ? $item['quantity_norm_quantity_detail']. $multiplier_str .' = ' : $item['quantity_norm_quantity_detail'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            if($this->without_coefficient == 1) {
+                $multiplier_str = '';
+                $multiplier = 1;
+            }else{
+                list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
+            }
 
-            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? round($item['quantity_norm_quantity_detail'] * $multiplier,3) : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[6], $this->height, $item['sort'] == 0 ? $item['quantity_norm_quantity_detail'] . $multiplier_str . ' = ' : $item['quantity_norm_quantity_detail'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? round($item['quantity_norm_quantity_detail'] * $multiplier, 3) : '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }

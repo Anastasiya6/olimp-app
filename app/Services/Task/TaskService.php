@@ -10,12 +10,13 @@ class TaskService
     public function store(Request $request)
     {
         $designation = Designation::where('designation', $request->designation)->first();
-
+       // dd($request);
         if ($designation->id) {
             $task = new Task();
             $task->designation_id = $designation->id;
             $task->quantity =  $request->quantity;
             $task->department_id =  $request->department_id;
+            $task->type = $request->type;
             $task->save();
         }
     }

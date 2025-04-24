@@ -45,7 +45,7 @@ class MaterialService
 
             $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1,$item->with_material_purchased);
 
-            $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials,$item->quantity);
+            $this->fillMaterials($item->materials,$item->designation->designation,1,$array_materials,1);
 
             $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased,$item->with_material_purchased,$item->quantity);
 
@@ -392,6 +392,7 @@ class MaterialService
 
     public function getSortItems($items)
     {
+        //dd($items);
         //for plan-task-detail-specification-norm
         return $items->groupBy('material')->map(function ($group) {
             // Группируем внутри каждой группы по названию материала

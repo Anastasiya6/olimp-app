@@ -113,19 +113,20 @@ class PlanTaskDetailSpecificationNormService
             $this->pdf->Ln();
 
             $this->setNewList();
+
             foreach($group as $item) {
 
                 list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$material);
 
                 $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                $this->pdf->MultiCell($this->width[1], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[1], $this->height, $item['detail'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 $this->pdf->MultiCell($this->width[2], $this->height, $item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['print_number'] . $multiplier_str . ' = ' :  $item['print_number']/*$item['sort'] == 0 ? $item['quantity_norm'] . $multiplier_str . ' = ' : $item['quantity_norm']*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['print_number'] . ' * ' . $item['order_quantity'] . $multiplier_str . ' = ' :  $item['print_number']/*$item['sort'] == 0 ? $item['quantity_norm'] . $multiplier_str . ' = ' : $item['quantity_norm']*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                $this->pdf->MultiCell($this->width[4], $this->height,  $item['sort'] == 0 ? round($item['print_value'] * $multiplier,3) : $item['print_value'] /*$item['sort'] == 0 ? round($item['quantity_norm'],3) * $multiplier : round($item['quantity_norm'],3) */ , 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[4], $this->height,  $item['sort'] == 0 ? round($item['print_value'] * $item['order_quantity'] * $multiplier,3) : $item['print_value'] /*$item['sort'] == 0 ? round($item['quantity_norm'],3) * $multiplier : round($item['quantity_norm'],3) */ , 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 $this->pdf->MultiCell($this->width[5], $this->height, $this->sender_department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

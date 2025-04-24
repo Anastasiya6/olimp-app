@@ -65,7 +65,7 @@ class EntryDetailDesignationService
 
         $this->getInfoMaterial();
 
-        $this->node($designation->id,0,1);
+        $this->node($designation->id,0,2);
 
         $this->addFooter();
 

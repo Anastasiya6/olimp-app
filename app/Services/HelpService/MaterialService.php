@@ -340,7 +340,7 @@ class MaterialService
 
     private function sortByGroup($records)
     {
-        dd($records);
+     //  dd($records);
         if($this->type_report == 1) {
 
             $records = collect($records->materials);

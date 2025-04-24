@@ -1,7 +1,7 @@
 <div>
     <div class="mb-6">
         <label class="block">
-            <span class="text-gray-700">Кількість на замовлення</span>
+            <span class="text-gray-700">Кількість на комплект</span>
             <input type="text" wire:model="quantity" wire:keyup="searchResult" name="quantity" class="block w-full mt-1 rounded-md" placeholder="" />
         </label>
         @error('quantity')
@@ -11,7 +11,7 @@
 
     <div class="mb-6">
         <label class="block">
-            <span class="text-gray-700">Загальна кількість</span>
+            <span class="text-gray-700">Кількість на замовлення</span>
             <input type="text" wire:model="quantity_total" value="{{$quantity_total}}" name="quantity_total" class="block w-full mt-1 rounded-md" placeholder="" />
         </label>
         @error('quantity_total')

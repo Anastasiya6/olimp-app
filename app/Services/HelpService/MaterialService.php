@@ -45,9 +45,9 @@ class MaterialService
 
             $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1,$item->with_material_purchased);
 
-            $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials);
+            $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials,$item->quantity);
 
-            $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased,$item->with_material_purchased);
+            $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased,$item->with_material_purchased,$item->quantity);
 
         }
 
@@ -171,7 +171,7 @@ class MaterialService
 
         return array();
     }
-    private function node($materials,$designation_id,$quantity,$with_purchased,$with_material_purchased,$pred_quantity_node=1)
+    private function node($materials,$designation_id,$quantity_node,$with_purchased,$with_material_purchased,$order_quantity=1,$pred_quantity_node=1)
     {
         $specifications = Specification
             ::where('designation_id', $designation_id)
@@ -193,18 +193,47 @@ class MaterialService
                         $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
 
                         if ($this->type_report == 0) {
-                            $materials->push((object)[
+                            $materials[] = array(
+                                'type' => $type,
+                                'detail' => $specification->designationEntry->designation,
+                                'material' => $specification->designationEntry->name,
+                                'material_id' => '',
+                                'norm' => $specification->quantity,
+                                'pred_quantity_node' => $quantity_node,
+                                'quantity_node' => $quantity_node,
+                                'order_quantity' => $order_quantity,
+                                'print_number' => $specification->quantity . ' * ' . $quantity_node . ' * ' . $order_quantity,
+                                'print_value' => $specification->quantity * $quantity_node * $order_quantity,
+                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                'code_1c' =>   $specification->designationEntry->code_1c,
+                                'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+                            /*$materials->push((object)[
                                 'type' => $type,
                                 'detail' => $specification->designationEntry->designation,
                                 'material' => $specification->designationEntry->name,
                                 'norm' => $specification->quantity,
-                                'pred_quantity_node' => $quantity,
+                                'pred_quantity_node' => $quantity_node,
                                 'code_1c' => $specification->designationEntry->code_1c,
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                                'sort' => $type == 'kr' ? 1 : 2
-                            ]);
+                                'sort' => $type == 'kr' ? 1 : 2*/
+                            //]);
                         } elseif ($this->type_report == 1) {
-                            if($this->type_group == 'detail'){
+
+                            $this->all_materials[] = array(
+                                'type' => $type,
+                                'detail' => $this->type_group == 'detail' ? $specification->designations->designation : $specification->designationEntry->designation,
+                                'material' => $this->type_group == 'detail' ? $specification->designationEntry->designation : $specification->designationEntry->name,
+                                'material_id' => $this->type_group == 'detail' ? $specification->designationEntry->name : $specification->designationEntry->id . $type,
+                                'norm' => $specification->quantity,
+                                'pred_quantity_node' => $pred_quantity_node,
+                                'quantity_node' => $quantity_node,
+                                'order_quantity' => $order_quantity,
+                                'print_number' => $specification->quantity . ' * ' . $quantity_node . ' * ' . $order_quantity,
+                                'print_value' => $specification->quantity * $quantity_node * $order_quantity,
+                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                'code_1c' =>  $specification->designationEntry->code_1c,
+                                'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+                            /*if($this->type_group == 'detail'){
 
                                 $this->all_materials[] = array(
                                     'type' => $type,
@@ -229,34 +258,52 @@ class MaterialService
                                     'quantity_norm_quantity_detail' => $specification->quantity * $quantity,
                                     'code_1c' => $specification->designationEntry->code_1c,
                                     'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                                    'sort' => $type == 'kr' ? 1 : 2);
+                                    'sort' => $type == 'kr' ? 1 : 2);*/
                             }
-                        }
+                       // }
                     }
                 }
 
                 $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased);
 
-                $this->fillMaterials($materials,$specification->designationEntry->designation,$quantity,$array_material,$pred_quantity_node);
+                $this->fillMaterials($materials,$specification->designationEntry->designation,$quantity_node,$array_material,$order_quantity,$pred_quantity_node);
 
-                $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$quantity);
+                $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$order_quantity,$quantity_node);
 
             }
         }
         return $materials;
     }
 
-    private function fillMaterials($materials,$designation,$quantity,$array_materials,$pred_quantity_node=1)
+    private function fillMaterials($materials,$designation,$quantity_node,$array_materials,$order_quantity,$pred_quantity_node=1)
     {
         if (empty($array_materials)) {
             return;
         }
-
         foreach ($array_materials as $array_material){
 
             if ($this->type_report == 1) {
-
                 $this->all_materials[] = array(
+                    'type' => $array_material['type'],
+                    'detail' => $designation,
+                    'material' => $array_material['material'],
+                    'material_id' => $array_material['material_id'],
+                    'norm' => $array_material['norm'],
+                    'pred_quantity_node' => $pred_quantity_node,
+                    'quantity_node' => $array_material['quantity'],
+                    'print_number' => $array_material['quantity'] . ' * ' . $quantity_node . ' * ' . $array_material['norm'] . ' * ' . $pred_quantity_node . ' * ' . $order_quantity,
+                    'print_value' => $array_material['quantity'] * $quantity_node * $array_material['norm'] * $pred_quantity_node * $order_quantity,
+                    'order_quantity' => $order_quantity,
+                    'unit' => $array_material['unit'] ?? "",
+                    'code_1c' => $array_material['code_1c'],
+                    'sort' => 0);
+
+               // 'quantity_norm' => $array_material['quantity'] * $quantity_node * $array_material['norm'] * $pred_quantity_node,
+              // 'quantity_norm_quantity_detail' => $array_material['quantity'] * $quantity_node * $array_material['norm'],
+
+         //   if ($this->type_report == 1) {
+
+                /*$this->all_materials[] = array(
                     'type' => $array_material['type'],
                     'detail' => $designation,
                     'material' => $array_material['material'],
@@ -267,20 +314,25 @@ class MaterialService
                     'quantity_norm_quantity_detail' => $array_material['quantity'] * $quantity * $array_material['norm'],
                     'unit' => $array_material['unit'] ?? "",
                     'code_1c' => $array_material['code_1c'],
-                    'sort' => 0);
+                    'sort' => 0);*/
             } elseif ($this->type_report == 0) {
 
-                $materials->push((object)[
+                $materials[] = array(
                     'type' => $array_material['type'],
                     'detail' => $designation,
                     'material' => $array_material['material'],
-                    'quantity' => $array_material['quantity'],
-                    'pred_quantity_node' => $pred_quantity_node,
+                    'material_id' => $array_material['material_id'],
                     'norm' => $array_material['norm'],
+                    'pred_quantity_node' => $pred_quantity_node,
+                    'quantity_node' => $array_material['quantity'],
+                    'print_number' => $array_material['quantity'] . ' * ' . $quantity_node . ' * ' . $array_material['norm'] . ' * ' . $pred_quantity_node . ' * ' . $order_quantity,
+                    'print_value' => $array_material['quantity'] * $quantity_node * $array_material['norm'] * $pred_quantity_node * $order_quantity,
+                    'order_quantity' => $order_quantity,
                     'unit' => $array_material['unit'] ?? "",
+                    'code_1c' => $array_material['code_1c'],
                     'sort' => 0
-                ]);
-            }
+                );
+           }
         }
 
         return $materials;
@@ -288,15 +340,31 @@ class MaterialService
 
     private function sortByGroup($records)
     {
+       // dd($records);
         if($this->type_report == 1) {
 
             $records = collect($records->materials);
-
+          // dd($records);
             if($this->type_group == 'material_id'){
-
+                //for plan-task-specification-norm
                 return $records->groupBy('material_id')->map(function ($group) {
                     return [
-                        'type' => $group->first()['type'],
+                            'type' => $group->first()['type'],
+                            'detail' => $group->first()['detail'],
+                            'material' => $group->first()['material'],
+                            'material_id' => $group->first()['material_id'],
+                            'norm' => $group->sum('norm'),
+                            'pred_quantity_node' => $group->sum('pred_quantity_node'),
+                            'quantity_node' => $group->sum('quantity_node'),
+                            'order_quantity' => $group->first()['order_quantity'],
+                            'print_number' => $group->sum('print_value'),
+                            'print_value' => round($group->sum('print_value'),3),
+                            'unit' => $group->first()['unit'],
+                            'code_1c' => $group->first()['code_1c'],
+                            'sort' => $group->first()['sort'],
+
+
+                       /* 'type' => $group->first()['type'],
                         'material_id' => $group->first()['material_id'],
                         'code_1c' => $group->first()['code_1c'],
                         'material' => $group->first()['material'],
@@ -306,12 +374,12 @@ class MaterialService
                         'quantity_norm' => $group->sum('quantity_norm'),
                         'quantity_norm_quantity_detail' => $group->sum('quantity_norm_quantity_detail'),
                         'unit' => $group->first()['unit'],
-                        'sort' => $group->first()['sort'],
+                        'sort' => $group->first()['sort'],*/
                     ];
                 })->sortBy('material')->sortBy('sort');
 
             }elseif($this->type_group == 'detail'){
-
+                   // dd($records);
                 $details = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 0)->values());
 
                 $pki = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 1)->values());
@@ -324,14 +392,30 @@ class MaterialService
 
     public function getSortItems($items)
     {
+        //for plan-task-detail-specification-norm
         return $items->groupBy('material')->map(function ($group) {
             // Группируем внутри каждой группы по названию материала
             //return $group->groupBy('material_name')->map(function ($materialDetails, $materialName) {
             // Группируем далее по наименованию детали
+
             return $group->groupBy('detail')->map(function ($details) {
-                // Возвращаем детали для каждой детали в группе
                 return [
                     'id' => $details->first()['material_id'],
+                    'type' => $details->first()['material_id'],
+                    'detail' => $details->first()['detail'],
+                    'material' => $details->first()['material'],
+                    'material_id' => $details->first()['material_id'],
+                    'norm' => $details->first()['norm'],
+                    'pred_quantity_node' => $details->first()['pred_quantity_node'],
+                    'quantity_node' => $details->first()['quantity_node'],
+                    'order_quantity' => $details->first()['order_quantity'],
+                    'print_number' =>  $details->sum('print_value'),
+                    'print_value' =>  round($details->sum('print_value'),3),
+                    'unit' => $details->first()['unit'],
+                    'code_1c' => $details->first()['code_1c'],
+                    'sort' => $details->first()['sort'],
+
+                /*    'id' => $details->first()['material_id'],
                     'type' => $details->first()['type'],
                     'material' => $details->first()['material'],
                     'detail' => $details->first()['detail'],
@@ -339,7 +423,7 @@ class MaterialService
                     'quantity_norm' => $details->sum('quantity_norm'),
                     'unit' => $details->first()['unit'],
                     'norm' => $details->first()['norm'],
-                    'sort' => $details->first()['sort'],
+                    'sort' => $details->first()['sort'],*/
                 ];
             })->sortBy('detail'); // Затем сортируем по sort (0 в начале, 1 в конце)
         })->sortKeys();

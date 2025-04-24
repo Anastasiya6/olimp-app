@@ -37,7 +37,7 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Кількість на замовлення</span>
+                                <span class="text-gray-700">Кількість на комлект</span>
                                 <input type="text" name="quantity"
                                        class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('quantity',$item->quantity)}}" />
@@ -48,7 +48,7 @@
                         </div>
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Загальна кількість</span>
+                                <span class="text-gray-700">Кількість на замовлення</span>
                                 <input type="text" name="quantity_total"
                                        class="block w-full mt-1 rounded-md"
                                        placeholder="" value="{{old('quantity_total',$item->quantity_total)}}" />

@@ -222,7 +222,7 @@ class MaterialService
                             $this->all_materials[] = array(
                                 'type' => $type,
                                 'detail' => $this->type_group == 'detail' ? $specification->designations->designation : $specification->designationEntry->designation,
-                                'material' => $this->type_group == 'detail' ? $specification->designationEntry->designation : $specification->designationEntry->name,
+                                'material' => $specification->designationEntry->name,
                                 'material_id' => $this->type_group == 'detail' ? $specification->designationEntry->name : $specification->designationEntry->id . $type,
                                 'norm' => $specification->quantity,
                                 'pred_quantity_node' => $pred_quantity_node,

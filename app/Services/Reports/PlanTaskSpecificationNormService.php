@@ -133,7 +133,7 @@ class PlanTaskSpecificationNormService
 
             $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['print_number'] . $multiplier_str . ' = ' :  $item['print_number']/*$item['sort'] == 0 ? $item['quantity_norm']. $multiplier_str . ' = ' : */, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? $item['print_value'] * $multiplier : $item['print_value'] /*$item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : ''*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? round($item['print_value'] * $multiplier,3) : $item['print_value'] /*$item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : ''*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[5], $this->height, $this->sender_department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

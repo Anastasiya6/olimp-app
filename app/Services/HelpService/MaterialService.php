@@ -45,7 +45,7 @@ class MaterialService
 
             $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1,$item->with_material_purchased);
 
-            $this->fillMaterials($item->materials,$item->designation->designation,1,$array_materials,$item->quantity);
+            $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials,$item->quantity);
 
             $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased,$item->with_material_purchased,$item->quantity);
 
@@ -202,8 +202,8 @@ class MaterialService
                                 'pred_quantity_node' => $quantity_node,
                                 'quantity_node' => $quantity_node,
                                 'order_quantity' => $order_quantity,
-                                'print_number' => $specification->quantity . ' * ' . $quantity_node . ' * ' . $order_quantity,
-                                'print_value' => $specification->quantity * $quantity_node * $order_quantity,
+                                'print_number' => $specification->quantity . ' * ' . $order_quantity,
+                                'print_value' => $specification->quantity * $order_quantity,
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                                 'code_1c' =>   $specification->designationEntry->code_1c,
                                 'sort' => $type == 'kr' || 'pki' ? 1 : 2);
@@ -228,8 +228,8 @@ class MaterialService
                                 'pred_quantity_node' => $pred_quantity_node,
                                 'quantity_node' => $quantity_node,
                                 'order_quantity' => $order_quantity,
-                                'print_number' => $specification->quantity . ' * ' . $quantity_node . ' * ' . $order_quantity,
-                                'print_value' => $specification->quantity * $quantity_node * $order_quantity,
+                                'print_number' => $specification->quantity . ' * ' . $order_quantity,
+                                'print_value' => $specification->quantity * $order_quantity,
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                                 'code_1c' =>  $specification->designationEntry->code_1c,
                                 'sort' => $type == 'kr' || 'pki' ? 1 : 2);
@@ -291,8 +291,8 @@ class MaterialService
                     'norm' => $array_material['norm'],
                     'pred_quantity_node' => $pred_quantity_node,
                     'quantity_node' => $array_material['quantity'],
-                    'print_number' => $array_material['quantity'] . ' * ' . $quantity_node . ' * ' . $array_material['norm'] . ' * ' . $pred_quantity_node . ' * ' . $order_quantity,
-                    'print_value' => $array_material['quantity'] * $quantity_node * $array_material['norm'] * $pred_quantity_node * $order_quantity,
+                    'print_number' => $array_material['quantity'] . ' * ' . $array_material['norm'] . ' * ' . $pred_quantity_node . ' * ' . $order_quantity,
+                    'print_value' => $array_material['quantity'] * $array_material['norm'] * $pred_quantity_node * $order_quantity,
                     'order_quantity' => $order_quantity,
                     'unit' => $array_material['unit'] ?? "",
                     'code_1c' => $array_material['code_1c'],
@@ -325,8 +325,8 @@ class MaterialService
                     'norm' => $array_material['norm'],
                     'pred_quantity_node' => $pred_quantity_node,
                     'quantity_node' => $array_material['quantity'],
-                    'print_number' => $array_material['quantity'] . ' * ' . $quantity_node . ' * ' . $array_material['norm'] . ' * ' . $pred_quantity_node . ' * ' . $order_quantity,
-                    'print_value' => $array_material['quantity'] * $quantity_node * $array_material['norm'] * $pred_quantity_node * $order_quantity,
+                    'print_number' => $array_material['quantity'] . ' * ' . $array_material['norm'] . ' * ' . $pred_quantity_node . ' * ' . $order_quantity,
+                    'print_value' => $array_material['quantity'] * $array_material['norm'] * $pred_quantity_node * $order_quantity,
                     'order_quantity' => $order_quantity,
                     'unit' => $array_material['unit'] ?? "",
                     'code_1c' => $array_material['code_1c'],

@@ -17,7 +17,7 @@ class EntryDetailDesignationService
 
     public $designation;
 
-    public $width = array(40,40,43,54,45,8,20,12,30);
+    public $width = array(40,30,43,50,45,8,15,12,40);
 
     public $department_str;
 
@@ -112,8 +112,10 @@ class EntryDetailDesignationService
         }
     }
 
-    public function node($designation_id,$level,$quantity_node,$route=0,$tm_last=0,$designation='',$designation_name='',$pred_quantity_node=0)
+    public function node($designation_id,$level,$quantity_node,$route=0,$tm_last=0,$designation='',$designation_name='',$pred_quantity_node=0,$array_pred_quantity_node=array())
     {
+        $array_pred_quantity_node[] = $quantity_node;
+
         $specifications = Specification
             ::where('designation_id', $designation_id)
             ->with(['designations','designationEntry.unit','designationMaterial.material.unit'])
@@ -167,7 +169,13 @@ class EntryDetailDesignationService
                         }else{
                             foreach ($specification->designationMaterial as $material) {
                                 $count++;
-                                $total = $pred_quantity_node ? $quantity_node * $specification->quantity * $material->norm * $pred_quantity_node : $quantity_node * $specification->quantity * $material->norm;
+                                $total_array = array_merge([
+                                    $material->norm,
+                                    $specification->quantity,
+                                ], $array_pred_quantity_node);
+                                $str =  implode(' * ', $array_pred_quantity_node);
+                                $total =  array_product($total_array);
+
                                 if ($count > 1) {
                                     $this->newList();
                                     $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
@@ -194,7 +202,12 @@ class EntryDetailDesignationService
                         }
                     } else {
                         $unit = str_starts_with($specification->designationEntry->designation, 'КР') ? 'шт' : $specification->designationEntry->unit->unit??'';
-                        $total = $pred_quantity_node ? $quantity_node * $specification->quantity * $pred_quantity_node : $quantity_node * $specification->quantity;
+                        $total_array = array_merge([
+                            $specification->quantity,
+                        ], $array_pred_quantity_node);
+                        $str =  implode(' * ', $array_pred_quantity_node);
+                        $total =  array_product($total_array);
+                        //$total = $pred_quantity_node ? $quantity_node * $specification->quantity * $pred_quantity_node : $quantity_node * $specification->quantity;
                         $this->pdf->MultiCell($this->width[4], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->MultiCell($this->width[5], $this->height, $unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
@@ -205,7 +218,7 @@ class EntryDetailDesignationService
                 }
                 $this->newList();
 
-                $this->node($specification->designation_entry_id, 1, $specification->quantity, $route, $tm, $specification->designationEntry->designation, $specification->designationEntry->name, $quantity_node);
+                $this->node($specification->designation_entry_id, 1, $specification->quantity, $route, $tm, $specification->designationEntry->designation, $specification->designationEntry->name, $quantity_node,$array_pred_quantity_node);
 
             }
         }

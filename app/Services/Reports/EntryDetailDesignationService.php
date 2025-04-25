@@ -17,7 +17,7 @@ class EntryDetailDesignationService
 
     public $designation;
 
-    public $width = array(40,30,43,50,45,8,15,12,40);
+    public $width = array(40,40,43,50,45,8,15,12,40);
 
     public $department_str;
 

@@ -249,7 +249,6 @@ class MaterialService
             $allFactors = array_merge([
                 $array_material['norm'],
                 $array_material['quantity'],
-               // $quantity_node
             ], $array_pred_quantity_node);
 
             if ($this->type_report == 1) {

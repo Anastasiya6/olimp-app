@@ -43,7 +43,7 @@ class MaterialService
 
             $item->materials = collect();
 
-            $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,1,$item->with_material_purchased);
+            $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,$item->quantity,$item->with_material_purchased);
 
             $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials);
 

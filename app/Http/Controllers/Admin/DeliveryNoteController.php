@@ -13,47 +13,6 @@ use Illuminate\Http\Request;
 
 class DeliveryNoteController extends Controller
 {
-    /*INSERT INTO plan_tasks (
-    order_name_id,
-    category_code,
-    designation_id,
-    order_designationEntry,
-    order_designationEntry_letters,
-    quantity,
-    quantity_total,
-    with_purchased,
-    tm,
-    sender_department_id,
-    receiver_department_id,
-       created_at,
-    updated_at
-)
-SELECT
-    38 AS order_name_id,
-    pt.category_code,
-    pt.designation_id,
-    pt.order_designationEntry,
-    pt.order_designationEntry_letters,
-    pt.quantity,
-    pt.quantity*20 as quantity_total,
-    pt.with_purchased,
-    pt.tm,
-    pt.sender_department_id,
-    pt.receiver_department_id,
-    NOW() AS created_at,
-    NOW() AS updated_at
-
-FROM plan_tasks pt
-WHERE pt.order_name_id = 19
-AND NOT EXISTS (
-    SELECT 1
-    FROM plan_tasks p2
-    WHERE p2.order_name_id = 38
-    AND p2.designation_id = pt.designation_id
-	 AND p2.sender_department_id=pt.sender_department_id
-	 AND p2.receiver_department_id=pt.receiver_department_id
-);
-*/
     public $route = 'delivery-notes';
     /**
      * Display a listing of the resource.

@@ -199,8 +199,8 @@ class TaskService
             $sheet->setCellValue('B' . $row, $item['detail']);
             $sheet->setCellValue('C' . $row, $item['material']);
             $sheet->setCellValue('D' . $row, $item['unit']);
-            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['quantity_norm_quantity_detail']. $multiplier_str .' = ' : $item['quantity_norm_quantity_detail']);
-            $sheet->setCellValue('F' . $row, $item['sort'] == 0 ? round($item['quantity_norm_quantity_detail'] * $multiplier,3) : '');
+            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['print_number']. $multiplier_str .' = ' : $item['print_number']);
+            $sheet->setCellValue('F' . $row, $item['sort'] == 0 ? round($item['print_value'] * $multiplier,3) : '');
             $sheet->setCellValue('G' . $row, $this->sender_department_number);
             $row++;
         }

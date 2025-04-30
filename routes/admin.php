@@ -118,7 +118,7 @@ use Illuminate\Support\Facades\Route;
 
 
     Route::get('not-norm-for-material/{department}/{order_name_id}', [NotNormForMaterialController::class,'notNormForMaterial'])->name('not.norm.material');
-    Route::get('delivery-note-plan/{sender_department}/{receiver_department}/{order_name_id}', [DeliveryNotePlanController::class,'deliveryNotePlan'])->name('delivery.notes.plan');
+    Route::get('delivery-note-plan/{sender_department}/{receiver_department}/{order_name_id}/{type_report_in}', [DeliveryNotePlanController::class,'deliveryNotePlan'])->name('delivery.notes.plan');
     Route::get('delivery-note/{sender_department}/{receiver_department}/{order_name_id}/{document_date}', [DeliveryNoteDocumentController::class,'deliveryNote'])->name('delivery.notes');
 
     Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('delivery.notes.designation');

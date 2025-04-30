@@ -11,6 +11,8 @@ use App\Repositories\Interfaces\OrderNameRepositoryInterface;
 use App\Services\HelpService\HelpService;
 use App\Services\HelpService\PDFService;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class DeliveryNotePlanService
 {
@@ -30,6 +32,15 @@ class DeliveryNotePlanService
                         '',
                         'к-ть',
                         'здаточним'];
+
+    private array $headerExcel = ['Номер деталі',
+        'Найменування деталі',
+        'Застосовність',
+        'Загальна к-ть',
+        'К-ть по здаточним'];
+
+    private array $widthExcel = array(15,60,8,15,15);
+
     public $pdf = null;
 
     public $page = 2;
@@ -44,6 +55,8 @@ class DeliveryNotePlanService
 
     public $order_name_id;
 
+    public $order_number;
+
     private $orderNameRepository;
 
     public function __construct(OrderNameRepositoryInterface $orderNameRepository)
@@ -51,8 +64,11 @@ class DeliveryNotePlanService
         $this->orderNameRepository = $orderNameRepository;
     }
 
-    public function deliveryNote($sender_department,$receiver_department,$order_name_id)
+    public function deliveryNote($sender_department,$receiver_department,$order_name_id,$type_report_in = 'pdf')
     {
+
+        $type_report_in = $type_report_in??'pdf';
+
         $this->sender_department = $sender_department;
       //  dd($sender_department,$receiver_department,$order_name_id);
 
@@ -72,21 +88,31 @@ class DeliveryNotePlanService
 
         $this->receiver_department_number = $receiver_department_number->number;
 
+        $this->order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
+
         $this->addInPlanTaskFromDeliveryNote();
 
         $delivery_notes_items = $this->getDeliveryNotesItems();
 
         $sortedResults = $this->getSortedItems();
 
-        $this->getPdf($delivery_notes_items,$sortedResults);
+        if($type_report_in === 'pdf'){
+
+            $this->getPdf($delivery_notes_items,$sortedResults);
+
+        }elseif($type_report_in === 'Excel'){
+
+            return $this->getExcel($delivery_notes_items,$sortedResults);
+
+        }
+
+       // $this->getPdf($delivery_notes_items,$sortedResults);
 
     }
 
     public function getPdf($delivery_notes_items,$report_application_items)
     {
-        $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
-        //dd($order_number);
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ПЛАНОМ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$order_number->name,'P');
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ЗДАТОЧНІ З ПЛАНОМ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number .' ЗАМОВЛЕННЯ №'.$this->order_number->name,'P');
 
         // Добавление данных таблицы
         foreach ($report_application_items as $item) {
@@ -103,7 +129,7 @@ class DeliveryNotePlanService
 
             $this->pdf->MultiCell($this->width[3], $this->height, $item->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item->quantity * $order_number->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item->quantity * $this->order_number->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[5], $this->height, $delivery_notes_items[$item->designation_id] ?? '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -111,7 +137,7 @@ class DeliveryNotePlanService
         }
 
         // Выводим PDF в браузер
-        $this->pdf->Output('delivery_note_'.$order_number.'.pdf', 'I');
+        $this->pdf->Output('delivery_note_'.$this->order_number.'.pdf', 'I');
     }
 
     private function addInPlanTaskFromDeliveryNote(){
@@ -210,5 +236,47 @@ class DeliveryNotePlanService
                 return ''; // В случае отсутствия обоих полей
             }
         });
+    }
+
+    private function getExcel($delivery_notes_items,$report_application_items)
+    {
+        // Новый объект Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Заголовки
+        $sheet->setCellValue('A1', $this->headerExcel[0]);
+        $sheet->setCellValue('B1', $this->headerExcel[1]);
+        $sheet->setCellValue('C1', $this->headerExcel[2]);
+        $sheet->setCellValue('D1', $this->headerExcel[3]);
+        $sheet->setCellValue('E1', $this->headerExcel[4]);
+
+        // Устанавливаем стили для заголовков
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+
+
+        $sheet->getColumnDimension('A')->setWidth($this->widthExcel[0]);
+        $sheet->getColumnDimension('B')->setWidth($this->widthExcel[1]);
+        $sheet->getColumnDimension('C')->setWidth($this->widthExcel[2]);
+        $sheet->getColumnDimension('D')->setWidth($this->widthExcel[3]);
+        $sheet->getColumnDimension('E')->setWidth($this->widthExcel[4]);
+
+        // Заполнение данными
+        $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
+        foreach ($report_application_items as $item) {
+
+            $sheet->setCellValue('A' . $row, $item->designation->designation);
+            $sheet->setCellValue('B' . $row, $item->designation->name);
+            $sheet->setCellValue('C' . $row, $item->quantity);
+            $sheet->setCellValue('D' . $row, $item->quantity * $this->order_number->quantity);
+            $sheet->setCellValue('E' . $row,  $delivery_notes_items[$item->designation_id] ?? '');
+            $row++;
+        }
+
+        // Сохраните файл
+        $writer = new Xlsx($spreadsheet);
+        $fileName = "plan_.xlsx";
+        $writer->save($fileName);
+        return $fileName;
     }
 }

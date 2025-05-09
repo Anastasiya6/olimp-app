@@ -46,8 +46,8 @@ class ReportPlanTaskService
                 return $query->where('receiver_department_id', $receiver_department);
             })
             ->with('designationEntry')
-            ->orderBy('order_designationEntry_letters')
             ->orderBy('order_designationEntry')
+            ->orderBy('order_designationEntry_letters')
             ->get();
 
         foreach ($plan_tasks as $item) {

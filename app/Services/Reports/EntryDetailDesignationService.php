@@ -188,14 +188,14 @@ class EntryDetailDesignationService
 
                                     $this->pdf->MultiCell($this->width[6], $this->height, $material->norm . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                                    $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . $total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                                    $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->Ln();
                                 } else {
                                     $this->pdf->MultiCell($this->width[4], $this->height, $material->material->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[5], $this->height, $material->material->unit->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[6], $this->height, $material->norm . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                                    $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . $total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                                    $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->Ln();
                                 }
                             }
@@ -212,7 +212,7 @@ class EntryDetailDesignationService
                         $this->pdf->MultiCell($this->width[5], $this->height, $unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                        $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . $total, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                        $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->Ln();
                     }
                 }
@@ -245,7 +245,7 @@ class EntryDetailDesignationService
                 $this->pdf->MultiCell($this->width[5], $this->height, $material->material->unit->unit, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                 $this->pdf->MultiCell($this->width[6], $this->height, $material->norm . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                 $this->pdf->MultiCell($this->width[7], $this->height, "1", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->MultiCell($this->width[8], $this->height, "=".$material->norm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                $this->pdf->MultiCell($this->width[8], $this->height, "=".round($material->norm,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                 $this->pdf->Ln();
                 $not_first_material++;
             }

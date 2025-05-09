@@ -1,190 +1,171 @@
 <div>
 
-    <div class="gap-4 sm:flex py-3">
+    <div class="space-y-6">
 
-        <label class="inline-flex items-center" for="exactMatchCheckbox">Замовл.</label>
+        {{-- Фільтри --}}
+        <div class="flex flex-wrap gap-4 justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+            <div class="flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded-lg">
+                <div class="flex flex-col">
+                    <label for="exactMatchCheckbox" class="text-sm font-medium text-gray-700">Замовлення</label>
+                    <select wire:model.change="selectedOrder" id="exactMatchCheckbox" name="order_id" class="w-28 rounded-md border-gray-300">
+                        @foreach($order_names as $order_name)
+                            <option value="{{ $order_name->id }}">{{ $order_name->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-        <select wire:model.change="selectedOrder" style="width: 100px" id="exactMatchCheckbox" name="order_id" class="block w-full mt-1 rounded-md">
-            @foreach($order_names as $order_name)
-                <option value="{{ $order_name->id }}">
-                    {{ $order_name->name }}
-                </option>
-            @endforeach
-        </select>
-        <label class="inline-flex items-center" for="departmentCheckbox">Цех відпр.</label>
+                <div class="flex flex-col">
+                    <label for="departmentSender" class="text-sm font-medium text-gray-700">Цех відпр.</label>
+                    <select wire:model.change="selectedDepartmentSender" id="departmentSender" class="w-28 rounded-md border-gray-300">
+                        @foreach($departments as $department)
+                            <option value="{{ $department->id }}" @selected($department->id == $default_first_department)>
+                                {{ $department->number }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-        <select wire:model.change="selectedDepartmentSender" style="width: 100px" id="departmentCheckbox"
-                class="block rounded-md">
-            @foreach($departments as $department)
-                <option value="{{ $department->id }}"
-                        @if($department->id==$default_first_department) selected @endif 'selected'>
-                    {{ $department->number }}
-                </option>
-            @endforeach
-        </select>
-        <label class="inline-flex items-center" for="departmentCheckbox">Цех отрим.</label>
+                <div class="flex flex-col">
+                    <label for="departmentReceiver" class="text-sm font-medium text-gray-700">Цех отрим.</label>
+                    <select wire:model.change="selectedDepartmentReceiver" id="departmentReceiver" class="w-28 rounded-md border-gray-300">
+                        @foreach($departments as $department)
+                            <option value="{{ $department->id }}" @selected($department->id == $default_second_department)>
+                                {{ $department->number }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-        <select wire:model.change="selectedDepartmentReceiver" style="width: 100px" id="exactMatchCheckbox"
-                class="block rounded-md">
-            @foreach($departments as $department)
-                <option value="{{ $department->id }}"
-                        @if($department->id==$default_second_department) selected @endif 'selected'>
-                    {{ $department->number }}
-                </option>
-            @endforeach
-        </select>
-        {{--<label class="inline-flex items-center" for="departmentCheckbox">Номер документа</label>
+                <div class="flex flex-col">
+                    <label class="text-sm font-medium text-gray-700">Дата документа</label>
+                    <input type="date" wire:model.change="selectedDocumentDate" class="w-40 rounded-md border-gray-300" />
+                </div>
+            </div>
 
-        <select wire:model.change="selectedDocumentNumber" style="width: 100px"
-                class="block rounded-md">
-            @foreach($document_numbers as $document_number)
-                <option value="{{ $document_number->document_number }}">
-                    {{ $document_number->document_number }}
-                </option>
-            @endforeach
-        </select>--}}
+            <div class="flex flex-wrap gap-2 pt-4">
+                <a target="_blank" href="{{ route('delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver, 'order_name_id' => $selectedOrder, 'document_date' => $selectedDocumentDate ]) }}" class="btn-primary">
+                    Здаточні по даті докум.
+                </a>
 
-        <label class="inline-flex items-center">
-            <span class="text-gray-700">Дата документа</span>
-            <input type="date" wire:model.change="selectedDocumentDate" class="block w-full mt-1 rounded-md"/>
-        </label>
+                <a target="_blank" href="{{ route('delivery.notes.plan', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver, 'order_name_id' => $selectedOrder, 'type_report_in' => 'pdf']) }}" class="btn-primary">
+                    Порівняння з планом (PDF)
+                </a>
 
-        <a target="_blank" href="{{ route('delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder, 'document_date' => $selectedDocumentDate ]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-            Здаточні по даті докум.
-        </a>
-        <a target="_blank" href="{{ route('delivery.notes.plan', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder, 'type_report_in' => 'pdf']) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-            Порівняння з планом
-        </a>
-        <a target="_blank" href="{{ route('delivery.notes.plan', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_name_id' => $selectedOrder, 'type_report_in' => 'Excel']) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-            Порівняння в Excel
-        </a>
-     {{--   <a href="{{ route('specification.delivery.notes', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver,'order_number' => $selectedOrder]) }}" class="underline-link" target="_blank">
-            Специфіковані норми Pdf
-        </a>--}}
+                <a target="_blank" href="{{ route('delivery.notes.plan', ['sender_department' => $selectedDepartmentSender, 'receiver_department' => $selectedDepartmentReceiver, 'order_name_id' => $selectedOrder, 'type_report_in' => 'Excel']) }}" class="btn-primary">
+                    Порівняння з планом (Excel)
+                </a>
 
-    </div>
-    <div class="sm:flex sm:justify-between">
-        <div class="gap-4 sm:flex py-3">
-            <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по номеру деталі"/>
+                <a target="_blank" href="{{ route('report.not.in.application.statement', ['sender_department' => $selectedDepartmentSender, 'order_name_id' => $selectedOrder]) }}" class="btn-primary">
+                    Нема у відомості застос.
+                </a>
+            </div>
+
+        </div>
+        <div class="flex gap-2">
+            <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по номеру деталі" class="rounded-md border-gray-300"/>
             <a target="_blank" href="{{ route('delivery.notes.designation', ['designation' => $searchTerm == null ? '0' : $searchTerm]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                 Деталь у здаточних
             </a>
         </div>
-        <div class="gap-4 sm:flex py-3">
-            <a target="_blank" href="{{ route('report.not.in.application.statement', ['sender_department' => $selectedDepartmentSender,'order_name_id' => $selectedOrder]) }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                Нема у відомості застос.
-            </a>
+        <div>
+            @if(session()->has('message'))
+                <div>{{ session('message') }}</div>
+            @endif
         </div>
-    </div>
-    <div>
-        @if(session()->has('message'))
-            <div>{{ session('message') }}</div>
-        @endif
-    </div>
-    <div class="min-w-full align-middle">
-        <table class="min-w-full border divide-y divide-gray-200">
-            <thead>
-            <tr>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Номер</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Деталь</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Докум.</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата докум.</span>
-                </th>
-               {{-- <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата внесення</span>
-                </th>--}}
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Замовл.</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Кіл-ть</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Цех відпр.</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Цех отрим.</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп.</span>
-                </th>
-                <th class="bg-gray-50 px-6 py-3 text-left">
-                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Заміна матеріал.</span>
-                </th>
-                <th class="w-56 bg-gray-50 px-6 py-3 text-left">
-                </th>
-            </tr>
-            </thead>
 
-            <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            @foreach($items as $item)
-                <tr class="bg-white">
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->designation->designation??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->designation->name??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->document_number??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ \Carbon\Carbon::parse($item->document_date)->format('d.m.Y')??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->orderName->name??'' }}</strong>
-                    </td>
-
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->quantity??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->senderDepartment->number??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                        <strong>{{ $item->receiverDepartment->number??'' }}</strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                        <strong>
-                            <div class="py-4">
-                                <input type="checkbox" disabled  name="with_purchased" @if($item->with_purchased) checked @endif id="exactMatchCheckbox" value="1">
-                            </div>
-                        </strong>
-                    </td>
-                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                        <strong>
-                            <div class="py-4">
-                                <input type="checkbox" disabled  name="with_material_purchased" @if($item->with_material_purchased) checked @endif id="exactMatchCheckbox" value="1">
-                            </div>
-                        </strong>
-                    </td>
-                    <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                        <a href="{{ route($route.'.edit', $item) }}"
-                           class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                            Edit
-                        </a>
-                        <x-danger-button
-                            wire:key="{{ $item->id }}"
-                            wire:click="deleteDeliveryNote({{ $item->id }})">
-                            Delete
-                        </x-danger-button>
-                    </td>
+        <div class="overflow-x-auto rounded-lg shadow">
+            <table class="min-w-full divide-y divide-gray-200 bg-white">
+                <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Номер
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Деталь
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Докум.
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Дата докум.
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Замовл.
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Кіл-ть
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Цех відпр.
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Цех отрим.
+                    </th>
+                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        З покуп.
+                    </th>
+                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Заміна матеріал.
+                    </th>
+                    <th class="px-4 py-3"></th>
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
-        <div class="py-4">
-            {{ $items->appends(request()->input())->links() }}
+                </thead>
+
+                <tbody class="divide-y divide-gray-200">
+                @foreach($items as $item)
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->designation->designation ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->designation->name ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->document_number ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ \Carbon\Carbon::parse($item->document_date)->format('d.m.Y') ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->orderName->name ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->quantity ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->senderDepartment->number ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                            {{ $item->receiverDepartment->number ?? '' }}
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <input type="checkbox" disabled @if($item->with_purchased) checked @endif class="h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <input type="checkbox" disabled @if($item->with_material_purchased) checked @endif class="h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route($route.'.edit', $item) }}"
+                                   class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                                    Edit
+                                </a>
+                                <x-danger-button
+                                    wire:key="{{ $item->id }}"
+                                    wire:click="deleteDeliveryNote({{ $item->id }})">
+                                    Delete
+                                </x-danger-button>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+
+            <div class="py-4">
+                {{ $items->appends(request()->input())->links() }}
+            </div>
         </div>
     </div>
-
 </div>
-
 

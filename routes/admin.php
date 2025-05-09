@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DeliveryNoteController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DesignationMaterialController;
+use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\Admin\GroupMaterialController;
 use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
@@ -64,7 +65,9 @@ use Illuminate\Support\Facades\Route;
     Route::resource('designations', DesignationController::class);
     Route::resource('departments', DepartmentController::class);
 
-   // Route::get('tasks}', [TaskController::class, 'index'])->name('tasks.index');
+    Route::resource('groups', GroupController::class);
+
+// Route::get('tasks}', [TaskController::class, 'index'])->name('tasks.index');
     //Route::resource('tasks', TaskController::class);
     //Route::get('tasks/{sender_department}/create', 'App\Http\Controllers\Admin\TaskController@create')->name('tasks.create');
     Route::get('tasks/{type}', [TaskController::class, 'index'])->name('tasks.index');

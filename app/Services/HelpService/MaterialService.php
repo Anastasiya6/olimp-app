@@ -74,11 +74,11 @@ class MaterialService
         }
     }
 
-    private function checkMaterial($designationMaterial,$designation_id, $designation_entry_id, $with_purchased,$quantity,$with_material_purchased)
+    private function checkMaterial($designationMaterial,$designation_id, $designation_entry_id, $with_purchased,$quantity,$with_material_purchased,$array_designation_id = array())
     {
         if($with_purchased == 1) {
 
-            $purchase = $this->getPurchase($designation_id, $designation_entry_id, $quantity);
+            $purchase = $this->getPurchase($designation_id, $designation_entry_id, $quantity,$array_designation_id);
 
             if(!empty($purchase)){
 
@@ -87,7 +87,7 @@ class MaterialService
         }
         if($with_material_purchased == 1) {
 
-            $material_purchase = $this->getMaterialPurchase($designation_id, $designation_entry_id,$quantity);
+            $material_purchase = $this->getMaterialPurchase($designation_id, $designation_entry_id,$quantity,$array_designation_id);
 
             if(!empty($material_purchase)){
 
@@ -133,10 +133,15 @@ class MaterialService
 
     }
 
-    private function getPurchase($designation_id, $designation_entry_id,$quantity)
+    private function getPurchase($designation_id, $designation_entry_id,$quantity,$array_designation_id)
     {
         $purchase = Purchase::where('designation_id', $designation_id)->where('designation_entry_id', $designation_entry_id)->first();
 
+        if (!$purchase && !empty($array_designation_id)) {
+
+            $purchase = Purchase::whereIn('designation_id', $array_designation_id)->where('designation_entry_id', $designation_entry_id)->first();
+
+        }
         if ($purchase) {
 
             return array([
@@ -152,10 +157,14 @@ class MaterialService
 
         return array();
     }
-    private function getMaterialPurchase($designation_id, $designation_entry_id,$quantity)
+    private function getMaterialPurchase($designation_id, $designation_entry_id,$quantity,$array_designation_id)
     {
         $material_purchase = MaterialPurchase::where('designation_id', $designation_id)->where('designation_entry_id', $designation_entry_id)->first();
 
+        if (!$material_purchase && !empty($array_designation_id)) {
+
+            $material_purchase = MaterialPurchase::whereIn('designation_id', $array_designation_id)->where('designation_entry_id', $designation_entry_id)->first();
+        }
         if ($material_purchase) {
 
             return array([
@@ -171,7 +180,7 @@ class MaterialService
 
         return array();
     }
-    private function node($materials,$designation_id,$quantity_node,$with_purchased,$with_material_purchased,$pred_quantity_node=1,$array_pred_quantity_node=array())
+    private function node($materials,$designation_id,$quantity_node,$with_purchased,$with_material_purchased,$pred_quantity_node=1,$array_pred_quantity_node=array(),$array_designation_id=array())
     {
         $array_pred_quantity_node[] = $quantity_node;
 
@@ -182,6 +191,8 @@ class MaterialService
             ->get();
 
         if ($specifications->isNotEmpty()) {
+
+            $array_designation_id[] = $designation_id;
 
             foreach ($specifications as $specification) {
 
@@ -228,11 +239,11 @@ class MaterialService
                     }
                 }
 
-                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased);
+                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased,$array_designation_id);
 
                 $this->fillMaterials($materials,$specification->designationEntry->designation,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node);
 
-                $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$quantity_node,$array_pred_quantity_node);
+                $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$quantity_node,$array_pred_quantity_node,$array_designation_id);
 
             }
         }
@@ -292,11 +303,10 @@ class MaterialService
 
     private function sortByGroup($records)
     {
-       //dd($records);
         if($this->type_report == 1) {
 
             $records = collect($records->materials);
-          // dd($records);
+
             if($this->type_group == 'material_id'){
                 //for plan-task-specification-norm
                 return $records->groupBy('material_id')->map(function ($group) {
@@ -309,7 +319,7 @@ class MaterialService
                             'pred_quantity_node' => $group->sum('pred_quantity_node'),
                             'quantity_node' => $group->sum('quantity_node'),
                             'print_number' => $group->sum('print_value'),
-                            'print_value' => round($group->sum('print_value'),3),
+                            'print_value' => $group->sum('print_value'),
                             'unit' => $group->first()['unit'],
                             'code_1c' => $group->first()['code_1c'],
                             'sort' => $group->first()['sort'],
@@ -318,7 +328,7 @@ class MaterialService
                 })->sortBy('material')->sortBy('sort');
 
             }elseif($this->type_group == 'detail'){
-                   // dd($records);
+
                 $details = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 0)->values());
 
                 $pki = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 1)->values());
@@ -331,7 +341,6 @@ class MaterialService
 
     public function getSortItems($items)
     {
-        //dd($items);
         //for plan-task-detail-specification-norm
         return $items->groupBy('material')->map(function ($group) {
             // Группируем внутри каждой группы по названию материала
@@ -349,7 +358,7 @@ class MaterialService
                     'pred_quantity_node' => $details->first()['pred_quantity_node'],
                     'quantity_node' => $details->first()['quantity_node'],
                     'print_number' =>  $details->sum('print_value'),
-                    'print_value' =>  round($details->sum('print_value'),3),
+                    'print_value' =>  $details->sum('print_value'),
                     'unit' => $details->first()['unit'],
                     'code_1c' => $details->first()['code_1c'],
                     'sort' => $details->first()['sort'],

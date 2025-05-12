@@ -115,6 +115,7 @@ class PlanTaskSpecificationNormService
     private function getPdf($materials)
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
+
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
 
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
@@ -123,17 +124,15 @@ class PlanTaskSpecificationNormService
 
             $this->setNewList();
 
-            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
-
             $this->pdf->MultiCell($this->width[0], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[1], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[2], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['print_number'] . $multiplier_str . ' = ' :  $item['print_number']/*$item['sort'] == 0 ? $item['quantity_norm']. $multiplier_str . ' = ' : */, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[3], $this->height, $item['sort'] == 0 ? $item['print_number'] . $item['multiplier_str'] . ' = ' :  $item['print_number']/*$item['sort'] == 0 ? $item['quantity_norm']. $multiplier_str . ' = ' : */, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? round($item['print_value'] * $multiplier,3) : $item['print_value'] /*$item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : ''*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[4], $this->height, $item['sort'] == 0 ? round($item['print_value'] * $item['multiplier'],3) : $item['print_value'] /*$item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : ''*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[5], $this->height, $this->sender_department_number, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
@@ -171,13 +170,12 @@ class PlanTaskSpecificationNormService
         // Заполнение данными
         $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
         foreach ($materials as $item) {
-            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
 
             $sheet->setCellValue('A' . $row, $item['code_1c']);
             $sheet->setCellValue('B' . $row, $item['material']);
             $sheet->setCellValue('C' . $row, $item['unit']);
-            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['print_number'] . $multiplier_str . ' = ' :  $item['print_number']/*$item['sort'] == 0 ? $item['quantity_norm'].' * '.$multiplier.' = ' : $item['norm']*/);
-            $sheet->setCellValue('E' . $row,  $item['sort'] == 0 ? $item['print_value'] * $multiplier : '' /*$item['sort'] == 0 ? round($item['quantity_norm'] * $multiplier,3) : ''*/);
+            $sheet->setCellValue('D' . $row, $item['sort'] == 0 ? $item['print_number'] . $item['multiplier_str'] . ' = ' :  $item['print_number']);
+            $sheet->setCellValue('E' . $row,  $item['sort'] == 0 ? $item['print_value'] * $item['multiplier'] : '');
             $sheet->setCellValue('F' . $row, $this->sender_department_number);
             $row++;
         }

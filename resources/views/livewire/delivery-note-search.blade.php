@@ -27,7 +27,7 @@
 
                 <div class="flex flex-col">
                     <label for="departmentReceiver" class="text-sm font-medium text-gray-700">Цех отрим.</label>
-                    <select wire:model.change="selectedDepartmentReceiver" id="departmentReceiver" class="w-28 rounded-md border-gray-300">
+                    <select wire:model.change="selectedDepartmentReceiver" id="departmentReceiver" class="w-40 rounded-md border-gray-300">
                         @foreach($departments as $department)
                             <option value="{{ $department->id }}" @selected($department->id == $default_second_department)>
                                 {{ $department->number }}

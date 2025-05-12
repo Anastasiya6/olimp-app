@@ -193,14 +193,13 @@ class TaskService
         // Заполнение данными
         $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
         foreach ($materials as $item) {
-            list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
 
             $sheet->setCellValue('A' . $row, $item['code_1c']);
             $sheet->setCellValue('B' . $row, $item['detail']);
             $sheet->setCellValue('C' . $row, $item['material']);
             $sheet->setCellValue('D' . $row, $item['unit']);
-            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['print_number']. $multiplier_str .' = ' : $item['print_number']);
-            $sheet->setCellValue('F' . $row, $item['sort'] == 0 ? round($item['print_value'] * $multiplier,3) : '');
+            $sheet->setCellValue('E' . $row, $item['sort'] == 0 ? $item['print_number']. $item['multiplier_str'] .' = ' : $item['print_number']);
+            $sheet->setCellValue('F' . $row, $item['sort'] == 0 ? round($item['print_value'] * $item['multiplier'],3) : '');
             $sheet->setCellValue('G' . $row, $this->sender_department_number);
             $row++;
         }
@@ -257,19 +256,14 @@ class TaskService
 
                     if($this->without_coefficient == 1) {
 
-                        $multiplier_str = '';
+                        $item['multiplier_str'] = '';
 
-                        $multiplier = 1;
-
-                    }else{
-
-                        list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
-
+                        $item['multiplier'] = 1;
                     }
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $item['sort'] == 0 ? $item['print_number'] . $multiplier_str . ' = ' :  $item['print_number']/*$norm->sort == 0 ? $norm->norm . ' * ' . $norm->quantity . ' * ' . $item->quantity .' * '. $norm->pred_quantity_node. $multiplier_str . ' = ' : $norm->norm . ' * ' . $item->quantity . ' = '*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $item['sort'] == 0 ? $item['print_number'] . $item['multiplier_str'] . ' = ' :  $item['print_number']/*$norm->sort == 0 ? $norm->norm . ' * ' . $norm->quantity . ' * ' . $item->quantity .' * '. $norm->pred_quantity_node. $multiplier_str . ' = ' : $norm->norm . ' * ' . $item->quantity . ' = '*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->MultiCell($this->width[++$column], $this->height, $item['sort'] == 0 ? round($item['print_value'] * $multiplier,3) : $item['print_value']/*$norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $norm->pred_quantity_node * $multiplier,3) : round($norm->norm * $item->quantity,3)*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[++$column], $this->height, $item['sort'] == 0 ? round($item['print_value'] * $item['multiplier'],3) : $item['print_value']/*$norm->sort == 0 ? round($norm->norm * $norm->quantity * $item->quantity * $norm->pred_quantity_node * $multiplier,3) : round($norm->norm * $item->quantity,3)*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                 }
             }
@@ -336,15 +330,15 @@ class TaskService
             $this->pdf->MultiCell($this->width[5], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             if($this->without_coefficient == 1) {
-                $multiplier_str = '';
-                $multiplier = 1;
-            }else{
-                list($multiplier_str, $multiplier) = $this->materialService->getTypeMaterial($item['type'],$item['material']);
+
+                $item['multiplier_str'] = '';
+
+                $item['multiplier'] = 1;
             }
 
-            $this->pdf->MultiCell($this->width[6], $this->height, $item['sort'] == 0 ? $item['print_number'] . $multiplier_str . ' = ' :  $item['print_number'] /*$item['sort'] == 0 ? $item['quantity_norm_quantity_detail'] . $multiplier_str . ' = ' : $item['quantity_norm_quantity_detail']*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[6], $this->height, $item['sort'] == 0 ? $item['print_number'] . $item['multiplier_str'] . ' = ' :  $item['print_number'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? $item['print_value'] * $multiplier : $item['print_value']/*$item['sort'] == 0 ? round($item['quantity_norm_quantity_detail'] * $multiplier, 3) : ''*/, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[7], $this->height, $item['sort'] == 0 ? $item['print_value'] * $item['multiplier'] : $item['print_value'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
         }

@@ -216,6 +216,8 @@ class MaterialService
                                 'quantity_node' => $quantity_node,
                                 'print_number' => $specification->quantity . ' * ' . $quantity_node,
                                 'print_value' => $specification->quantity * $quantity_node,
+                                'multiplier_str' => "",
+                                'multiplier' => "",
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                                 'code_1c' =>   $specification->designationEntry->code_1c,
                                 'sort' => $type == 'kr' || 'pki' ? 1 : 2);
@@ -232,6 +234,8 @@ class MaterialService
                                 'quantity_node' => $quantity_node,
                                 'print_number' => $specification->quantity . ' * ' . $quantity_node,
                                 'print_value' => $specification->quantity * $quantity_node,
+                                'multiplier_str' => "",
+                                'multiplier' => "",
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
                                 'code_1c' =>  $specification->designationEntry->code_1c,
                                 'sort' => $type == 'kr' || 'pki' ? 1 : 2);
@@ -255,8 +259,15 @@ class MaterialService
         if (empty($array_materials)) {
             return;
         }
+
         foreach ($array_materials as $array_material){
 
+            if($array_material['unit']  == 'шт'){
+                $multiplier_str = '';
+                $multiplier = 1;
+            }else {
+                list($multiplier_str, $multiplier) = $this->getTypeMaterial($array_material['type'], $array_material['material']);
+            }
             $allFactors = array_merge([
                 $array_material['norm'],
                 $array_material['quantity'],
@@ -274,6 +285,8 @@ class MaterialService
                     'quantity_node' => $quantity_node,
                     'print_number' => implode(' * ', $allFactors),
                     'print_value' => array_product($allFactors),
+                    'multiplier_str' => $multiplier_str,
+                    'multiplier' => $multiplier,
                     'unit' => $array_material['unit'] ?? "",
                     'code_1c' => $array_material['code_1c'],
                     'sort' => 0);
@@ -291,13 +304,14 @@ class MaterialService
                     'quantity_node' => $quantity_node,
                     'print_number' => implode(' * ', $allFactors),
                     'print_value' => array_product($allFactors),
+                    'multiplier_str' => $multiplier_str,
+                    'multiplier' => $multiplier,
                     'unit' => $array_material['unit'] ?? "",
                     'code_1c' => $array_material['code_1c'],
                     'sort' => 0
                 );
            }
         }
-
         return $materials;
     }
 
@@ -320,6 +334,8 @@ class MaterialService
                             'quantity_node' => $group->sum('quantity_node'),
                             'print_number' => $group->sum('print_value'),
                             'print_value' => $group->sum('print_value'),
+                            'multiplier_str' => $group->first()['multiplier_str'],
+                            'multiplier' => $group->first()['multiplier'],
                             'unit' => $group->first()['unit'],
                             'code_1c' => $group->first()['code_1c'],
                             'sort' => $group->first()['sort'],
@@ -359,6 +375,8 @@ class MaterialService
                     'quantity_node' => $details->first()['quantity_node'],
                     'print_number' =>  $details->sum('print_value'),
                     'print_value' =>  $details->sum('print_value'),
+                    'multiplier_str' => $details->first()['multiplier_str'],
+                    'multiplier' => $details->first()['multiplier'],
                     'unit' => $details->first()['unit'],
                     'code_1c' => $details->first()['code_1c'],
                     'sort' => $details->first()['sort'],

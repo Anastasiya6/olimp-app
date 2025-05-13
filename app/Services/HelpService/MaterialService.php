@@ -205,6 +205,10 @@ class MaterialService
 
                         $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
 
+                        $allFactors = array_merge([
+                            $specification->quantity,
+                        ], $array_pred_quantity_node);
+
                         if ($this->type_report == 0) {
                             $materials[] = array(
                                 'type' => $type,
@@ -214,8 +218,10 @@ class MaterialService
                                 'norm' => $specification->quantity,
                                 'pred_quantity_node' => $quantity_node,
                                 'quantity_node' => $quantity_node,
-                                'print_number' => $specification->quantity . ' * ' . $quantity_node,
-                                'print_value' => $specification->quantity * $quantity_node,
+                                //'print_number' => $specification->quantity . ' * ' . $quantity_node,
+                                //'print_value' => $specification->quantity * $quantity_node,
+                                'print_number' => implode(' * ', $allFactors),
+                                'print_value' => array_product($allFactors),
                                 'multiplier_str' => "",
                                 'multiplier' => "",
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
@@ -232,8 +238,10 @@ class MaterialService
                                 'norm' => $specification->quantity,
                                 'pred_quantity_node' => $pred_quantity_node,
                                 'quantity_node' => $quantity_node,
-                                'print_number' => $specification->quantity . ' * ' . $quantity_node,
-                                'print_value' => $specification->quantity * $quantity_node,
+                                //'print_number' => $specification->quantity . ' * ' . $quantity_node,
+                                //'print_value' => $specification->quantity * $quantity_node,
+                                'print_number' => implode(' * ', $allFactors),
+                                'print_value' => array_product($allFactors),
                                 'multiplier_str' => "",
                                 'multiplier' => "",
                                 'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
@@ -349,7 +357,7 @@ class MaterialService
 
                 $pki = $this->getSortItems($records->filter(fn($item) => $item['sort'] == 1)->values());
 
-                return $details->merge($pki);;
+                return $details->merge($pki);
             }
         }
         return $records;

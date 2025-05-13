@@ -90,7 +90,7 @@ class DeliveryNotePlanService
 
         $this->order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
-        $this->addInPlanTaskFromDeliveryNote();
+        //$this->addInPlanTaskFromDeliveryNote();
 
         $delivery_notes_items = $this->getDeliveryNotesItems();
 
@@ -140,44 +140,44 @@ class DeliveryNotePlanService
         $this->pdf->Output('delivery_note_'.$this->order_number.'.pdf', 'I');
     }
 
-    private function addInPlanTaskFromDeliveryNote(){
-
-        $records = DeliveryNote
-            ::select(
-                'designation_id'
-            )
-            ->where('order_name_id', $this->order_name_id)
-            ->whereNotIn('designation_id', function($query) {
-                $query->select('designation_id')
-                    ->from('plan_tasks')
-                    ->where('order_name_id',$this->order_name_id);
-            })
-            ->where('sender_department_id', $this->sender_department)
-            ->where('receiver_department_id', $this->receiver_department)
-            ->groupBy('designation_id')
-            ->with('designation')
-            ->get();
-
-        foreach($records as $detail) {
-            $attributes = [
-                'order_name_id' => $this->order_name_id,
-                'designation_id' => $detail->designation_id,
-            ];
-
-            $values = [
-                'category_code' => 0,
-                'quantity' => 0,
-                'quantity_total' => 0,
-                'sender_department_id' => $this->sender_department,
-                'receiver_department_id' => $this->receiver_department,
-                'order_designationEntry' =>HelpService::getNumbers($detail->designation->designation) ,
-                'order_designationEntry_letters' => HelpService::getLetters($detail->designation->designation),
-                'is_report_application_statement' => 2 // зі здаточних
-            ];
-
-            PlanTask::firstOrCreate($attributes, $values);
-        }
-    }
+//    private function addInPlanTaskFromDeliveryNote(){
+//
+//        $records = DeliveryNote
+//            ::select(
+//                'designation_id'
+//            )
+//            ->where('order_name_id', $this->order_name_id)
+//            ->whereNotIn('designation_id', function($query) {
+//                $query->select('designation_id')
+//                    ->from('plan_tasks')
+//                    ->where('order_name_id',$this->order_name_id);
+//            })
+//            ->where('sender_department_id', $this->sender_department)
+//            ->where('receiver_department_id', $this->receiver_department)
+//            ->groupBy('designation_id')
+//            ->with('designation')
+//            ->get();
+//
+//        foreach($records as $detail) {
+//            $attributes = [
+//                'order_name_id' => $this->order_name_id,
+//                'designation_id' => $detail->designation_id,
+//            ];
+//
+//            $values = [
+//                'category_code' => 0,
+//                'quantity' => 0,
+//                'quantity_total' => 0,
+//                'sender_department_id' => $this->sender_department,
+//                'receiver_department_id' => $this->receiver_department,
+//                'order_designationEntry' =>HelpService::getNumbers($detail->designation->designation) ,
+//                'order_designationEntry_letters' => HelpService::getLetters($detail->designation->designation),
+//                'is_report_application_statement' => 2 // зі здаточних
+//            ];
+//
+//            PlanTask::firstOrCreate($attributes, $values);
+//        }
+//    }
 
     private function getDeliveryNotesItems()
     {

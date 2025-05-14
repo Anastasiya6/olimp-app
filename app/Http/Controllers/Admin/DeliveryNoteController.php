@@ -43,9 +43,14 @@ class DeliveryNoteController extends Controller
      */
     public function store(StoreDeliveryNoteRequest $request, DeliveryNoteService $service)
     {
-        $service->store($request);
+        $statusCreatePlanTask = $service->store($request);
 
-        return redirect()->route('delivery-notes.index')->with('status', 'Дані успішно збережено');
+        return redirect()
+            ->route('delivery-notes.index')
+            ->with([
+                'status' => 'Дані успішно збережено',
+                //'message' => $statusCreatePlanTask
+            ]);
 
     }
 

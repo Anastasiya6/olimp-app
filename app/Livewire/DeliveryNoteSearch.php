@@ -31,6 +31,9 @@ class DeliveryNoteSearch extends Component
 
     public function mount()
     {
+        if(session()->has('message')){
+            $this->dispatch('open-modal',name:'viewLog');
+        }
         if($this->selectedOrder==0) {
 
             $order_first = OrderName::where('is_order', 1)->orderBy('name')->first();

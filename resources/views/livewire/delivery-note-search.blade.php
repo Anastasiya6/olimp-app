@@ -167,5 +167,14 @@
             </div>
         </div>
     </div>
+
+        <x-small-modal-window name="viewLog" title="{{ session('message') }}">
+            <x-slot:body>
+                <div class="min-w-full align-middle">
+                    {{ session('status') }}
+                </div>
+            </x-slot:body>
+        </x-small-modal-window>
+
 </div>
 

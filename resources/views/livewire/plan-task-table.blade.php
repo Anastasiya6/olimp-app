@@ -1,5 +1,5 @@
-<div class="py-12">
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+<div>
+    <div class="space-y-6">
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
             <div class="sm:flex sm:justify-between px-6 py-3">
                 <a style="text-decoration: underline;" href="{{ route('plan-tasks.all',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}" target="_blank">
@@ -15,6 +15,7 @@
                     Специфіковані норми в Excel
                 </a>
             </div>
+
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between py-6 px-6">
 
                 <label for="exactMatchCheckbox">Замовлення</label>
@@ -61,17 +62,19 @@
                         </div>
                     </div>
                 </div>
-{{--                <button wire:click="viewConfirm"--}}
-{{--                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">--}}
-{{--                    Перенести дані з відом. застосув. у план--}}
-{{--                </button>--}}
-            </div>
-            <div>
-                @if(session()->has('message'))
-                    <div>{{ session('message') }}</div>
-                @endif
+        {{--                <button wire:click="viewConfirm"--}}
+        {{--                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">--}}
+        {{--                    Перенести дані з відом. застосув. у план--}}
+        {{--                </button>--}}
+{{--                    </div>--}}
+                <div>
+                    @if(session()->has('message'))
+                        <div>{{ session('message') }}</div>
+                    @endif
 
+                </div>
             </div>
+
             <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white px-6">
                 <div class="flex justify-between items-center py-4 gap-4">
                     <a href="{{ route($route.'.create',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}"
@@ -79,91 +82,96 @@
                         Створити
                     </a>
                 </div>
+
                 <div class="py-4">
                     <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по номеру деталі"/>
                 </div>
-                <div class="min-w-full align-middle">
-                    <table class="min-w-full border divide-y divide-gray-200">
-                        <thead>
-                        <tr>
-                            <th class="bg-gray-50 px-6 py-3 text-left">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Мате-ріал</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Деталь</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Найменування деталі</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Застосовність</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Загальна кіл-ть</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Замовл.</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Цех відправник</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Цех отримувач</span>
-                            </th>
-                            <th class="bg-gray-50 px-3 py-3 text-center">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З відомості застос.</span>
-                            </th>
-                            <th class="bg-gray-50 px-6 py-3 text-left">
-                                <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">З покуп.</span>
-                            </th>
-                            <th class="w-56 bg-gray-50 px-6 py-3 text-left">
-                            </th>
-                        </tr>
-                        </thead>
+            </div>
+            <div class="overflow-x-auto rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200 bg-white">
+                    <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Мате-ріал
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Деталь
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Найменування деталі
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Застосов-ність
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Загальна кіл-ть
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Замовл.
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Цех відправник
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Цех отримувач
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                           Додано
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                           З покуп.
+                        </th>
+                        <th class="px-4 py-3">
+                        </th>
+                    </tr>
+                    </thead>
 
-                        <tbody class="bg-white divide-y divide-gray-200 divide-solid">
+                    <tbody class="divide-y divide-gray-200">
 
-                        @foreach($items as $item)
-                            <tr class="bg-white">
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>
-                                        <div class="py-4">
-                                            <input type="checkbox" disabled  name="material" @if($item->material) checked @endif id="exactMatchCheckbox" value="1">
-                                        </div>
-                                    </strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->designation->designation??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap">
-                                    <strong>{{ $item->designation->name??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{ $item->quantity??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{ $item->quantity_total??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{ $item->orderName->name??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{ $item->senderDepartment->number??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{ $item->receiverDepartment->number??'' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{ $item->is_report_application_statement? 'Так' : 'Ні' }}</strong>
-                                </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>
-                                        <div class="py-4">
-                                            <input type="checkbox" disabled  name="with_purchased" @if($item->with_purchased) checked @endif id="exactMatchCheckbox" value="1">
-                                        </div>
-                                    </strong>
-                                </td>
-                                <td class="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                    @foreach($items as $item)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+
+                                    <div class="py-4">
+                                        <input type="checkbox" disabled  name="material" @if($item->material) checked @endif id="exactMatchCheckbox" value="1">
+                                    </div>
+
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                {{ $item->designation->designation??'' }}
+                            </td>
+                            <td class="px-4 py-4  font-bold text-gray-900">
+                                {{ $item->designation->name??'' }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                {{ $item->quantity??'' }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                {{ $item->quantity_total??'' }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                {{ $item->orderName->name??'' }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                {{ $item->senderDepartment->number??'' }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                {{ $item->receiverDepartment->number??'' }}
+                            </td>
+                            <td class="px-4 py-4 font-bold text-gray-900">
+                                @if($item->is_report_application_statement==1)
+                                        З відом застосув.
+                                    @elseif($item->is_report_application_statement==2)
+                                        Зі здаточ.
+                                     @endif
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
+                                <div class="py-4">
+                                    <input type="checkbox" disabled  name="with_purchased" @if($item->with_purchased) checked @endif id="exactMatchCheckbox" value="1">
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-right">
+                                <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route($route.'.edit', $item) }}"
                                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                                         Edit
@@ -174,16 +182,14 @@
                                         wire:confirm="Ви впевнені, що хочете видалити запис?">
                                         Delete
                                     </x-danger-button>
-
-
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                   <div class="py-4">
-                         {{ $items->appends(request()->input())->links() }}
-                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+               <div class="py-4">
+                     {{ $items->appends(request()->input())->links() }}
                 </div>
             </div>
         </div>

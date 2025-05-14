@@ -104,7 +104,7 @@
                             Застосов-ність
                         </th>
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Загальна кіл-ть
+                            Заг. кіл-ть
                         </th>
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                             Замовл.

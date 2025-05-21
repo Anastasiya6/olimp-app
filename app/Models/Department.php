@@ -17,5 +17,7 @@ class Department extends Model
 
     CONST FIRST_DEPARTMENT = '06';
 
+    CONST DEPARTMENT_25_ID = 5;
+
     public $timestamps = true;
 }

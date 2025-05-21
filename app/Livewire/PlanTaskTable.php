@@ -60,10 +60,10 @@ class PlanTaskTable extends Component
             }
         }
         if(!$this->sender_department_id){
-            $this->sender_department_id = $sender_department_id ?? Department::DEFAULT_FIRST_DEPARTMENT_ID;
+            $this->sender_department_id = $sender_department_id ?? Department::DEPARTMENT_25_ID;
         }
         if(!$this->receiver_department_id) {
-            $this->receiver_department_id = $receiver_department_id ?? Department::DEFAULT_SECOND_DEPARTMENT_ID;
+            $this->receiver_department_id = $receiver_department_id ?? 0;
         }
     }
 

@@ -27,7 +27,8 @@ class PlanTaskService
                     'type' => $request->type,
                     'sender_department_id' => $request->sender_department_id,
                     'receiver_department_id' => $request->receiver_department_id,
-                    'with_purchased' => $request->with_purchased
+                    'with_purchased' => $request->with_purchased,
+                    'comment' => $request->comment,
                 ]
             );
         }
@@ -38,6 +39,7 @@ class PlanTaskService
         $planTask->quantity = $request->quantity;
         $planTask->quantity_total = $request->quantity_total;
         $planTask->with_purchased = $request->with_purchased;
+        $planTask->comment = $request->comment;
         $planTask->save();
     }
 }

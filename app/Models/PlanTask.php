@@ -22,7 +22,8 @@ class PlanTask extends Model
         'order_designationEntry',
         'order_designationEntry_letters',
         'is_report_application_statement',
-        'tm'
+        'tm',
+        'comment'
     ];
 
     /**

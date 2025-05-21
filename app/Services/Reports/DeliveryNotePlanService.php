@@ -66,11 +66,9 @@ class DeliveryNotePlanService
 
     public function deliveryNote($sender_department,$receiver_department,$order_name_id,$type_report_in = 'pdf')
     {
-
         $type_report_in = $type_report_in??'pdf';
 
         $this->sender_department = $sender_department;
-      //  dd($sender_department,$receiver_department,$order_name_id);
 
         $this->receiver_department = $receiver_department;
 
@@ -134,8 +132,16 @@ class DeliveryNotePlanService
             $this->pdf->MultiCell($this->width[5], $this->height, $delivery_notes_items[$item->designation_id] ?? '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->Ln();
-        }
 
+             if(!empty($item->comment)){
+
+                $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+                $this->pdf->MultiCell($this->width[1], $this->height, $item->comment, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+                $this->pdf->Ln();
+            }
+        }
         // Выводим PDF в браузер
         $this->pdf->Output('delivery_note_'.$this->order_number.'.pdf', 'I');
     }
@@ -199,7 +205,8 @@ class DeliveryNotePlanService
         $results = PlanTask
             ::select(
                 'designation_id as designation_id',
-                'quantity')
+                'quantity',
+                'comment')
             ->where('order_name_id',$this->order_name_id)
             ->where('order_designationEntry_letters','!=','ПИ')
             ->where('order_designationEntry_letters','!=','КР')

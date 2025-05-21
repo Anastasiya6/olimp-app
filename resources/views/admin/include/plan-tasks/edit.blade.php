@@ -79,6 +79,15 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Коментар</span>
+                                <textarea name="comment" class="block w-full mt-1 rounded-md" rows="3" placeholder="Введіть коментар...">{{ old('comment', $item->comment ?? '') }}</textarea>
+                            </label>
+                            @error('comment')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
                         @include('administrator::include.plan-tasks.checkbox')
                         <x-primary-button type="submit">
                             Оновити

@@ -47,39 +47,16 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
-                        @include('administrator::include.plan-tasks.checkbox')
-                        {{--<div class="mb-6">
+                        <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Цех відправник</span>
-                                <select name="sender_department_id" class="block w-full mt-1 rounded-md">
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}"
-                                        @if($sender_department_id == $department->id) selected @endif>
-                                            {{ $department->number }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <span class="text-gray-700">Коментар</span>
+                                <textarea name="comment" class="block w-full mt-1 rounded-md" rows="3" placeholder="Введіть коментар...">{{ old('comment') }}</textarea>
                             </label>
-                            @error('sender_department_id')
+                            @error('comment')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="mb-6">
-                            <label class="block">
-                                <span class="text-gray-700">Цех отримувач</span>
-                                <select name="receiver_department_id" class="block w-full mt-1 rounded-md">
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}"
-                                                @if($receiver_department == $department->number) selected @endif>
-                                            {{ $department->number }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </label>
-                            @error('receiver_department_id')
-                            <div class="text-sm text-red-600">{{ $message }}</div>
-                            @enderror
-                        </div>--}}
+                        @include('administrator::include.plan-tasks.checkbox')
                         <x-primary-button type="submit">
                             Зберегти
                         </x-primary-button>

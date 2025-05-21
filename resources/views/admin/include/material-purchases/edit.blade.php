@@ -37,6 +37,17 @@
                         </div>
                         <livewire:material-search-dropdown :material_id="$item->material_id" :material_name="$item->material->name" :material_unit="$item->material->unit->unit" :show_unit="1"/>
                         <div class="flex flex-wrap -mx-3 mb-6">
+
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block">
+                                    <span class="text-gray-700">Код 1С</span>
+                                    <input type="text" name="code_1c" class="block w-full mt-1 rounded-md" placeholder=""
+                                           value="{{ old('code_1c', $item->code_1c) }}" />
+                                </label>
+                                @error('code_1c')
+                                <div class="text-sm text-red-600">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                                 <label class="block">
                                     <span class="text-gray-700">Кількість</span>
@@ -45,16 +56,6 @@
                                            placeholder="" value="{{old('norm',$item->norm)}}" />
                                 </label>
                                 @error('norm')
-                                <div class="text-sm text-red-600">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <label class="block">
-                                    <span class="text-gray-700">Код 1С</span>
-                                    <input type="text" name="code_1c" class="block w-full mt-1 rounded-md" placeholder=""
-                                           value="{{ old('code_1c', $item->code_1c) }}" />
-                                </label>
-                                @error('code_1c')
                                 <div class="text-sm text-red-600">{{ $message }}</div>
                                 @enderror
                             </div>

@@ -33,10 +33,10 @@ class TaskSearch extends Component
     {
         $this->type = $request->type??0;
 
-        if($this->type == 'technologist'){
-
-            $this->without_coefficient = true;
-        }
+//        if($this->type == 'technologist'){
+//
+//            $this->without_coefficient = true;
+//        }
 
         if(!$this->selectedDepartmentSender) {
             $this->selectedDepartmentSender = Department::DEFAULT_FIRST_DEPARTMENT_ID;
@@ -75,7 +75,7 @@ class TaskSearch extends Component
 
     public function updateSearch()
     {
-        $this->without_coefficient = (int) $this->without_coefficient;
+//        $this->without_coefficient = (int) $this->without_coefficient;
 
         $this->resetPage();
     }

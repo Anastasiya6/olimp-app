@@ -106,10 +106,10 @@
             <div class="flex sm:justify-center text-xl font-semibold">
                 Завдання
             </div>
-            <div class="flex items-center justify-end px-3 py-3">
-                <input type="checkbox" wire:model="without_coefficient" id="without_coefficient" wire:change="updateSearch">
-                <label for="with_purchased" class="ml-1 font-semibold text-gray-800 text-base">Без коеф.</label>
-            </div>
+{{--            <div class="flex items-center justify-end px-3 py-3">--}}
+{{--                <input type="checkbox" wire:model="without_coefficient" id="without_coefficient" wire:change="updateSearch">--}}
+{{--                <label for="with_purchased" class="ml-1 font-semibold text-gray-800 text-base">Без коеф.</label>--}}
+{{--            </div>--}}
             <div class="sm:flex sm:justify-between px-3 py-3">
                 <!-- Форма для "Подет.-специфіковані" -->
                 <form action="{{ route('report.task.detail') }}" method="POST" target="_blank">

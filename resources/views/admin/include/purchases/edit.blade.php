@@ -67,13 +67,34 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="mb-6">
+                            <label class="block">
+                                <span class="text-gray-700">Замовлення</span>
+                                <select name="orders[]" multiple class="block w-full mt-1 rounded-md">
+                                    @foreach($order_names as $order_name)
+                                        <option
+                                            @if(isset($item) && isset($order_name) && !$item->order_names->where('id',$order_name->id)->isEmpty())
+                                            selected
+                                            @endif
+
+                                            value="{{ $order_name->id }}">{{$order_name->name}}</option>
+                                    @endforeach
+                                </select>
+                            </label>
+                            @error('orders')
+                            <div class="text-sm text-red-600">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <x-primary-button type="submit">
                             Оновити
                         </x-primary-button>
 
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
 </x-app-layout>

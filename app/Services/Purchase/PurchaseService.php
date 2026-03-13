@@ -10,13 +10,15 @@ class PurchaseService
     public function store(Request $request)
     {
        // dd($request);
-        Purchase::create([
+        $purchase  = Purchase::create([
             'designation_id' => $request->designation_id,
             'designation_entry_id' => $request->designation_entry_id,
             'quantity' => $request->quantity,
             'purchase' => $request->purchase,
             'code_1c' => $request->code_1c
         ]);
+        $purchase->order_names()->attach($request->input('orders'));
+
     }
 
     public function update(Request $request, Purchase $purchase)
@@ -24,6 +26,7 @@ class PurchaseService
         $purchase->quantity = $request->quantity;
         $purchase->purchase = $request->purchase;
         $purchase->code_1c = $request->code_1c;
+        $purchase->order_names()->sync($request->input('orders'));
         //$purchase->designation_id = $request->designation;
         //$purchase->designation_entry_id = $request->designation_entry;
 

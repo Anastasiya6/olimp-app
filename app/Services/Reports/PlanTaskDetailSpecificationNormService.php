@@ -87,7 +87,7 @@ class PlanTaskDetailSpecificationNormService
             });
         }
 
-        $records = $this->materialService->material($records,1,$this->sender_department_id,'detail');
+        $records = $this->materialService->material($records,1,$this->sender_department_id,'detail',$this->order_name_id);
 
         if($type_report_in === 'Pdf'){
 

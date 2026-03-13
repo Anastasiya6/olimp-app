@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseCreateRequest;
 use App\Http\Requests\PurchaseUpdateRequest;
+use App\Models\OrderName;
 use App\Models\Purchase;
 use App\Services\Purchase\PurchaseService;
 
@@ -29,7 +30,8 @@ class PurchaseController extends Controller
     public function create()
     {
         return view('administrator::include.purchases.create', [
-            'route' => $this->route
+            'route' => $this->route,
+            'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
         ]);
     }
 
@@ -38,6 +40,7 @@ class PurchaseController extends Controller
      */
     public function store(PurchaseCreateRequest $request, PurchaseService $service)
     {
+        //dd($request);
         $service->store($request);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
     }
@@ -58,6 +61,7 @@ class PurchaseController extends Controller
         return view('administrator::include.purchases.edit', [
             'item' => $purchase,
             'route' => $this->route,
+            'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
             'title' => 'Редагувати запис'
         ]);
     }
@@ -67,6 +71,7 @@ class PurchaseController extends Controller
      */
     public function update(PurchaseUpdateRequest $request, Purchase $purchase, PurchaseService $service)
     {
+        dd($request);
         $service->update($request,$purchase);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
     }

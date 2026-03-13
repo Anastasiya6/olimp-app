@@ -153,7 +153,6 @@ class WriteOffService
 
     private function getDeliveryNotePdf($records)
     {
-        //dd($records);
         foreach ($records as $item_record) {
 
             $this->setNewList($this->header1,$this->header2,$this->width);
@@ -234,7 +233,7 @@ class WriteOffService
 
     private function getMaterials($records)
     {
-        return $this->materialService->material($records,$this->type_report,$this->sender_department_id,'material_id');
+        return $this->materialService->material($records,$this->type_report,$this->sender_department_id,'material_id', $this->order_name_id);
 
     }
 
@@ -264,7 +263,7 @@ class WriteOffService
 
             $this->pdf->MultiCell($this->width[6], $this->height, $item['code_1c'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-            $this->pdf->MultiCell($this->width[7], $this->height, $item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            $this->pdf->MultiCell($this->width[7], $this->height, $item['type']=='detail'?$item['material'].' '.$item['detail']:$item['material'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
             $this->pdf->MultiCell($this->width[8], $this->height,$item['unit'], 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 

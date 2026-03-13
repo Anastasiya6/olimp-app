@@ -15,6 +15,8 @@ class MaterialService
 
     public $type_group = null;
 
+    public  $order_name_id = null;
+
     public int $sender_department_number;
 
     public int $sender_department_id;
@@ -27,8 +29,10 @@ class MaterialService
 
     }
 
-    public function material($records,$type_report,$sender_department_id,$type_group = null)
+    public function material($records,$type_report,$sender_department_id,$type_group = null, $order_name_id = null)
     {
+        $this->order_name_id = $order_name_id;
+
         $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($sender_department_id)?->number;
 
         $this->sender_department_id = $sender_department_id;
@@ -143,16 +147,19 @@ class MaterialService
 
         }
         if ($purchase) {
-
-            return array([
-                'type' => 'purchase',
-                'material_id' => $purchase->purchase,
-                'material' => $purchase->purchase,
-                'norm' => 1,
-                'quantity' => $quantity,
-                'unit' => '',
-                'code_1c' => $purchase->code_1c
-            ]);
+            if (($this->order_name_id === null) ||
+                $purchase->order_names->isEmpty() ||
+                $purchase->order_names->contains('id', $this->order_name_id)) {
+                return array([
+                    'type' => 'purchase',
+                    'material_id' => $purchase->purchase,
+                    'material' => $purchase->purchase,
+                    'norm' => 1,
+                    'quantity' => $quantity,
+                    'unit' => '',
+                    'code_1c' => $purchase->code_1c
+                ]);
+            }
         }
 
         return array();
@@ -166,22 +173,27 @@ class MaterialService
             $material_purchase = MaterialPurchase::whereIn('designation_id', $array_designation_id)->where('designation_entry_id', $designation_entry_id)->first();
         }
         if ($material_purchase) {
+            if (($this->order_name_id === null) ||
+                $material_purchase->order_names->isEmpty() ||
+                $material_purchase->order_names->contains('id', $this->order_name_id)) {
 
-            return array([
-                'type' => 'material_purchase',
-                'material_id' => $material_purchase->material_id,
-                'material' => $material_purchase->material->name,
-                'norm' => $material_purchase->norm,
-                'quantity' => $quantity,
-                'unit' => $material_purchase->material->unit->unit,
-                'code_1c' => $material_purchase->code_1c
-            ]);
+                return array([
+                    'type' => 'material_purchase',
+                    'material_id' => $material_purchase->material_id,
+                    'material' => $material_purchase->material->name,
+                    'norm' => $material_purchase->norm,
+                    'quantity' => $quantity,
+                    'unit' => $material_purchase->material->unit->unit,
+                    'code_1c' => $material_purchase->code_1c
+                ]);
+            }
         }
 
         return array();
     }
     private function node($materials,$designation_id,$quantity_node,$with_purchased,$with_material_purchased,$pred_quantity_node=1,$array_pred_quantity_node=array(),$array_designation_id=array())
     {
+
         $array_pred_quantity_node[] = $quantity_node;
 
         $specifications = Specification
@@ -334,7 +346,7 @@ class MaterialService
                 return $records->groupBy('material_id')->map(function ($group) {
                     return [
                             'type' => $group->first()['type'],
-                            'detail' => $group->first()['detail'],
+                            'detail' => $group->pluck('detail')->unique()->implode(', '),
                             'material' => $group->first()['material'],
                             'material_id' => $group->first()['material_id'],
                             'norm' => $group->sum('norm'),

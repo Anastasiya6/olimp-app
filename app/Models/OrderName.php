@@ -14,4 +14,22 @@ class OrderName extends Model
         'is_order',
         'quantity'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function purchases(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany('App\Models\Purchase','purchase_order_names');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function material_purchases(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany('App\Models\MaterialPurchase','material_purchase_order_names');
+    }
+
+
 }

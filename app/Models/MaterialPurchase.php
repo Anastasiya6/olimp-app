@@ -42,4 +42,12 @@ class MaterialPurchase extends Model
     {
         return $this->belongsTo(Material::class, 'material_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function order_names(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany('App\Models\OrderName','material_purchase_order_names');
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MaterialPurchaseCreateRequest;
 use App\Http\Requests\MaterialPurchaseUpdateRequest;
 use App\Models\MaterialPurchase;
+use App\Models\OrderName;
 use App\Services\MaterialPurchase\MaterialPurchaseService;
 
 class MaterialPurchaseController extends Controller
@@ -29,7 +30,8 @@ class MaterialPurchaseController extends Controller
     public function create()
     {
         return view('administrator::include.material-purchases.create', [
-            'route' => $this->route
+            'route' => $this->route,
+            'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
         ]);
     }
 
@@ -58,6 +60,7 @@ class MaterialPurchaseController extends Controller
         return view('administrator::include.material-purchases.edit', [
             'item' => $material_purchase,
             'route' => $this->route,
+            'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
             'title' => 'Редагувати запис'
         ]);
     }

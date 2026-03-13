@@ -37,4 +37,12 @@ class Purchase extends Model
     {
         return $this->belongsTo(Designation::class, 'designation_entry_id')->orderBy('designation');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function order_names(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany('App\Models\OrderName','purchase_order_names');
+    }
 }

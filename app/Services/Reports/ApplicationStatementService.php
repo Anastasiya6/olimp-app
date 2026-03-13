@@ -61,13 +61,17 @@ class ApplicationStatementService
                 $chto_name = $item->chto_name.' '.$item->gost;
                 $previous_chto = $item->chto;
             }
-            $this->pdf->MultiCell($this->width[0], $this->height, $item->zakaz, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[1], $this->height, $chto, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[2], $this->height, $chto_name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[3], $this->height, $item->kuda, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[4], $this->height, $item->kols, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[5], $this->height, $item->kolzak, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-            $this->pdf->MultiCell($this->width[6], $this->height, $item->route==''? '   '.$item->tm : $item->tm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+            // визначаємо динамічну висоту для $chto_name
+            $chto_name_height = $this->pdf->getStringHeight($this->width[2], $chto_name);
+            $row_height = max($this->height, $chto_name_height); // беремо максимум між стандартною висотою і необхідною
+
+            $this->pdf->MultiCell($this->width[0], $row_height, $item->zakaz, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+            $this->pdf->MultiCell($this->width[1], $row_height, $chto, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+            $this->pdf->MultiCell($this->width[2], $row_height, $chto_name, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+            $this->pdf->MultiCell($this->width[3], $row_height, $item->kuda, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+            $this->pdf->MultiCell($this->width[4], $row_height, $item->kols, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+            $this->pdf->MultiCell($this->width[5], $row_height, $item->kolzak, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+            $this->pdf->MultiCell($this->width[6], $row_height, $item->route=='' ? '   '.$item->tm : $item->tm, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
             $this->pdf->Ln();
         }
         $this->pdf->AddPage();

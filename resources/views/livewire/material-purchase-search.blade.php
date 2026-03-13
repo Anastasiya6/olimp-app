@@ -36,6 +36,9 @@
                     <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Код 1С</span>
                 </th>
                 <th class="bg-gray-50 px-4 py-3 text-left">
+                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Замовлення</span>
+                </th>
+                <th class="bg-gray-50 px-4 py-3 text-left">
                 </th>
             </tr>
             </thead>
@@ -57,6 +60,9 @@
                     </td>
                     <td class="px-4 py-3 leading-5 text-gray-900 whitespace-no-wrap">
                         <strong>{{ $item->code_1c??'' }}</strong>
+                    </td>
+                    <td class="px-4 py-3 leading-5 text-gray-900 whitespace-no-wrap">
+                        <strong>{{ $item->order_names->implode('name', ', ') }}</strong>
                     </td>
                     <td class="px-4 py-3 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                         <a href="{{ route($route.'.edit', $item) }}"

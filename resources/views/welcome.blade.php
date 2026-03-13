@@ -16,7 +16,8 @@
         </style>
 
     </head>
-    <body class="bg-red-50 antialiased">
+    @stack('scripts') <!-- Обов’язково -->
+    <body class="bg-gray-900 antialiased">
 
         @if(session('success'))
             <x-layout>

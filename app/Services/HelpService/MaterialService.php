@@ -98,8 +98,11 @@ class MaterialService
                 return $material_purchase;
             }
         }
-
-
+        foreach ($designationMaterial as $material) {
+            if ($material->designation->id == 82429) {
+                dd($designationMaterial, $designation_id, $designation_entry_id, $with_purchased, $quantity, $with_material_purchased, $array_designation_id);
+            }
+        }
         return $this->getMaterial($designationMaterial,$quantity);
 
     }
@@ -212,60 +215,65 @@ class MaterialService
 
                 $route = SpecificationService::getRoute($specification,$tm,$this->sender_department_number);
 
-                if($route == 0 || $route == $this->sender_department_number) {
-                    if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
+                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased,$array_designation_id);
 
-                        $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
+                if (!empty($array_material)) {
 
-                        $allFactors = array_merge([
-                            $specification->quantity,
-                        ], $array_pred_quantity_node);
+                    $this->fillMaterials($materials,$specification->designationEntry->designation,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node);
 
-                        if ($this->type_report == 0) {
-                            $materials[] = array(
-                                'type' => $type,
-                                'detail' => $specification->designationEntry->designation,
-                                'material' => $specification->designationEntry->name,
-                                'material_id' => '',
-                                'norm' => $specification->quantity,
-                                'pred_quantity_node' => $quantity_node,
-                                'quantity_node' => $quantity_node,
-                                //'print_number' => $specification->quantity . ' * ' . $quantity_node,
-                                //'print_value' => $specification->quantity * $quantity_node,
-                                'print_number' => implode(' * ', $allFactors),
-                                'print_value' => array_product($allFactors),
-                                'multiplier_str' => "",
-                                'multiplier' => "",
-                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                                'code_1c' =>   $specification->designationEntry->code_1c,
-                                'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+                } else {
 
-                        } elseif ($this->type_report == 1) {
+                    if ($route == 0 || $route == $this->sender_department_number) {
+                        if (str_starts_with($specification->designationEntry->designation, 'КР') || str_starts_with($specification->designationEntry->designation, 'ПИ0')) {
 
-                            $this->all_materials[] = array(
-                                'type' => $type,
-                                'detail' => $this->type_group == 'detail' ? $specification->designations->designation : $specification->designationEntry->designation,
-                                'material' => $specification->designationEntry->name,
-                                'material_id' => $this->type_group == 'detail' ? $specification->designationEntry->name : $specification->designationEntry->id . $type,
-                                'norm' => $specification->quantity,
-                                'pred_quantity_node' => $pred_quantity_node,
-                                'quantity_node' => $quantity_node,
-                                //'print_number' => $specification->quantity . ' * ' . $quantity_node,
-                                //'print_value' => $specification->quantity * $quantity_node,
-                                'print_number' => implode(' * ', $allFactors),
-                                'print_value' => array_product($allFactors),
-                                'multiplier_str' => "",
-                                'multiplier' => "",
-                                'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
-                                'code_1c' =>  $specification->designationEntry->code_1c,
-                                'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+                            $type = str_starts_with($specification->designationEntry->designation, 'КР') ? 'kr' : 'pki';
+
+                            $allFactors = array_merge([
+                                $specification->quantity,
+                            ], $array_pred_quantity_node);
+
+                            if ($this->type_report == 0) {
+                                $materials[] = array(
+                                    'type' => $type,
+                                    'detail' => $specification->designationEntry->designation,
+                                    'material' => $specification->designationEntry->name,
+                                    'material_id' => '',
+                                    'norm' => $specification->quantity,
+                                    'pred_quantity_node' => $quantity_node,
+                                    'quantity_node' => $quantity_node,
+                                    //'print_number' => $specification->quantity . ' * ' . $quantity_node,
+                                    //'print_value' => $specification->quantity * $quantity_node,
+                                    'print_number' => implode(' * ', $allFactors),
+                                    'print_value' => array_product($allFactors),
+                                    'multiplier_str' => "",
+                                    'multiplier' => "",
+                                    'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                    'code_1c' => $specification->designationEntry->code_1c,
+                                    'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+
+                            } elseif ($this->type_report == 1) {
+
+                                $this->all_materials[] = array(
+                                    'type' => $type,
+                                    'detail' => $this->type_group == 'detail' ? $specification->designations->designation : $specification->designationEntry->designation,
+                                    'material' => $specification->designationEntry->name,
+                                    'material_id' => $this->type_group == 'detail' ? $specification->designationEntry->name : $specification->designationEntry->id . $type,
+                                    'norm' => $specification->quantity,
+                                    'pred_quantity_node' => $pred_quantity_node,
+                                    'quantity_node' => $quantity_node,
+                                    //'print_number' => $specification->quantity . ' * ' . $quantity_node,
+                                    //'print_value' => $specification->quantity * $quantity_node,
+                                    'print_number' => implode(' * ', $allFactors),
+                                    'print_value' => array_product($allFactors),
+                                    'multiplier_str' => "",
+                                    'multiplier' => "",
+                                    'unit' => $type == 'kr' ? 'шт' : $specification->designationEntry->unit->unit ?? "",
+                                    'code_1c' => $specification->designationEntry->code_1c,
+                                    'sort' => $type == 'kr' || 'pki' ? 1 : 2);
+                            }
                         }
                     }
                 }
-
-                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased,$array_designation_id);
-
-                $this->fillMaterials($materials,$specification->designationEntry->designation,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node);
 
                 $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$quantity_node,$array_pred_quantity_node,$array_designation_id);
 

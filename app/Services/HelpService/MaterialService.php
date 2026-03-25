@@ -98,11 +98,11 @@ class MaterialService
                 return $material_purchase;
             }
         }
-        foreach ($designationMaterial as $material) {
-            if ($material->designation->id == 82429) {
-                dd($designationMaterial, $designation_id, $designation_entry_id, $with_purchased, $quantity, $with_material_purchased, $array_designation_id);
-            }
-        }
+//        foreach ($designationMaterial as $material) {
+//            if ($material->designation->id == 82429) {
+//                dd($designationMaterial, $designation_id, $designation_entry_id, $with_purchased, $quantity, $with_material_purchased, $array_designation_id);
+//            }
+//        }
         return $this->getMaterial($designationMaterial,$quantity);
 
     }
@@ -219,7 +219,7 @@ class MaterialService
 
                 if (!empty($array_material)) {
 
-                    $this->fillMaterials($materials,$specification->designationEntry->designation,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node);
+                    $this->fillMaterials($materials,$specification->designationEntry->designation,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node/*,$specification->designations->designation*/);
 
                 } else {
 
@@ -282,7 +282,7 @@ class MaterialService
         return $materials;
     }
 
-    private function fillMaterials($materials,$designation,$quantity_node,$array_materials,$pred_quantity_node=1,$array_pred_quantity_node=[])
+    private function fillMaterials($materials,$designation,$quantity_node,$array_materials,$pred_quantity_node=1,$array_pred_quantity_node=[]/*,$designation_name=null*/)
     {
         if (empty($array_materials)) {
             return;
@@ -305,6 +305,7 @@ class MaterialService
                 $this->all_materials[] = array(
                     'type' => $array_material['type'],
                     'detail' => $designation,
+                    //'designation_name' => $designation_name.$designation ?? '',
                     'material' => $array_material['material'],
                     'material_id' => $array_material['material_id'],
                     'norm' => $array_material['norm'],
@@ -324,6 +325,7 @@ class MaterialService
                 $materials[] = array(
                     'type' => $array_material['type'],
                     'detail' => $designation,
+                    //'designation_name' => $designation_name.$designation ?? '',
                     'material' => $array_material['material'],
                     'material_id' => $array_material['material_id'],
                     'norm' => $array_material['norm'],
@@ -355,6 +357,7 @@ class MaterialService
                     return [
                             'type' => $group->first()['type'],
                             'detail' => $group->pluck('detail')->unique()->implode(', '),
+                            //'designation_name' => $group->pluck('designation_name')->unique()->implode(', '),
                             'material' => $group->first()['material'],
                             'material_id' => $group->first()['material_id'],
                             'norm' => $group->sum('norm'),
@@ -396,6 +399,7 @@ class MaterialService
                     'id' => $details->first()['material_id'],
                     'type' => $details->first()['material_id'],
                     'detail' => $details->first()['detail'],
+                    //'designation_name' => $details->first()['designation_name'],
                     'material' => $details->first()['material'],
                     'material_id' => $details->first()['material_id'],
                     'norm' => $details->first()['norm'],

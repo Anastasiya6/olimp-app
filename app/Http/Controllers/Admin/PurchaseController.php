@@ -71,7 +71,6 @@ class PurchaseController extends Controller
      */
     public function update(PurchaseUpdateRequest $request, Purchase $purchase, PurchaseService $service)
     {
-        dd($request);
         $service->update($request,$purchase);
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
     }

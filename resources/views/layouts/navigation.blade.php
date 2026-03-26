@@ -62,6 +62,9 @@
                         <x-dropdown-link wire:navigate :href="route('departments.index')">
                             {{ __('Цеха') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('sections.index')">
+                            {{ __('Ділянки') }}
+                        </x-dropdown-link>
                     </x-slot>
                 </x-dropdown>
                 <x-nav-link align="right" width="48" :href="route('order-names.index')">
@@ -127,6 +130,12 @@
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('materials.index')">
                             {{ __('Матеріали') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('import-material-stocks.index')">
+                            {{ __('Матеріали з 1С') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('issuance-materials.index')">
+                            {{ __('Видача матеріалів') }}
                         </x-dropdown-link>
                     </x-slot>
                 </x-dropdown>

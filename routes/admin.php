@@ -6,7 +6,10 @@ use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DesignationMaterialController;
 use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\Admin\GroupMaterialController;
+use App\Http\Controllers\Admin\GroupPermissionController;
+use App\Http\Controllers\Admin\ImportMaterialStockController;
 use App\Http\Controllers\Admin\IndexController;
+use App\Http\Controllers\Admin\IssuanceMaterialController;
 use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
 use App\Http\Controllers\Admin\Logs\SpecificationLogController;
 use App\Http\Controllers\Admin\MaterialController;
@@ -35,9 +38,14 @@ use App\Http\Controllers\Admin\Report\ReportWriteOffController;
 use App\Http\Controllers\Admin\Report\ReportWriteOffNoMaterialController;
 use App\Http\Controllers\Admin\Report\SpecificationNormController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WriteOffController;
+use App\Livewire\IssuanceMaterialIndex;
+use App\Livewire\IssuanceMaterialPage;
 use App\Livewire\Login;
+use App\Livewire\UserSearch;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -64,9 +72,13 @@ use Illuminate\Support\Facades\Route;
     Route::resource('specifications', \App\Http\Controllers\Admin\SpecificationController::class);
     Route::resource('designations', DesignationController::class);
     Route::resource('departments', DepartmentController::class);
+    Route::resource('sections', SectionController::class);
 
     Route::resource('groups', GroupController::class);
+    Route::resource('users', UserController::class);
 
+    Route::get('users', UserSearch::class);
+    Route::resource('group-permissions', GroupPermissionController::class);
 // Route::get('tasks}', [TaskController::class, 'index'])->name('tasks.index');
     //Route::resource('tasks', TaskController::class);
     //Route::get('tasks/{sender_department}/create', 'App\Http\Controllers\Admin\TaskController@create')->name('tasks.create');
@@ -76,12 +88,19 @@ use Illuminate\Support\Facades\Route;
     Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
 
+    Route::resource('issuance-materials', IssuanceMaterialController::class);
+   // Route::get('/issuance-materials', IssuanceMaterialIndex::class)->name('issuance-materials.index');
+    //Route::get('/issuance-materials/create', IssuanceMaterialPage::class)->name('issuance-materials.create');
     Route::resource('pi0s', PI0Controller::class);
+
     Route::resource('delivery-notes', \App\Http\Controllers\Admin\DeliveryNoteController::class);
 
 
     Route::resource('materials', MaterialController::class);
-    Route::resource('designation-materials', DesignationMaterialController::class);
+    Route::resource('import-material-stocks', ImportMaterialStockController::class);
+    Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('import.material.stock');
+
+Route::resource('designation-materials', DesignationMaterialController::class);
     Route::resource('orders', OrderController::class);
     Route::resource('reports', ReportController::class);
     Route::resource('group-materials', GroupMaterialController::class);

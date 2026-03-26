@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DesignationController;
+use App\Http\Controllers\Admin\ImportMaterialStockController;
 use App\Http\Controllers\Pub\Logs\DesignationMaterialLogController;
 use App\Http\Controllers\Pub\Logs\SpecificationLogController;
 use App\Http\Controllers\Pub\ReportController;
@@ -41,3 +43,27 @@ Route::get('/make-application-statement', [makeApplicationStatement::class, 'mak
 Route::resource('public-reports', ReportController::class);
 Route::resource('public-specification-logs', SpecificationLogController::class);
 Route::resource('public-designation-material-logs', DesignationMaterialLogController::class);
+
+Route::get('/api/designations/search', [DesignationController::class, 'search']);
+Route::get('/api/import-materials/search',[ImportMaterialStockController::class, 'search']);
+//Route::get('/api/designations/search', function (Request $request) {
+//    $q = trim($request->get('q'));
+//
+//    if (strlen($q) < 2) {
+//        return [];
+//    }
+//
+//    try {
+//        return \App\Models\Designation::query()
+//            ->where('designation', 'like', "$q%")
+//            ->orWhere('name', 'like', "%$q%")
+//            ->limit(10)
+//            ->get()
+//            ->map(fn ($d) => [
+//                'value' => $d->id,
+//                'text' => "{$d->designation} — {$d->name}",
+//            ]);
+//    } catch (\Exception $e) {
+//        return response()->json(['error' => $e->getMessage()], 500);
+//    }
+//});

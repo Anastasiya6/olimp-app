@@ -7,6 +7,7 @@ use App\Http\Requests\DesignationCreateRequest;
 use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DesignationController extends Controller
 {
@@ -123,4 +124,30 @@ class DesignationController extends Controller
 
     }
 
+    public function search(Request $request)
+    {
+        // сюди вставляємо
+        $q = trim($request->get('q')); // видаляємо пробіли
+
+        if (strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        try {
+            $results = Designation::query()
+                ->where('designation', 'like', "%{$q}%")
+                ->orWhere('name', 'like', "%{$q}%")
+                ->limit(10)
+                ->get(['id', 'designation', 'name']);
+
+            return response()->json(
+                $results->map(fn($d) => [
+                    'value' => $d->id,
+                    'text' => "{$d->designation} — {$d->name}",
+                ])
+            );
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

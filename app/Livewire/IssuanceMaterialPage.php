@@ -42,7 +42,9 @@ class IssuanceMaterialPage extends Component
 
     public function designationSelected($value)
     {
-        $this->designation_id = $value;
+        if (!$value) return;
+
+        $this->designation_id = (int) $value;
     }
 
     public function openModal($material_id)

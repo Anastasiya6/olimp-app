@@ -33,11 +33,10 @@ function initTomSelect() {
         },
 
         onChange(value) {
-            Livewire.dispatch('designationSelected', value);
+            Livewire.dispatch('designationSelected', {value});
         }
     });
 }
 
 document.addEventListener('livewire:init', initTomSelect);
 document.addEventListener('livewire:navigated', initTomSelect);
-

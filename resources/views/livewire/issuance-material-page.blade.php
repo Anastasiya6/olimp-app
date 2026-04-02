@@ -122,7 +122,7 @@
                 </div>
 
                 {{-- TABLE --}}
-                @if($materials && $materials->count())
+                @if($materials && !empty($materials))
                     <table class="w-full border">
                         <thead>
                         <tr class="bg-gray-100">

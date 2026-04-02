@@ -13,7 +13,10 @@ class MaterialIssuance extends Model
     protected $fillable = [
         'order_name_id',
         'designation_id',
-        'quantity'
+        'quantity',
+        'issued_to_employee',
+        'issued_by_employee',
+        'status'
     ];
 
     public function designation(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -24,5 +27,10 @@ class MaterialIssuance extends Model
     public function designationMaterial(): HasMany
     {
         return $this->hasMany(DesignationMaterial::class, 'designation_id','designation_id');
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(MaterialIssuanceItem::class);
     }
 }

@@ -38,7 +38,7 @@ class IssuanceMaterialSearch extends Component
         'materialUpdated' => 'loadSelectedMaterials'
     ];
 
-    public function openModal(int $material_id)
+    public function openModal($material_id)
     {
 
         $this->dispatch('openMaterialModal', $material_id,$this->materialIssuanceId);
@@ -60,7 +60,7 @@ class IssuanceMaterialSearch extends Component
         $this->materialIssuanceId = $materialIssuance->id;
 
         $this->all_materials = $materialService->material(collect([$materialIssuance]),1,5,'material_id');
-
+       // dd($this->all_materials);
         $this->generated = true;
 
         //return redirect()->route('issuance-materials.edit', ['issuance_material' => $this->materialIssuanceId ]);

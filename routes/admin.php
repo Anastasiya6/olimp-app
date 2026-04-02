@@ -88,9 +88,10 @@ use Illuminate\Support\Facades\Route;
     Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
 
-    Route::resource('issuance-materials', IssuanceMaterialController::class);
-   // Route::get('/issuance-materials', IssuanceMaterialIndex::class)->name('issuance-materials.index');
-    //Route::get('/issuance-materials/create', IssuanceMaterialPage::class)->name('issuance-materials.create');
+    // Route::resource('issuance-materials', IssuanceMaterialController::class);
+    Route::get('/issuance-materials/{id}/pdf', [\App\Http\Controllers\IssuanceMaterialPdfController::class, 'show'])->name('issuance-materials.pdf');
+    Route::get('/issuance-materials', IssuanceMaterialIndex::class)->name('issuance-materials.index');
+    Route::get('/issuance-materials/create', IssuanceMaterialPage::class)->name('issuance-materials.create');
     Route::resource('pi0s', PI0Controller::class);
 
     Route::resource('delivery-notes', \App\Http\Controllers\Admin\DeliveryNoteController::class);

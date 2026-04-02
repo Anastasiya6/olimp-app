@@ -93,7 +93,7 @@
 
                     <td>
                         <x-primary-button
-                            wire:click="openModal({{ $material['material_id'] }})"
+                            wire:click="openModal('{{ $material['material_id'] }}')"
                             class="{{ $taken > 0 ? 'bg-green-500' : '' }}"
                         >
                             {{ $taken > 0 ? 'Додати ще' : 'Взяти матеріал' }}

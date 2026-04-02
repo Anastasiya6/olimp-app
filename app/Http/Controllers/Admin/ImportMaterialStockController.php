@@ -91,7 +91,6 @@ class ImportMaterialStockController extends Controller
 
     public function search(Request $request)
     {
-        Log::info('ddd');
         return ImportMaterial::query()
             ->where('name', 'like', "%{$request->q}%")
             ->limit(10)

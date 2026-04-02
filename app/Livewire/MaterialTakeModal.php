@@ -46,12 +46,12 @@ class MaterialTakeModal extends Component
         ]);
 
 
-        ImportMaterialStock::create([
-            'import_material_id' => $this->selectedMaterialId,
-            'amount' => -$this->takeQty,
-            'type' => 'stock_out',
-            'document_number' => $this->materialIssuanceId
-        ]);
+//        ImportMaterialStock::create([
+//            'import_material_id' => $this->selectedMaterialId,
+//            'amount' => -$this->takeQty,
+//            'type' => 'stock_out',
+//            'document_number' => $this->materialIssuanceId
+//        ]);
         // 🔥 повідомляємо батьківський компонент
         $this->dispatch('materialUpdated');
 

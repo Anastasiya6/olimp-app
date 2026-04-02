@@ -303,7 +303,7 @@ class ImportMaterialStockSearch extends Component
 
             return ImportMaterialStock
                 ::with('materials','unit')
-                ->orderBy('document_number','desc')
+               // ->orderBy('document_number','desc')
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
 

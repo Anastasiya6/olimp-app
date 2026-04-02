@@ -15,4 +15,14 @@ class MaterialIssuanceItem extends Model
         'import_material_id',
         'quantity'
     ];
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'material_id');
+    }
+
+    public function importMaterial()
+    {
+        return $this->belongsTo(ImportMaterial::class, 'import_material_id');
+    }
 }

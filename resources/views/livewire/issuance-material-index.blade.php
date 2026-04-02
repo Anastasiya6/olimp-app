@@ -29,6 +29,7 @@
                         <th class="p-2 border">ID</th>
                         <th class="p-2 border">Дата</th>
                         <th class="p-2 border">Дія</th>
+                        <th class="p-2 border">Звіт</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -37,12 +38,28 @@
                             <td class="p-2 border">{{ $item->id }}</td>
                             <td class="p-2 border">{{ $item->created_at }}</td>
                             <td class="p-2 border">
+                                {{-- ПРОВЕСТИ --}}
+                                @if($item->status === 'draft')
+                                    <button
+                                        wire:click="postDocument({{ $item->id }})"
+                                        wire:confirm="Провести документ?"
+                                        class="text-green-600 hover:underline"
+                                    >
+                                        Провести
+                                    </button>
+                                @else
+                                    <span class="text-gray-500 text-sm">
+                                        Проведено
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="p-2 border">
                                 <a
-                                    wire:navigate
-                                    href="#"
-                                    class="text-blue-600"
+                                    href="{{ route('issuance-materials.pdf', $item->id) }}"
+                                    target="_blank"
+                                    class="text-blue-600 hover:underline"
                                 >
-                                    Відкрити
+                                    PDF
                                 </a>
                             </td>
                         </tr>

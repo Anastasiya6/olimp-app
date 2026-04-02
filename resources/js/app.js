@@ -34,5 +34,4 @@ function initTomSelect() {
 
 document.addEventListener('livewire:init', initTomSelect);
 document.addEventListener('livewire:navigated', initTomSelect);
-document.addEventListener('livewire:updated', initTomSelect);
 

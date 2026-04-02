@@ -15,17 +15,17 @@ class IssuanceMaterialPage extends Component
 
     public $generated = false;
 
-    public ?int $order_name_id = null;
+    public $order_name_id;
 
-    public ?int $designation_id = null;
+    public $designation_id;
 
-    public ?int $quantity = null;
+    public $quantity;
 
     public string $issued_to_employee;
 
     public string $issued_by_employee;
 
-    public $all_materials = [];
+    public $all_materials;
 
     public ?int $materialIssuanceId = null;
 

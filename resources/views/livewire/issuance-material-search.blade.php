@@ -96,12 +96,12 @@
                             wire:click="openModal('{{ $material['material_id'] }}')"
                             class="{{ $taken > 0 ? 'bg-green-500' : '' }}"
                         >
-                            {{ $taken > 0 ? 'Додати ще' : 'Взяти матеріал' }}
+                            {{ $taken > 0 ? 'Додати ще' : 'Видати матеріал' }}
                         </x-primary-button>
 
                         @if($taken > 0)
                             <div class="text-green-600 text-sm">
-                                Взято: {{ $taken }}
+                                Видано: {{ $taken }}
                             </div>
                         @endif
                     </td>

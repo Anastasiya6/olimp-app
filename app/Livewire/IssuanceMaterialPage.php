@@ -25,7 +25,7 @@ class IssuanceMaterialPage extends Component
 
     public string $issued_by_employee;
 
-    public $all_materials;
+    public $all_materials = [];
 
     public ?int $materialIssuanceId = null;
 

@@ -116,13 +116,13 @@ class ImportMaterialStockSearch extends Component
     {
 
         $this->validate();
-        dd('dd');
+
         $path = $this->file->getRealPath();
 
         // Читаємо файл
         $spreadsheet = IOFactory::load($path);
         $worksheet = $spreadsheet->getActiveSheet();
-
+        dd('ss');
         // Пробігаємось по рядках
         $documentDate = null;
         $currentDepartment = null;

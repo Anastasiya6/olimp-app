@@ -5,13 +5,6 @@
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
             Створення видачі матеріалів
         </h2>
-        <x-secondary-button
-            onclick="return confirm('Ви впевнені, що хочете закрити документ?')"
-            wire:click="closeDocument"
-            class="bg-red-600 text-white hover:bg-red-700"
-        >
-            Закрити
-        </x-secondary-button>
     </x-slot>
 
     <div class="py-12">
@@ -154,15 +147,15 @@
 
                                 <td class="p-2 border">
                                     <x-primary-button
-                                        wire:click="openModal({{ $material['material_id'] }})"
+                                        wire:click="openModal('{{ $material['material_id'] }}')"
                                         class="bg-black hover:bg-gray-800 text-white"
                                     >
-                                        {{ $taken ? 'Додати ще' : 'Взяти' }}
+                                        {{ $taken ? 'Додати ще' : 'Видати матеріал' }}
                                     </x-primary-button>
 
                                     @if($taken)
                                         <div class="text-xs text-green-600 mt-1">
-                                            Взято: {{ $taken }}
+                                            Видано: {{ $taken }}
                                         </div>
                                     @endif
 

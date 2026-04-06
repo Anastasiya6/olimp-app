@@ -6,6 +6,8 @@ use App\Models\Department;
 use App\Models\ImportMaterial;
 use App\Models\ImportMaterialStaging;
 use App\Models\ImportMaterialStock;
+use App\Models\MaterialIssuance;
+use App\Models\MaterialIssuanceItem;
 use App\Models\TypeUnit;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -57,6 +59,8 @@ class ImportMaterialStockSearch extends Component
         $path = $this->file->getRealPath();
 
         ImportMaterialStock::query()->delete();
+        MaterialIssuanceItem::query()->delete();
+        MaterialIssuance::query()->delete();
         ImportMaterial::query()->delete();
         ImportMaterialStaging::query()->delete();
         // Читаємо файл

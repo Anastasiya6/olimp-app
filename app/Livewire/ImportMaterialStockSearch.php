@@ -114,9 +114,9 @@ class ImportMaterialStockSearch extends Component
 
     public function unloadingStockIn()
     {
-        dd('dd');
-        $this->validate();
 
+        $this->validate();
+        dd('dd');
         $path = $this->file->getRealPath();
 
         // Читаємо файл

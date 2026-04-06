@@ -122,7 +122,7 @@ class ImportMaterialStockSearch extends Component
         // Читаємо файл
         $spreadsheet = IOFactory::load($path);
         $worksheet = $spreadsheet->getActiveSheet();
-        dd('ss');
+
         // Пробігаємось по рядках
         $documentDate = null;
         $currentDepartment = null;

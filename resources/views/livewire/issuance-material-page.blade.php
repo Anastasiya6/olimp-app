@@ -121,11 +121,12 @@
                         <tr class="bg-gray-100">
                             <th class="p-2 border">Деталь</th>
                             <th class="p-2 border">Матеріал</th>
-                            <th class="p-2 border">Норма</th>
+                            <th class="p-2 border">Норма витрат на виріб</th>
                             <th class="p-2 border">К-сть</th>
                             <th class="p-2 border">Од.</th>
+                            <th class="p-2 border">Норма</th>
                             <th class="p-2 border">Множник</th>
-                            <th class="p-2 border">Друк</th>
+                            <th class="p-2 border"></th>
                             <th class="p-2 border">Дія</th>
                         </tr>
                         </thead>
@@ -133,18 +134,20 @@
                         <tbody>
                         @foreach($materials as $index => $material)
                             @php
-                                $taken = $selectedMaterials[$material['material_id']] ?? 0;
+                                $taken = is_numeric($material['material_id'])
+                                 ? ($selectedMaterials['material_id'][$material['material_id']] ?? 0)
+                                 : ($selectedMaterials['designation_id'][$material['designation_id']] ?? 0);
                             @endphp
 
                             <tr class="{{ $taken ? 'bg-green-50' : '' }}">
                                 <td class="p-2 border">{{ $material['detail'] }}</td>
                                 <td class="p-2 border">{{ $material['material'] }}</td>
-                                <td class="p-2 border">{{ $material['norm'] }}</td>
-                                <td class="p-2 border">{{ $material['quantity_node'] }}</td>
+                                <td class="p-2 border">{{ $material['print_value'] / $quantity }}</td>
+                                <td class="p-2 border">{{ $quantity }}</td>
                                 <td class="p-2 border">{{ $material['unit'] }}</td>
+                                <td class="p-2 border">{{ $material['print_value']  }}</td>
                                 <td class="p-2 border">{{ $material['multiplier_str'] }}</td>
-                                <td class="p-2 border">{{ $material['print_value'] }}</td>
-
+                                <td class="p-2 border">{{ $material['print_value'] * 1.1}}</td>
                                 <td class="p-2 border">
                                     <x-primary-button
                                         wire:click="openModal('{{ $material['material_id'] }}')"
@@ -161,7 +164,7 @@
 
                                     @if($taken)
                                         <x-secondary-button
-                                            wire:click="removeMaterial({{ $material['material_id'] }})"
+                                            wire:click="removeMaterial('{{ $material['material_id'] }}')"
                                             class="mt-1"
                                         >
                                             Відмінити

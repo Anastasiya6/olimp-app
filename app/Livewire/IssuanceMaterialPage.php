@@ -27,9 +27,9 @@ class IssuanceMaterialPage extends Component
 
     public $all_materials;
 
-    public ?int $materialIssuanceId = null;
+    public $materialIssuanceId = null;
 
-    public ?int $currentIndex = null;
+    public $currentIndex = null;
 
     public array $selectedMaterials = [];
 
@@ -42,9 +42,7 @@ class IssuanceMaterialPage extends Component
 
     public function designationSelected($value)
     {
-        if (!$value) return;
-
-        $this->designation_id = (int) $value;
+        $this->designation_id = $value;
     }
 
     public function openModal($material_id)
@@ -54,9 +52,17 @@ class IssuanceMaterialPage extends Component
 
     public function removeMaterial($materialId)
     {
-        MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId)
-            ->where('material_id', $materialId)
-            ->delete();
+        $query = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId);
+        //dd( $materialId);
+        if (is_numeric($materialId)) {
+            // це material
+            $query->where('material_id', $materialId);
+        } else {
+            // це designation → чистимо id
+            $query->where('designation_id', (int) $materialId);
+        }
+
+        $query->delete();
 
         $this->loadSelectedMaterials();
     }
@@ -88,11 +94,24 @@ class IssuanceMaterialPage extends Component
 
     public function loadSelectedMaterials()
     {
-        $this->selectedMaterials = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId)
-            ->selectRaw('material_id, SUM(quantity) as total')
-            ->groupBy('material_id')
-            ->pluck('total', 'material_id')
-            ->toArray();
+        $items = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId)->get();
+
+        $result = [
+            'material_id' => [],
+            'designation_id' => [],
+        ];
+
+        foreach ($items as $item) {
+            if ($item->designation_id) {
+
+                $result['designation_id'][$item->designation_id] = $item->quantity;
+            }elseif ($item->material_id) {
+
+                $result['material_id'][$item->material_id] = $item->quantity;
+            }
+        }
+
+        $this->selectedMaterials = $result;
     }
 
     public function closeDocument()

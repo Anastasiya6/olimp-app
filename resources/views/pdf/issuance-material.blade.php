@@ -41,7 +41,7 @@
     <tbody>
     @foreach($document->items as $item)
         <tr>
-            <td>{{ $item->material->name ?? '—' }}</td>
+            <td>{{ $item->material->name ?? $item->designation->name ?? '—' }}</td>
             <td>{{ $item->importMaterial->name ?? '—' }}</td>
             <td>{{ $item->quantity ?? 0 }}</td>
         </tr>

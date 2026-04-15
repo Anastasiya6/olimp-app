@@ -45,9 +45,9 @@ class IssuanceMaterialPage extends Component
         $this->designation_id = $value;
     }
 
-    public function openModal($material_id)
+    public function openModal($material_id, $detail_name, $material_name)
     {
-        $this->dispatch('openMaterialModal', $material_id,$this->materialIssuanceId);
+        $this->dispatch('openMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId);
     }
 
     public function removeMaterial($materialId)
@@ -76,7 +76,7 @@ class IssuanceMaterialPage extends Component
             'designation_id' => 'required',
             'quantity' => 'required|numeric|min:1',
         ]);
-        //$this->designation_id = Designation::where('is_order',1)->orderBy('name')->get()
+
         $materialIssuance = MaterialIssuance::create([
             'order_name_id' => $this->order_name_id,
             'designation_id' => $this->designation_id,
@@ -87,7 +87,7 @@ class IssuanceMaterialPage extends Component
         $this->materialIssuanceId = $materialIssuance->id;
 
         $this->all_materials = $materialService->material(collect([$materialIssuance]),1,5,'material_id');
-
+       // dd($this->all_materials);
         $this->generated = true;
 
     }

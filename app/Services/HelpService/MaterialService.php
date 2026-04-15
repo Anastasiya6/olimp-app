@@ -49,7 +49,7 @@ class MaterialService
 
             $array_materials = $this->checkMaterial($item->designationMaterial,$item->designation_id,$item->designation_id,$item->with_purchased,$item->quantity,$item->with_material_purchased);
 
-            $this->fillMaterials($item->materials,$item->designation->designation,$item->quantity,$array_materials);
+            $this->fillMaterials($item->materials,$item->designation,$item->quantity,$array_materials);
 
             $this->node($item->materials,$item->designation_id,$item->quantity,$item->with_purchased,$item->with_material_purchased,$item->quantity);
 
@@ -219,7 +219,7 @@ class MaterialService
 
                 if (!empty($array_material)) {
 
-                    $this->fillMaterials($materials,$specification->designationEntry->designation,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node/*,$specification->designations->designation*/);
+                    $this->fillMaterials($materials,$specification->designationEntry,$specification->quantity,$array_material,$pred_quantity_node,$array_pred_quantity_node/*,$specification->designations->designation*/);
 
                 } else {
 
@@ -305,7 +305,7 @@ class MaterialService
             if ($this->type_report == 1) {
                 $this->all_materials[] = array(
                     'type' => $array_material['type'],
-                    'detail' => $designation,
+                    'detail' => $designation->designation,
                     //'designation_name' => $designation_name.$designation ?? '',
                     'designation_id' => null,
                     'material' => $array_material['material'],

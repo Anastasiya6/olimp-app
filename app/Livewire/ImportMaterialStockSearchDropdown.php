@@ -29,7 +29,7 @@ class ImportMaterialStockSearchDropdown extends Component
         $materials = ImportMaterial::withSum('stocks', 'amount')
         ->where('name', 'like', '%'. $this->search .'%')
             ->orderBy('name')
-            ->limit(10)
+            ->limit(150)
             ->get()
             ->map(function ($material) {
                 $balance = $material->stocks_sum_amount ?? 0;

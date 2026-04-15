@@ -14,7 +14,9 @@ class MaterialTakeModal extends Component
     public $selectedMaterialId = null;
     public $takeQty = 0;
     public $materials = [];
-    public  $materialIssuanceId = null;
+    public $materialIssuanceId = null;
+    public $detail_name = null;
+    public $material_name = null;
 
     protected $listeners = ['openMaterialModal' => 'open','materialSelected' => 'setMaterial'];
 
@@ -23,10 +25,12 @@ class MaterialTakeModal extends Component
         $this->selectedMaterialId = $id;
     }
 
-    public function open($currentIndex,$materialIssuanceId)
+    public function open($currentIndex,$detail_name, $material_name,$materialIssuanceId)
     {
-     //   dd($materialId,$materialIssuanceId);
+        //dd($currentIndex,$materialIssuanceId);
         $this->currentIndex = $currentIndex;
+        $this->detail_name = $detail_name;
+        $this->material_name = $material_name;
         $this->materialIssuanceId = $materialIssuanceId;
         $this->show = true;
         $this->selectedMaterial = null;
@@ -39,6 +43,7 @@ class MaterialTakeModal extends Component
         $data = [
             'material_issuance_id' => $this->materialIssuanceId,
             'import_material_id' => $this->selectedMaterialId,
+            'details' => $this->detail_name,
             'quantity' => $this->takeQty,
             'material_id' => null,
             'designation_id' => null,

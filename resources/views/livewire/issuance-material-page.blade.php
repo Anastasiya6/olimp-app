@@ -147,10 +147,13 @@
                                 <td class="p-2 border">{{ $material['unit'] }}</td>
                                 <td class="p-2 border">{{ $material['print_value']  }}</td>
                                 <td class="p-2 border">{{ $material['multiplier_str'] }}</td>
-                                <td class="p-2 border">{{ $material['print_value'] * 1.1}}</td>
+                                <td class="p-2 border">{{ $material['multiplier'] ? $material['print_value'] * $material['multiplier'] : $material['print_value']}}</td>
                                 <td class="p-2 border">
                                     <x-primary-button
-                                        wire:click="openModal('{{ $material['material_id'] }}')"
+                                        wire:click="openModal('{{ $material['material_id'] }}',
+                                                                '{{ $material['detail'] }}',
+                                                                '{{ $material['material'] }}',
+                                                                '{{ $materialIssuanceId }}')"
                                         class="bg-black hover:bg-gray-800 text-white"
                                     >
                                         {{ $taken ? 'Додати ще' : 'Видати матеріал' }}

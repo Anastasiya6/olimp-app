@@ -32,18 +32,22 @@
 <table>
     <thead>
     <tr>
+        <th>Деталь</th>
         <th>Матеріал</th>
         <th>Матеріал 1С</th>
         <th>Кількість</th>
+        <th>од.</th>
     </tr>
     </thead>
 
     <tbody>
     @foreach($document->items as $item)
         <tr>
+            <td>{{ $item->details }}</td>
             <td>{{ $item->material->name ?? $item->designation->name ?? '—' }}</td>
             <td>{{ $item->importMaterial->name ?? '—' }}</td>
             <td>{{ $item->quantity ?? 0 }}</td>
+            <td>{{ $item->importMaterial->unit->unit ?? '—' }}</td>
         </tr>
     @endforeach
     </tbody>

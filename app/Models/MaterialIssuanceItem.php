@@ -15,7 +15,8 @@ class MaterialIssuanceItem extends Model
         'material_id',
         'designation_id',
         'import_material_id',
-        'quantity'
+        'quantity',
+        'details'
     ];
 
     public function material()

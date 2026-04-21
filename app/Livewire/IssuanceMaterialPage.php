@@ -35,10 +35,37 @@ class IssuanceMaterialPage extends Component
 
     public array $selectedBalances = [];
 
+    public $designationName = null;
+
+    public $isEdit = false;
+
     protected $listeners = [
         'materialUpdated' => 'loadSelectedMaterials',
         'designationSelected' => 'designationSelected',
     ];
+
+    public function mount($id = null)
+    {
+        if ($id) {
+            $this->isEdit = true;
+
+            $issuance = MaterialIssuance::findOrFail($id);
+            $this->designationName = $issuance->designation->designation;
+            $this->materialIssuanceId = $issuance->id;
+            $this->order_name_id = $issuance->order_name_id;
+            $this->designation_id = $issuance->designation_id;
+            $this->quantity = $issuance->quantity;
+            $this->issued_to_employee = $issuance->issued_to_employee;
+            $this->issued_by_employee = $issuance->issued_by_employee;
+
+            $materialService = app(MaterialService::class);
+            $this->all_materials = $materialService->material(collect([$issuance]),1,5,'material_id');
+
+            $this->generated = true;
+
+            $this->loadSelectedMaterials();
+        }
+    }
 
     public function designationSelected($value)
     {

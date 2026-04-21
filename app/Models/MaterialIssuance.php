@@ -33,4 +33,9 @@ class MaterialIssuance extends Model
     {
         return $this->hasMany(MaterialIssuanceItem::class);
     }
+
+    public function order_name(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(OrderName::class);
+    }
 }

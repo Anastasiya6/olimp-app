@@ -3,7 +3,11 @@
     {{-- HEADER --}}
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            Створення видачі матеріалів
+            @if($isEdit)
+                Редагування документа №{{ $materialIssuanceId }}
+            @else
+                Створення видачі матеріалів
+            @endif
         </h2>
     </x-slot>
 
@@ -31,12 +35,22 @@
                         <div class="col-span-6">
                             <label class="block">
                                 <span class="text-gray-700">Хто отримує матеріал</span>
-                                <input
-                                    type="text"
-                                    wire:model="issued_to_employee"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
-                                    placeholder="ПІБ співробітника"
-                                >
+
+                                @if($isEdit)
+                                    {{-- readonly вигляд --}}
+                                    <div class="mt-1 px-3 py-2 bg-gray-100 border rounded-md text-gray-500 cursor-not-allowed">
+                                        {{ $issued_to_employee }}
+                                    </div>
+                                @else
+                                    {{-- звичайний input --}}
+                                    <input
+                                        type="text"
+                                        wire:model="issued_to_employee"
+                                        class="block w-full mt-1 border-gray-300 rounded-md"
+                                        placeholder="ПІБ співробітника"
+                                    >
+                                @endif
+
                             </label>
                         </div>
 
@@ -47,8 +61,9 @@
                                 <input
                                     type="text"
                                     wire:model="issued_by_employee"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
-                                    placeholder="ПІБ співробітника"
+                                    {{ $isEdit ? 'disabled' : '' }}
+                                    class="block w-full mt-1 border-gray-300 rounded-md
+                                    @if($isEdit) bg-gray-100 text-gray-400 cursor-not-allowed @endif"
                                 >
                             </label>
                         </div>
@@ -77,13 +92,25 @@
                         </div>
 
                         {{-- DESIGNATION --}}
-                        <div class="col-span-6" wire:ignore>
+                        <div class="col-span-6">
                             <label class="block">
                                 <span class="text-gray-700">Деталь</span>
-                                <input
-                                    id="designation-select"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
-                                >
+
+                                @if($isEdit)
+                                    {{-- тільки показуємо --}}
+                                    <div class="mt-1 p-2 border rounded-md bg-gray-100">
+                                        {{ $designationName }}
+                                    </div>
+                                @else
+                                    {{-- вибір деталі --}}
+                                    <div wire:ignore>
+                                        <input
+                                            id="designation-select"
+                                            class="block w-full mt-1 border-gray-300 rounded-md"
+                                        >
+                                    </div>
+                                @endif
+
                             </label>
                         </div>
 
@@ -100,15 +127,16 @@
                         </div>
 
                         {{-- BUTTON --}}
-                        <div class="col-span-2 flex items-end">
-                            <x-primary-button
-                                wire:click="generate"
-                                class="w-full bg-black hover:bg-gray-800"
-
-                            >
-                                Сформувати
-                            </x-primary-button>
-                        </div>
+                        @if(!$isEdit)
+                            <div class="col-span-2 flex items-end">
+                                <x-primary-button
+                                    wire:click="generate"
+                                    class="w-full bg-black hover:bg-gray-800"
+                                >
+                                    Сформувати
+                                </x-primary-button>
+                            </div>
+                        @endif
 
                     </div>
 

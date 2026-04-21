@@ -38,17 +38,25 @@
                             <td class="p-2 border">{{ $item->id }}</td>
                             <td class="p-2 border">{{ $item->created_at }}</td>
                             <td class="p-2 border">
+                                {{-- РЕДАГУВАННЯ --}}
+                                <a
+                                    href="{{ route('issuance-materials.edit', $item->id) }}"
+                                    class="text-blue-600 hover:underline"
+                                >
+                                    Редагувати
+                                </a>
+
                                 {{-- ПРОВЕСТИ --}}
                                 @if($item->status === 'draft')
                                     <button
                                         wire:click="postDocument({{ $item->id }})"
                                         wire:confirm="Провести документ?"
-                                        class="text-green-600 hover:underline"
+                                        class="text-green-600 hover:underline ml-2"
                                     >
                                         Провести
                                     </button>
                                 @else
-                                    <span class="text-gray-500 text-sm">
+                                    <span class="text-gray-500 text-sm ml-2">
                                         Проведено
                                     </span>
                                 @endif

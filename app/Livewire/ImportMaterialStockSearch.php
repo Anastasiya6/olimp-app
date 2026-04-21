@@ -182,7 +182,6 @@ class ImportMaterialStockSearch extends Component
                    $materialsCount = $materials->count();
 
                    if ($materialsCount === 0) {
-
                        $material = ImportMaterial::create([
                            'article' => $article,
                            'name' => $name,
@@ -227,7 +226,6 @@ class ImportMaterialStockSearch extends Component
         $this->dispatch('close-modal', name: 'confirmStockIn');
         $this->dispatch('close-modal', name: 'viewStock');
 
-        $this->dispatch('open-modal', name: 'viewMaterialConflict');
         //$this->dispatch('open-modal', name: 'viewMaterialConflict');
         session()->flash('success', 'Залишки успішно імпортовано');
 

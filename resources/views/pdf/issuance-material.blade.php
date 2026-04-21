@@ -15,6 +15,8 @@
 
 <h2>Звіт видачі матеріалів #{{ $document->id }}</h2>
 
+<p><strong>Замовлення: №</strong> {{ $document->order_name->name }}</p>
+
 <p><strong>Дата:</strong> {{ $document->created_at }}</p>
 
 <p><strong>Отримав:</strong>

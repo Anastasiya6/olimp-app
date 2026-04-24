@@ -26,9 +26,11 @@
                 <table class="w-full border">
                     <thead>
                     <tr class="bg-gray-100">
+                        <th class="p-2 border"></th>
                         <th class="p-2 border">ID</th>
                         <th class="p-2 border">Дата</th>
                         <th class="p-2 border">Дія</th>
+
                         <th class="p-2 border">Звіт</th>
                     </tr>
                     </thead>
@@ -45,7 +47,8 @@
                                 >
                                     Редагувати
                                 </a>
-
+                            </td>
+                            <td>
                                 {{-- ПРОВЕСТИ --}}
                                 @if($item->status === 'draft')
                                     <button

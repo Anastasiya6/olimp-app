@@ -13,12 +13,18 @@ class MaterialTakeModal extends Component
     public $selectedMaterial = null;
     public $selectedMaterialId = null;
     public $takeQty = 0;
+    public $takeFactQty = 0;
     public $materials = [];
     public $materialIssuanceId = null;
     public $detail_name = null;
     public $material_name = null;
+    public $editingId = null;
 
-    protected $listeners = ['openMaterialModal' => 'open','materialSelected' => 'setMaterial'];
+    protected $listeners = [
+        'openMaterialModal' => 'open',
+        'openEditMaterialModal' => 'openEdit',
+        'materialSelected' => 'setMaterial',
+    ];
 
     public function setMaterial($id)
     {
@@ -38,6 +44,27 @@ class MaterialTakeModal extends Component
         $this->takeQty = 0;
     }
 
+    public function openEdit($currentIndex,$detail_name, $material_name,$materialIssuanceId)
+    {
+        $this->currentIndex = $currentIndex;
+        $this->materialIssuanceId = $materialIssuanceId;
+        $this->detail_name = $detail_name;
+        $this->material_name = $material_name;
+        if (is_numeric($this->currentIndex)) {
+            $item = MaterialIssuanceItem::where('material_id',$this->currentIndex)->where('material_issuance_id',$this->materialIssuanceId)->first();
+
+        } else {
+            $item = MaterialIssuanceItem::where('designation_id',$this->currentIndex)->where('material_issuance_id',$this->materialIssuanceId)->first();
+
+        }
+        $this->editingId = $item->id;
+        $this->selectedMaterial = $item->importMaterial?->name ?? '—';
+        $this->selectedMaterialId = $item->import_material_id;
+        $this->takeQty = $item->quantity;
+        $this->takeFactQty = $item->fact_quantity;
+        $this->show = true;
+    }
+
     public function save()
     {
         $data = [
@@ -45,6 +72,7 @@ class MaterialTakeModal extends Component
             'import_material_id' => $this->selectedMaterialId,
             'details' => $this->detail_name,
             'quantity' => $this->takeQty,
+            'fact_quantity' => $this->takeFactQty,
             'material_id' => null,
             'designation_id' => null,
         ];
@@ -55,8 +83,13 @@ class MaterialTakeModal extends Component
             //dd($this->currentIndex,(int) $this->currentIndex);
             $data['designation_id'] = (int) $this->currentIndex;
         }
-
-        MaterialIssuanceItem::create($data);
+       // dd($this->currentIndex,$data);
+        if ($this->editingId) {
+            MaterialIssuanceItem::where('id', $this->editingId)->update($data);
+        } else {
+            MaterialIssuanceItem::create($data);
+        }
+        $this->editingId = null;
         //dd($this->selectedMaterialId,$this->materialIssuanceId,$this->currentIndex,$this->takeQty);
         //dd($this->currentIndex,$this->materialIssuanceId );
         // Можна робити логіку списання або передавати батьку

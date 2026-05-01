@@ -38,6 +38,7 @@
         <th>Матеріал</th>
         <th>Матеріал 1С</th>
         <th>Кількість</th>
+        <th>Факт кількість</th>
         <th>од.</th>
     </tr>
     </thead>
@@ -49,6 +50,7 @@
             <td>{{ $item->material->name ?? $item->designation->name ?? '—' }}</td>
             <td>{{ $item->importMaterial->name ?? '—' }}</td>
             <td>{{ $item->quantity ?? 0 }}</td>
+            <td>{{ $item->fact_quantity ?? 0 }}</td>
             <td>{{ $item->importMaterial->unit->unit ?? '—' }}</td>
         </tr>
     @endforeach

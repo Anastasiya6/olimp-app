@@ -77,6 +77,11 @@ class IssuanceMaterialPage extends Component
         $this->dispatch('openMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId);
     }
 
+    public function openEditModal($material_id, $detail_name, $material_name)
+    {
+        $this->dispatch('openEditMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId);
+    }
+
     public function removeMaterial($materialId)
     {
         $query = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId);
@@ -137,7 +142,6 @@ class IssuanceMaterialPage extends Component
                 $result['material_id'][$item->material_id] = $item->quantity;
             }
         }
-
         $this->selectedMaterials = $result;
     }
 

@@ -16,6 +16,7 @@ class MaterialIssuanceItem extends Model
         'designation_id',
         'import_material_id',
         'quantity',
+        'fact_quantity',
         'details'
     ];
 

@@ -31,7 +31,7 @@
 
                 {{-- SEARCH --}}
                 <div class="mb-4">
-                    <livewire:import-material-stock-search-dropdown/>
+                    <livewire:import-material-stock-search-dropdown :material_id="$selectedMaterialId" :material_name="$selectedMaterial"/>
                 </div>
 
                 {{-- INPUT --}}
@@ -42,6 +42,19 @@
                             type="number"
                             step="0.01"
                             wire:model="takeQty"
+                            class="block w-full mt-1 rounded-lg border-gray-300 focus:ring focus:ring-blue-200"
+                        >
+                    </label>
+                </div>
+
+                {{-- INPUT --}}
+                <div class="mb-6">
+                    <label class="block">
+                        <span class="text-gray-700 text-sm">Фактична кількість</span>
+                        <input
+                            type="number"
+                            step="0.01"
+                            wire:model="takeFactQty"
                             class="block w-full mt-1 rounded-lg border-gray-300 focus:ring focus:ring-blue-200"
                         >
                     </label>

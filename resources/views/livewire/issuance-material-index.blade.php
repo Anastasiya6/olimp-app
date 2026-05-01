@@ -26,11 +26,13 @@
                 <table class="w-full border">
                     <thead>
                     <tr class="bg-gray-100">
-                        <th class="p-2 border"></th>
+
                         <th class="p-2 border">ID</th>
                         <th class="p-2 border">Дата</th>
+                        <th class="p-2 border">Деталь (на що брали)</th>
+                        <th class="p-2 border">Деталі</th>
                         <th class="p-2 border">Дія</th>
-
+                        <th class="p-2 border">Дія</th>
                         <th class="p-2 border">Звіт</th>
                     </tr>
                     </thead>
@@ -39,6 +41,10 @@
                         <tr>
                             <td class="p-2 border">{{ $item->id }}</td>
                             <td class="p-2 border">{{ $item->created_at }}</td>
+                            <td class="p-2 border">{{$item->designation->designation}}</td>
+                            <td class="p-2 border text-xs">
+                                {{ collect($item->items ?? [])->pluck('details')->filter()->implode(', ') }}
+                            </td>
                             <td class="p-2 border">
                                 {{-- РЕДАГУВАННЯ --}}
                                 <a
@@ -49,7 +55,6 @@
                                 </a>
                             </td>
                             <td>
-                                {{-- ПРОВЕСТИ --}}
                                 @if($item->status === 'draft')
                                     <button
                                         wire:click="postDocument({{ $item->id }})"
@@ -59,9 +64,13 @@
                                         Провести
                                     </button>
                                 @else
-                                    <span class="text-gray-500 text-sm ml-2">
-                                        Проведено
-                                    </span>
+                                    <button
+                                        wire:click="unpostDocument({{ $item->id }})"
+                                        wire:confirm="Відмінити проведення?"
+                                        class="text-red-600 hover:underline ml-2"
+                                    >
+                                        Відмінити
+                                    </button>
                                 @endif
                             </td>
                             <td class="p-2 border">

@@ -166,7 +166,6 @@
                                  ? ($selectedMaterials['material_id'][$material['material_id']] ?? 0)
                                  : ($selectedMaterials['designation_id'][$material['designation_id']] ?? 0);
                             @endphp
-
                             <tr class="{{ $taken ? 'bg-green-50' : '' }}">
                                 <td class="p-2 border">{{ $material['detail'] }}</td>
                                 <td class="p-2 border">{{ $material['material'] }}</td>
@@ -177,16 +176,26 @@
                                 <td class="p-2 border">{{ $material['multiplier_str'] }}</td>
                                 <td class="p-2 border">{{ $material['multiplier'] ? $material['print_value'] * $material['multiplier'] : $material['print_value']}}</td>
                                 <td class="p-2 border">
-                                    <x-primary-button
-                                        wire:click="openModal('{{ $material['material_id'] }}',
-                                                                '{{ $material['detail'] }}',
-                                                                '{{ $material['material'] }}',
-                                                                '{{ $materialIssuanceId }}')"
-                                        class="bg-black hover:bg-gray-800 text-white"
-                                    >
-                                        {{ $taken ? 'Додати ще' : 'Видати матеріал' }}
-                                    </x-primary-button>
-
+                                    @if(!$taken)
+                                        <x-primary-button
+                                            wire:click="openModal('{{ $material['material_id'] }}',
+                                                                    '{{ $material['detail'] }}',
+                                                                    '{{ $material['material'] }}',
+                                                                    '{{ $materialIssuanceId }}')"
+                                            class="bg-black hover:bg-gray-800 text-white"
+                                        >
+                                            Видати матеріал
+                                        </x-primary-button>
+                                    @endif
+                                    @if($isEdit && $taken)
+                                        <x-primary-button
+                                        wire:click="openEditModal('{{ $material['material_id']}}',
+                                                                    '{{ $material['detail'] }}',
+                                                                    '{{ $material['material'] }}',
+                                                                    '{{ $materialIssuanceId }}')">
+                                            Редагувати
+                                        </x-primary-button>
+                                    @endif
                                     @if($taken)
                                         <div class="text-xs text-green-600 mt-1">
                                             Видано: {{ $taken }}
@@ -201,9 +210,6 @@
                                             Відмінити
                                         </x-secondary-button>
 
-                                        <div class="text-xs text-green-600 mt-1">
-                                            Взято: {{ $taken }}
-                                        </div>
                                     @endif
                                 </td>
                             </tr>

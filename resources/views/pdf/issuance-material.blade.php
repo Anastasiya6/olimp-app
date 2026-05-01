@@ -36,6 +36,7 @@
     <tr>
         <th>Деталь</th>
         <th>Матеріал</th>
+        <th>Артикул 1С</th>
         <th>Матеріал 1С</th>
         <th>Кількість</th>
         <th>Факт кількість</th>
@@ -48,6 +49,7 @@
         <tr>
             <td>{{ $item->details }}</td>
             <td>{{ $item->material->name ?? $item->designation->name ?? '—' }}</td>
+            <td>{{ $item->importMaterial->article ?? '—' }}</td>
             <td>{{ $item->importMaterial->name ?? '—' }}</td>
             <td>{{ $item->quantity ?? 0 }}</td>
             <td>{{ $item->fact_quantity ?? 0 }}</td>

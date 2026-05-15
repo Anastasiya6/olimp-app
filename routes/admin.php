@@ -40,6 +40,7 @@ use App\Http\Controllers\Admin\Report\SpecificationNormController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\TypeUnitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WriteOffController;
 use App\Livewire\IssuanceMaterialIndex;
@@ -73,6 +74,7 @@ use Illuminate\Support\Facades\Route;
     Route::resource('designations', DesignationController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('sections', SectionController::class);
+    Route::resource('type_units', TypeUnitController::class);
 
     Route::resource('groups', GroupController::class);
     Route::resource('users', UserController::class);
@@ -90,6 +92,7 @@ use Illuminate\Support\Facades\Route;
 
     // Route::resource('issuance-materials', IssuanceMaterialController::class);
     Route::get('/issuance-materials/{id}/pdf', [\App\Http\Controllers\IssuanceMaterialPdfController::class, 'show'])->name('issuance-materials.pdf');
+    Route::get('/issuance-materials/bulk-pdf', [\App\Http\Controllers\IssuanceMaterialBulkPdfController::class, 'bulkPdf'])->name('issuance-materials.bulk-pdf');
     Route::get('/issuance-materials', IssuanceMaterialIndex::class)->name('issuance-materials.index');
     Route::get('/issuance-materials/create', IssuanceMaterialPage::class)->name('issuance-materials.create');
     Route::get('/issuance-materials/{id}/edit', IssuanceMaterialPage::class)->name('issuance-materials.edit');

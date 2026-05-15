@@ -21,14 +21,23 @@
                         Додати документ
                     </x-primary-button>
                 </div>
-
+                <a
+                    href="{{ route('issuance-materials.bulk-pdf', [
+                        'ids' => implode(',', $selectedItems)
+                    ]) }}"
+                    target="_blank"
+                    class="text-blue-600 hover:underline"
+                >
+                    Роздрукувати вибрані
+                </a>
                 {{-- ТАБЛИЦЯ --}}
                 <table class="w-full border">
                     <thead>
                     <tr class="bg-gray-100">
-
+                        <th class="p-2 border">На друк</th>
                         <th class="p-2 border">ID</th>
                         <th class="p-2 border">Дата</th>
+                        <th class="p-2 border">Отримав</th>
                         <th class="p-2 border">Деталь (на що брали)</th>
                         <th class="p-2 border">Деталі</th>
                         <th class="p-2 border">Дія</th>
@@ -39,8 +48,16 @@
                     <tbody>
                     @forelse($items as $item)
                         <tr>
+                            <td class="p-2 border">
+                                <input
+                                    type="checkbox"
+                                    value="{{ $item->id }}"
+                                    wire:model.live="selectedItems"
+                                >
+                            </td>
                             <td class="p-2 border">{{ $item->id }}</td>
                             <td class="p-2 border">{{ $item->created_at }}</td>
+                            <td class="p-2 border">{{$item->issued_by_employee}}</td>
                             <td class="p-2 border">{{$item->designation->designation}}</td>
                             <td class="p-2 border text-xs">
                                 {{ collect($item->items ?? [])->pluck('details')->filter()->implode(', ') }}
@@ -102,5 +119,4 @@
 
         </div>
     </div>
-
 </div>

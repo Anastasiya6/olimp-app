@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Звіт</title>
+
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 6px; }
+        th { background: #f3f3f3; }
+    </style>
+</head>
+<body>
+
+@foreach($documents as $document)
+    <div style="font-size: 12px; margin-bottom: 15px; line-height: 1.6;">
+
+        <strong>Звіт:</strong> #{{ $document->id }}<br>
+
+        <strong>Замовлення:</strong> {{ $document->order_name->name ?? '—' }}
+        <strong>Дата:</strong> {{ $document->created_at }}
+        <strong>Отримав:</strong> {{ $document->issued_to_employee ?? '—' }}
+        <strong>Відпустив:</strong> {{ $document->issued_by_employee ?? '—' }}
+
+        <br>
+
+        <strong>Деталь:</strong>
+        {{ ($document->designation->designation ?? '') . ' ' . ($document->designation->name ?? '') ?: '—' }}
+
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Деталь</th>
+            <th>Матеріал</th>
+            <th>Артикул 1С</th>
+            <th>Матеріал 1С</th>
+            <th>Кількість</th>
+            <th>Факт кількість</th>
+            <th>од.</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @foreach($document->items as $item)
+            <tr>
+                <td>{{ $item->details }}</td>
+                <td>{{ $item->material->name ?? $item->designation->name ?? '—' }}</td>
+                <td>{{ $item->importMaterial->article ?? '—' }}</td>
+                <td>{{ $item->importMaterial->name ?? '—' }}</td>
+                <td>{{ $item->quantity ?? 0 }}</td>
+                <td>{{ $item->fact_quantity ?? 0 }}</td>
+                <td>{{ $item->importMaterial->unit->unit ?? '—' }}</td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+@endforeach
+</body>
+</html>

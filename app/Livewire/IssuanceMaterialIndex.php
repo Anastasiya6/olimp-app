@@ -13,6 +13,8 @@ class IssuanceMaterialIndex extends Component
 {
     use WithPagination;
 
+    public $selectedItems = [];
+
     public function postDocument($id)
     {
         $doc = MaterialIssuance::findOrFail($id);

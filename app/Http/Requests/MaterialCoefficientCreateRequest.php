@@ -14,6 +14,14 @@ class MaterialCoefficientCreateRequest extends FormRequest
         return true; // Можно оставить как true, если авторизация не требуется, требуется, как будет авторизация, изменить надо на true
     }
 
+    protected function prepareForValidation()
+    {
+        // Заменяем запятые на точки для поля norm
+        $this->merge([
+            'coefficient' => str_replace(',', '.', $this->coefficient),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

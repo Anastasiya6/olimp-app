@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\IssuanceMaterialController;
 use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
 use App\Http\Controllers\Admin\Logs\SpecificationLogController;
+use App\Http\Controllers\Admin\MaterialCoefficientController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\MaterialPurchaseController;
 use App\Http\Controllers\Admin\OrderController;
@@ -75,6 +76,7 @@ use Illuminate\Support\Facades\Route;
     Route::resource('departments', DepartmentController::class);
     Route::resource('sections', SectionController::class);
     Route::resource('type_units', TypeUnitController::class);
+    Route::resource('material_coefficients', MaterialCoefficientController::class);
 
     Route::resource('groups', GroupController::class);
     Route::resource('users', UserController::class);

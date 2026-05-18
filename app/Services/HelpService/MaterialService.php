@@ -87,13 +87,6 @@ class MaterialService
             }
 
             return ["* 1.1", 1.1];
-            if(str_starts_with($material, 'Лист') || str_starts_with($material, 'Плита')) {
-
-                return ["* 1.2",1.2];
-            }
-
-            return ["* 1.1",1.1];
-
         }
     }
 

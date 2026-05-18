@@ -2,6 +2,7 @@
 
 namespace App\Services\HelpService;
 
+use App\Models\MaterialCoefficient;
 use App\Models\MaterialPurchase;
 use App\Models\Purchase;
 use App\Models\Specification;
@@ -21,6 +22,8 @@ class MaterialService
 
     public int $sender_department_id;
 
+    public $coefficients = null;
+
     private DepartmentRepositoryInterface $departmentRepository;
 
     public function __construct(DepartmentRepositoryInterface $departmentRepository)
@@ -31,6 +34,8 @@ class MaterialService
 
     public function material($records,$type_report,$sender_department_id,$type_group = null, $order_name_id = null)
     {
+        $this->coefficients = MaterialCoefficient::all();
+
         $this->order_name_id = $order_name_id;
 
         $this->sender_department_number = $this->departmentRepository->getByDepartmentIdFirst($sender_department_id)?->number;
@@ -68,6 +73,20 @@ class MaterialService
             return ["", 1];
 
         }else{
+            foreach ($this->coefficients as $coefficient) {
+
+                if (str_starts_with($material, $coefficient->keyword)) {
+
+                    $value = rtrim(rtrim(number_format($coefficient->coefficient, 2, '.', ''), '0'), '.');
+
+                    return [
+                        "* {$value}",
+                        (float) $coefficient->coefficient
+                    ];
+                }
+            }
+
+            return ["* 1.1", 1.1];
             if(str_starts_with($material, 'Лист') || str_starts_with($material, 'Плита')) {
 
                 return ["* 1.2",1.2];

@@ -68,6 +68,9 @@
                         <x-dropdown-link wire:navigate :href="route('type_units.index')">
                             {{ __('Од. вимірювання') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('material_coefficients.index')">
+                            {{ __('Коефіцієнти') }}
+                        </x-dropdown-link>
                     </x-slot>
                 </x-dropdown>
                 <x-nav-link align="right" width="48" :href="route('order-names.index')">

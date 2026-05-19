@@ -57,7 +57,7 @@
                             </td>
                             <td class="p-2 border">{{ $item->id }}</td>
                             <td class="p-2 border">{{ $item->created_at }}</td>
-                            <td class="p-2 border">{{$item->issued_by_employee}}</td>
+                            <td class="p-2 border">{{$item->issued_to_employee}}</td>
                             <td class="p-2 border">{{$item->designation->designation}}</td>
                             <td class="p-2 border text-xs">
                                 {{ collect($item->items ?? [])->pluck('details')->filter()->implode(', ') }}

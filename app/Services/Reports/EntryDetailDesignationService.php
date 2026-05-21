@@ -215,8 +215,26 @@ class EntryDetailDesignationService
                         $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->Ln();
                     }
+                }elseif($route != 0) {
+                    $total_array = array_merge([
+                        $specification->quantity,
+                    ], $array_pred_quantity_node);
+                    $str =  implode(' * ', $array_pred_quantity_node);
+                    $total =  array_product($total_array);
+                    $this->pdf->MultiCell($this->width[0], $this->height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[2], $this->height, $specification->designationEntry->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[3], $this->height, $specification->designationEntry->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[4], $this->height, $tm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+
+                    $this->pdf->Ln();
+                    continue;
                 }
-                $this->newList();
+                    $this->newList();
 
                 $this->node($specification->designation_entry_id, 1, $specification->quantity, $route, $tm, $specification->designationEntry->designation, $specification->designationEntry->name, $quantity_node,$array_pred_quantity_node);
 

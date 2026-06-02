@@ -110,11 +110,6 @@ class MaterialService
                 return $material_purchase;
             }
         }
-//        foreach ($designationMaterial as $material) {
-//            if ($material->designation->id == 82429) {
-//                dd($designationMaterial, $designation_id, $designation_entry_id, $with_purchased, $quantity, $with_material_purchased, $array_designation_id);
-//            }
-//        }
         return $this->getMaterial($designationMaterial,$quantity);
 
     }
@@ -206,6 +201,20 @@ class MaterialService
 
         return array();
     }
+
+    private function checkSameRoute($route){
+
+        $routeParts = explode('-', $route);
+
+        $firstRoute = $routeParts[0] ?? null;
+        $secondRoute = $routeParts[1] ?? null;
+
+        if ($firstRoute === $secondRoute) {
+            return true;
+        }
+        return false;
+    }
+
     private function node($materials,$designation_id,$quantity_node,$with_purchased,$with_material_purchased,$pred_quantity_node=1,$array_pred_quantity_node=array(),$array_designation_id=array())
     {
 
@@ -227,7 +236,25 @@ class MaterialService
 
                 $route = SpecificationService::getRoute($specification,$tm,$this->sender_department_number);
 
-                $array_material = $this->checkMaterial($specification->designationMaterial,$specification->designation_id,$specification->designation_entry_id,$with_purchased,$specification->quantity,$with_material_purchased,$array_designation_id);
+                $array_material = array();
+
+                if ($route == 0 || $route == $this->sender_department_number) {
+                    $array_material = $this->checkMaterial($specification->designationMaterial, $specification->designation_id, $specification->designation_entry_id, $with_purchased, $specification->quantity, $with_material_purchased, $array_designation_id);
+                }else{
+                    if($this->checkSameRoute($tm)){
+                        continue;
+                    }
+
+                    $array_material[]  = [
+                        'type' => 'detail',
+                        'material_id' => $specification->id,
+                        'material' => $specification->name,
+                        'norm' => 1,
+                        'quantity' => $specification->quantity,
+                        'unit' => "",
+                        'code_1c' => ""
+                        ];
+                }
 
                 if (!empty($array_material)) {
 
@@ -287,9 +314,9 @@ class MaterialService
                         }
                     }
                 }
-
-                $this->node($materials,$specification->designationEntry->id,$specification->quantity,$with_purchased,$with_material_purchased,$quantity_node,$array_pred_quantity_node,$array_designation_id);
-
+                if ($route == 0 || $route == $this->sender_department_number) {
+                    $this->node($materials, $specification->designationEntry->id, $specification->quantity, $with_purchased, $with_material_purchased, $quantity_node, $array_pred_quantity_node, $array_designation_id);
+                }
             }
         }
         return $materials;

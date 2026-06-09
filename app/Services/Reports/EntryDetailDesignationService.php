@@ -216,6 +216,14 @@ class EntryDetailDesignationService
                         $this->pdf->Ln();
                     }
                 }elseif($route != 0) {
+                    $hasInTargetRoute = $this->hasRouteInSubtree(
+                        $specification->designation_entry_id,
+                        $this->department
+                    );
+
+                    if (!$hasInTargetRoute) {
+                        continue;
+                    }
                     $this->newList();
                     $total_array = array_merge([
                         $specification->quantity,
@@ -233,7 +241,7 @@ class EntryDetailDesignationService
                     $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
                     $this->pdf->Ln();
-                    continue;
+                   // continue;
                 }
                     $this->newList();
 
@@ -241,6 +249,31 @@ class EntryDetailDesignationService
 
             }
         }
+    }
+
+    private function hasRouteInSubtree($designation_id, $targetRoute)
+    {
+        $specifications = Specification::where('designation_id', $designation_id)
+            ->with('designationEntry')
+            ->get();
+
+        foreach ($specifications as $spec) {
+
+            $tm = StatementService::getTm($spec);
+            $route = SpecificationService::getRoute($spec, $tm, $this->department);
+
+            // якщо цей вузол або його діти підходять
+            if ($route == 0 || $route == $targetRoute) {
+                return true;
+            }
+
+            // рекурсія вниз
+            if ($this->hasRouteInSubtree($spec->designation_entry_id, $targetRoute)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getInfoMaterial()

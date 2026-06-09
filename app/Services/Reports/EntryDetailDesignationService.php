@@ -216,6 +216,7 @@ class EntryDetailDesignationService
                         $this->pdf->Ln();
                     }
                 }elseif($route != 0) {
+                    $this->newList();
                     $total_array = array_merge([
                         $specification->quantity,
                     ], $array_pred_quantity_node);

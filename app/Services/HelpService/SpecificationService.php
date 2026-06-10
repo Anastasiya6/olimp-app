@@ -16,4 +16,22 @@ class SpecificationService
             return $department_number == 0 ? 0 : substr($specification->designationEntry->route, 0, 2);
         }
     }
+
+    public static function checkSameRoute($route){
+
+        $routeParts = explode('-', $route);
+
+        $firstRoute = $routeParts[0] ?? null;
+        $secondRoute = $routeParts[1] ?? null;
+
+        if ($firstRoute === $secondRoute) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function getLastRoute($route)
+    {
+        return substr($route, -2);
+    }
 }

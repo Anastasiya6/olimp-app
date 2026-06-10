@@ -216,13 +216,18 @@ class EntryDetailDesignationService
                         $this->pdf->Ln();
                     }
                 }elseif($route != 0) {
-                    $hasInTargetRoute = $this->hasRouteInSubtree(
-                        $specification->designation_entry_id,
-                        $this->department
-                    );
-
-                    if (!$hasInTargetRoute) {
+                    if(SpecificationService::checkSameRoute($specification->designationEntry->route)){
                         continue;
+                    }
+                    if(SpecificationService::getLastRoute($tm) != $this->department){
+                        $hasInTargetRoute = $this->hasRouteInSubtree(
+                            $specification->designation_entry_id,
+                            $this->department
+                        );
+
+                        if (!$hasInTargetRoute) {
+                            continue;
+                        }
                     }
                     $this->newList();
                     $total_array = array_merge([

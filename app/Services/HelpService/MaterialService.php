@@ -202,19 +202,6 @@ class MaterialService
         return array();
     }
 
-    private function checkSameRoute($route){
-
-        $routeParts = explode('-', $route);
-
-        $firstRoute = $routeParts[0] ?? null;
-        $secondRoute = $routeParts[1] ?? null;
-
-        if ($firstRoute === $secondRoute) {
-            return true;
-        }
-        return false;
-    }
-
     private function node($materials,$designation_id,$quantity_node,$with_purchased,$with_material_purchased,$pred_quantity_node=1,$array_pred_quantity_node=array(),$array_designation_id=array())
     {
 
@@ -241,7 +228,7 @@ class MaterialService
                 if ($route == 0 || $route == $this->sender_department_number) {
                     $array_material = $this->checkMaterial($specification->designationMaterial, $specification->designation_id, $specification->designation_entry_id, $with_purchased, $specification->quantity, $with_material_purchased, $array_designation_id);
                 }else{
-                    if($this->checkSameRoute($tm)){
+                    if(SpecificationService::checkSameRoute($tm)){
                         continue;
                     }
 

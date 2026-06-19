@@ -51,7 +51,8 @@
                     </td>
                 @else
                     <td></td>
-                    <td>0</td>
+                    <td></td>
+                    <td></td>
                 @endif
             @else
                 @php
@@ -72,7 +73,8 @@
                     </td>
                 @else
                     <td></td>
-                    <td>0</td>
+                    <td></td>
+                    <td></td>
                 @endif
             @endif
         </tr>

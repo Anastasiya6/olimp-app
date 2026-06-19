@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
 use App\Http\Controllers\Admin\Logs\SpecificationLogController;
 use App\Http\Controllers\Admin\MaterialCoefficientController;
 use App\Http\Controllers\Admin\MaterialController;
+use App\Http\Controllers\Admin\MaterialIssueController;
 use App\Http\Controllers\Admin\MaterialPurchaseController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderNameController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Admin\Report\DeliveryNoteDesignationController;
 use App\Http\Controllers\Admin\Report\DetailSpecificationNormController;
 use App\Http\Controllers\Admin\Report\EntryDetailController;
 use App\Http\Controllers\Admin\Report\EntryDetailDesignationController;
+use App\Http\Controllers\Admin\Report\EntryDetailDesignationHtmlController;
 use App\Http\Controllers\Admin\Report\NotInApplicationStatement;
 use App\Http\Controllers\Admin\Report\NotNormForMaterialController;
 use App\Http\Controllers\Admin\Report\PlanTaskDetailSpecificationNormController;
@@ -124,12 +126,16 @@ Route::resource('designation-materials', DesignationMaterialController::class);
     Route::get('detail-specification-material-norm/{order_name_id}/{department}', [DetailSpecificationNormController::class,'detailSpecificationNorm'])->name('detail.specification.material');
     Route::get('entry-detail/{order_name_id}', [EntryDetailController::class,'entryDetail'])->name('entry.detail');
     Route::get('entry-detail-designation/{designation_number?}/{department}', [EntryDetailDesignationController::class,'entryDetailDesignation'])->name('entry.detail.designation');
-    Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}/{type_report}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
+    Route::get('entry-detail-designation-html/{designation_number?}/{department}', [EntryDetailDesignationHtmlController::class,'entryDetailDesignation'])->name('entry.detail.designation.html');
+Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}/{type_report}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');
     Route::get('write-off-no-material/{order_name_id}/{start_date}/{end_date}/{sender_department}/{receiver_department}', [ReportWriteOffNoMaterialController::class,'writeOffNoMaterial'])->name('report.write.off.no.material');
     Route::get('not-in-application-statement/{sender_department}/{order_name_id}', [NotInApplicationStatement::class,'notInApplicationStatement'])->name('report.not.in.application.statement');
     Route::get('department-list/{filter}/{order_name_id}/{department}', [ReportDepartmentList::class,'reportDepartmentList'])->name('department.list');
 
-    Route::post('task-detail', [ReportTaskController::class,'task'])->name('report.task.detail');
+    Route::get('material-issuance-pdf/{order_name_id}/{designation_number?}', [MaterialIssueController::class,'materialIssuePdf'])->name('material.issue.pdf');
+
+
+Route::post('task-detail', [ReportTaskController::class,'task'])->name('report.task.detail');
     Route::post('task-material', [ReportTaskController::class,'task'])->name('report.task.material');
     Route::post('task-no-material', [ReportTaskNoMaterialController::class,'task'])->name('report.task.no.material');
 //Route::get('write-off/{items}', [ReportWriteOffController::class,'writeOff'])->name('report.write.off');

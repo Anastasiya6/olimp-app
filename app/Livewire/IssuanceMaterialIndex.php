@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Models\ImportMaterialStock;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
+use App\Models\OrderName;
 use DB;
+use Livewire\Attributes\Session;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,6 +16,18 @@ class IssuanceMaterialIndex extends Component
     use WithPagination;
 
     public $selectedItems = [];
+
+    #[Session]
+    public $designation_number;
+
+    public $selectedOrder = null;
+
+    public function mount()
+    {
+        if($this->designation_number == '')
+            $this->designation_number = 'ААМВ685614100';
+
+    }
 
     public function postDocument($id)
     {
@@ -72,7 +86,14 @@ class IssuanceMaterialIndex extends Component
 
     public function render()
     {
+        $order_names = OrderName::where('is_order', 1)->orderBy('name')->get();
+
+        if (!$this->selectedOrder && $order_names->count()) {
+            $this->selectedOrder = $order_names->first()->id;
+        }
+
         return view('livewire.issuance-material-index', [
+            'order_names'=> $order_names,
             'items' => MaterialIssuance::with('items')
                 ->whereHas('items')
                 ->latest()

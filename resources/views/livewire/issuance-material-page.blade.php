@@ -162,11 +162,23 @@
                         <tbody>
                         @foreach($materials as $index => $material)
                             @php
-                                $taken = is_numeric($material['material_id'])
-                                 ? ($selectedMaterials['material_id'][$material['material_id']] ?? 0)
-                                 : ($selectedMaterials['designation_id'][$material['designation_id']] ?? 0);
+                                if (is_numeric($material['material_id'])) {
+                                    $hasTaken = array_key_exists(
+                                        $material['material_id'],
+                                        $selectedMaterials['material_id']
+                                    );
+
+                                    $taken = $selectedMaterials['material_id'][$material['material_id']] ?? 0;
+                                } else {
+                                    $hasTaken = array_key_exists(
+                                        $material['designation_id'],
+                                        $selectedMaterials['designation_id']
+                                    );
+
+                                    $taken = $selectedMaterials['designation_id'][$material['designation_id']] ?? 0;
+                                }
                             @endphp
-                            <tr class="{{ $taken ? 'bg-green-50' : '' }}">
+                            <tr class="{{ $hasTaken ? 'bg-green-50' : '' }}">
                                 <td class="p-2 border">{{ $material['detail'] }}</td>
                                 <td class="p-2 border">{{ $material['material'] }}</td>
                                 <td class="p-2 border">{{ $material['print_value'] / $quantity }}</td>
@@ -176,7 +188,7 @@
                                 <td class="p-2 border">{{ $material['multiplier_str'] }}</td>
                                 <td class="p-2 border">{{ $material['multiplier'] ? $material['print_value'] * $material['multiplier'] : $material['print_value']}}</td>
                                 <td class="p-2 border">
-                                    @if(!$taken)
+                                    @if(!$hasTaken)
                                         <x-primary-button
                                             wire:click="openModal('{{ $material['material_id'] }}',
                                                                     '{{ $material['detail'] }}',
@@ -187,7 +199,7 @@
                                             Видати матеріал
                                         </x-primary-button>
                                     @endif
-                                    @if($isEdit && $taken)
+                                    @if($isEdit && $hasTaken)
                                         <x-primary-button
                                         wire:click="openEditModal('{{ $material['material_id']}}',
                                                                     '{{ $material['detail'] }}',
@@ -196,13 +208,13 @@
                                             Редагувати
                                         </x-primary-button>
                                     @endif
-                                    @if($taken)
+                                    @if($hasTaken)
                                         <div class="text-xs text-green-600 mt-1">
                                             Видано: {{ $taken }}
                                         </div>
                                     @endif
 
-                                    @if($taken)
+                                    @if($hasTaken)
                                         <x-secondary-button
                                             wire:click="removeMaterial('{{ $material['material_id'] }}')"
                                             class="mt-1"

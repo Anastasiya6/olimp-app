@@ -16,12 +16,18 @@ class MaterialIssuance extends Model
         'quantity',
         'issued_to_employee',
         'issued_by_employee',
-        'status'
+        'status',
+        'plan_task_designation_id'
     ];
 
     public function designation(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Designation::class);
+    }
+
+    public function planTaskDesignation(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Designation::class, 'plan_task_designation_id');
     }
 
     public function designationMaterial(): HasMany

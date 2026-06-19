@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Designation;
+use App\Models\MaterialIssuance;
 use App\Models\MaterialIssue;
+use App\Models\OrderName;
+use App\Services\HelpService\MaterialService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class MaterialIssueController extends Controller
@@ -54,6 +59,53 @@ class MaterialIssueController extends Controller
         //
     }
 
+    public function materialIssuePdf($order_name_id,$designation_number,MaterialService $materialService)
+    {
+        //dd($order_name_id,$designation_number);
+        $designation = Designation::where('designation', $designation_number)->first();
+        $order = OrderName::find($order_name_id);
+
+        if($designation && $order_name_id){
+            $materialIssuance = MaterialIssuance::with( 'items.material', 'items.importMaterial')->where('order_name_id', $order_name_id)->where('plan_task_designation_id', $designation->id)->get();
+            $result = [
+                'material_id' => [],
+                'designation_id' => [],
+            ];
+
+            foreach ($materialIssuance as $document) {
+                foreach ($document->items as $item) {
+
+                    if ($item->designation_id) {
+                        $result['designation_id'][$item->designation_id][] = [
+                            'item' => $item,
+                            'quantity' => $document->quantity,
+                        ];
+                    } elseif ($item->material_id) {
+                        $result['material_id'][$item->material_id][] = [
+                            'item' => $item,
+                            'quantity' => $document->quantity,
+                        ];
+                    }
+                }
+            }
+
+            //dd($order_name_id,$designation,$materialIssuance);
+            $all_materials = $materialService->material($materialIssuance,1,5,'material_id');
+//            foreach ($all_materials  as $item)
+            //dd($all_materials,$result);
+
+            $pdf = Pdf::loadView('pdf.material-issue', [
+                'all_materials' => $all_materials,
+                'result' => $result,
+                'designation' => $designation->designation,
+                'order' => $order->name
+            ]);
+
+            return $pdf->stream("material-issue.pdf");
+        }
+
+
+    }
     /**
      * Show the form for editing the specified resource.
      */

@@ -7,6 +7,7 @@ use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
 use App\Models\OrderName;
 use App\Services\HelpService\MaterialService;
+use App\Services\HelpService\PlanService;
 use Livewire\Component;
 
 class IssuanceMaterialPage extends Component
@@ -31,7 +32,10 @@ class IssuanceMaterialPage extends Component
 
     public $currentIndex = null;
 
-    public array $selectedMaterials = [];
+    public array $selectedMaterials =  [
+        'material_id' => [],
+        'designation_id' => [],
+    ];
 
     public array $selectedBalances = [];
 
@@ -108,6 +112,10 @@ class IssuanceMaterialPage extends Component
             'designation_id' => 'required',
             'quantity' => 'required|numeric|min:1',
         ]);
+        $plan_task_designation_id = null;
+        if($detail_from_plan = PlanService::getDetailFromPlan($this->designation_id,$this->order_name_id)){
+            $plan_task_designation_id = $detail_from_plan->designation_id;
+        }
 
         $materialIssuance = MaterialIssuance::create([
             'order_name_id' => $this->order_name_id,
@@ -115,6 +123,7 @@ class IssuanceMaterialPage extends Component
             'quantity' => $this->quantity,
             'issued_to_employee' => $this->issued_to_employee,
             'issued_by_employee' => $this->issued_by_employee,
+            'plan_task_designation_id' => $plan_task_designation_id
         ]);
         $this->materialIssuanceId = $materialIssuance->id;
 
@@ -152,6 +161,7 @@ class IssuanceMaterialPage extends Component
 
     public function render()
     {
+       // dd($this->selectedMaterials );
         return view('livewire.issuance-material-page',[
             'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
             'materials' => $this->all_materials

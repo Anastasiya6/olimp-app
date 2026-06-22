@@ -149,27 +149,30 @@ class MaterialService
 
     private function getPurchase($designation_id, $designation_entry_id,$quantity,$array_designation_id)
     {
-        $purchase = Purchase::where('designation_id', $designation_id)->where('designation_entry_id', $designation_entry_id)->first();
 
-        if (!$purchase && !empty($array_designation_id)) {
+        $purchases = Purchase::with('order_names')->where('designation_id', $designation_id)->where('designation_entry_id', $designation_entry_id)->get();
 
-            $purchase = Purchase::whereIn('designation_id', $array_designation_id)->where('designation_entry_id', $designation_entry_id)->first();
+        if ($purchases->isEmpty() && !empty($array_designation_id)) {
+
+            $purchases = Purchase::with('order_names')->whereIn('designation_id', $array_designation_id)->where('designation_entry_id', $designation_entry_id)->get();
 
         }
+        $purchase = $purchases->first(function ($purchase) {
+            return $this->order_name_id === null
+                || $purchase->order_names->isEmpty()
+                || $purchase->order_names->contains('id', $this->order_name_id);
+        });
         if ($purchase) {
-            if (($this->order_name_id === null) ||
-                $purchase->order_names->isEmpty() ||
-                $purchase->order_names->contains('id', $this->order_name_id)) {
-                return array([
-                    'type' => 'purchase',
-                    'material_id' => $purchase->purchase,
-                    'material' => $purchase->purchase,
-                    'norm' => 1,
-                    'quantity' => $quantity,
-                    'unit' => '',
-                    'code_1c' => $purchase->code_1c
-                ]);
-            }
+            return array([
+                'type' => 'purchase',
+                'material_id' => $purchase->purchase,
+                'material' => $purchase->purchase,
+                'norm' => 1,
+                'quantity' => $quantity,
+                'unit' => '',
+                'code_1c' => $purchase->code_1c
+            ]);
+
         }
 
         return array();

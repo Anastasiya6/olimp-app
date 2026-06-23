@@ -78,7 +78,7 @@
                             <label class="block">
                                 <span class="text-gray-700">Замовлення</span>
                                 <select
-                                    wire:model="order_name_id"
+                                    wire:model="order_name_id" wire:change="updateSearch"
                                     class="block w-full mt-1 border-gray-300 rounded-md"
                                 >
                                     <option value="">—</option>
@@ -92,7 +92,7 @@
                         </div>
 
                         {{-- DESIGNATION --}}
-                        <div class="col-span-6">
+                        <div class="col-span-3">
                             <label class="block">
                                 <span class="text-gray-700">Деталь</span>
 
@@ -111,6 +111,24 @@
                                     </div>
                                 @endif
 
+                            </label>
+                        </div>
+
+                        <div class="col-span-3">
+                            <label class="block">
+                                <span class="text-gray-700">Деталь з плану:</span>
+                                @if($planDesignationName)
+                                    {{-- тільки показуємо --}}
+                                    <div class="mt-1 p-2 border rounded-md bg-gray-100">
+                                        {{ $planDesignationName }}
+                                    </div>
+                                @else
+                                    <div>
+                                        <input readonly
+                                            class="block w-full mt-1 border-gray-300 rounded-md"
+                                        >
+                                    </div>
+                                @endif
                             </label>
                         </div>
 

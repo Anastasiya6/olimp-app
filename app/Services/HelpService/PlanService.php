@@ -13,7 +13,6 @@ class PlanService
         $designationId = $designation_id;
         $orderId = $order_name_id;
 
-        $saved = false;
         $checked = [];
 
         while ($designationId && !in_array($designationId, $checked)) {
@@ -25,6 +24,7 @@ class PlanService
                 ->first();
 
             if ($planTask) {
+               // dd($planTask);
                 return $planTask;
                 //$saved = true;
                 //break;
@@ -55,6 +55,7 @@ class PlanService
                 ->first();
 
             if ($planTask) {
+                dd($planTask);
                 return $planTask;
                 //break;
             }

@@ -32,6 +32,8 @@ class IssuanceMaterialPage extends Component
 
     public $currentIndex = null;
 
+    public $planDesignationName=null;
+
     public array $selectedMaterials =  [
         'material_id' => [],
         'designation_id' => [],
@@ -66,14 +68,36 @@ class IssuanceMaterialPage extends Component
             $this->all_materials = $materialService->material(collect([$issuance]),1,5,'material_id');
 
             $this->generated = true;
-
+            $this->planDesignationName = $issuance->planTaskDesignation?->designation;
             $this->loadSelectedMaterials();
+        }
+    }
+
+    public function loadPlanDesignation(){
+
+        $this->planDesignationName = null;
+
+        if (
+            $this->designation_id &&
+            $this->order_name_id &&
+            $detail_from_plan = PlanService::getDetailFromPlan(
+                $this->designation_id,
+                $this->order_name_id
+            )
+        ) {
+            $this->planDesignationName = $detail_from_plan->designation->designation;
         }
     }
 
     public function designationSelected($value)
     {
         $this->designation_id = $value;
+        $this->loadPlanDesignation();
+    }
+
+    public function updateSearch()
+    {
+        $this->loadPlanDesignation();
     }
 
     public function openModal($material_id, $detail_name, $material_name)
@@ -89,7 +113,7 @@ class IssuanceMaterialPage extends Component
     public function removeMaterial($materialId)
     {
         $query = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId);
-        //dd( $materialId);
+
         if (is_numeric($materialId)) {
             // це material
             $query->where('material_id', $materialId);
@@ -131,6 +155,11 @@ class IssuanceMaterialPage extends Component
        // dd($this->all_materials);
         $this->generated = true;
 
+    }
+
+    public function updatedDesignationId()
+    {
+        $this->loadPlanDesignation();
     }
 
     public function loadSelectedMaterials()

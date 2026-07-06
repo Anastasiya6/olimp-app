@@ -393,7 +393,14 @@ class MaterialService
                             'material' => $group->first()['material'],
                             'material_id' => $group->first()['material_id'],
                             'norm' => $group->sum('norm'),
+                            'norm_list' => $group
+                                                ->pluck('norm', 'detail')
+                                                ->toArray(),
                             'pred_quantity_node' => $group->sum('pred_quantity_node'),
+
+                            'specification_quantity' => $group
+                                                            ->pluck('quantity_node', 'detail')
+                                                            ->toArray(),
                             'quantity_node' => $group->sum('quantity_node'),
                             'print_number' => $group->sum('print_value'),
                             'print_value' => $group->sum('print_value'),

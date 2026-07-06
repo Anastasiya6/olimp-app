@@ -61,7 +61,7 @@ class MaterialIssueController extends Controller
 
     public function materialIssuePdf($order_name_id,$designation_number,MaterialService $materialService)
     {
-        //dd($order_name_id,$designation_number);
+
         $designation = Designation::where('designation', $designation_number)->first();
         $order = OrderName::find($order_name_id);
 
@@ -76,29 +76,30 @@ class MaterialIssueController extends Controller
                 foreach ($document->items as $item) {
 
                     if ($item->designation_id) {
-                        $result['designation_id'][$item->designation_id][] = [
+                        $result['designation_id'][$item->designation_id][$item->details][] = [
                             'item' => $item,
                             'quantity' => $document->quantity,
                         ];
                     } elseif ($item->material_id) {
-                        $result['material_id'][$item->material_id][] = [
+                        $result['material_id'][$item->material_id][$item->details][] = [
                             'item' => $item,
                             'quantity' => $document->quantity,
                         ];
                     }
                 }
             }
+            $record = clone $materialIssuance->first();
+            $record->designation_id = $record->plan_task_designation_id;
 
-            //dd($order_name_id,$designation,$materialIssuance);
-            $all_materials = $materialService->material($materialIssuance,1,5,'material_id');
-//            foreach ($all_materials  as $item)
-            //dd($all_materials,$result);
+            $records = collect([$record]);
+            $all_materials = $materialService->material($records,1,5,'material_id');
 
             $pdf = Pdf::loadView('pdf.material-issue', [
                 'all_materials' => $all_materials,
                 'result' => $result,
                 'designation' => $designation->designation,
-                'order' => $order->name
+                'order' => $order->name,
+                'order_quantity' => $order->quantity
             ]);
 
             return $pdf->stream("material-issue.pdf");

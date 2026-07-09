@@ -95,6 +95,7 @@ class IssuanceMaterialIndex extends Component
         return view('livewire.issuance-material-index', [
             'order_names'=> $order_names,
             'items' => MaterialIssuance::with('items')
+                ->byDesignation()
                 ->whereHas('items')
                 ->latest()
                 ->paginate(10)

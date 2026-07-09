@@ -17,7 +17,9 @@ class MaterialIssuance extends Model
         'issued_to_employee',
         'issued_by_employee',
         'status',
-        'plan_task_designation_id'
+        'plan_task_designation_id',
+        'issued_by_user_id',
+        'received_by_user_id'
     ];
 
     public function designation(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -43,5 +45,29 @@ class MaterialIssuance extends Model
     public function order_name(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(OrderName::class);
+    }
+
+    public function receivedByUser()
+    {
+        return $this->belongsTo(User::class, 'received_by_user_id');
+    }
+
+    public function issuedByUser()
+    {
+        return $this->belongsTo(User::class, 'issued_by_user_id');
+    }
+
+    public function scopeManual($query)
+    {
+        return $query
+            ->whereNull('order_name_id')
+            ->whereNull('designation_id');
+    }
+
+    public function scopeByDesignation($query)
+    {
+        return $query
+            ->whereNotNull('order_name_id')
+            ->whereNotNull('designation_id');
     }
 }

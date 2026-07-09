@@ -35,22 +35,19 @@
                         <div class="col-span-6">
                             <label class="block">
                                 <span class="text-gray-700">Хто отримує матеріал</span>
+                                <select
+                                    wire:model="received_by_user_id"
+                                    class="block w-full mt-1 border-gray-300 rounded-md"
+                                    @disabled($isEdit)
+                                >
+                                    <option value="">Оберіть співробітника</option>
 
-                                @if($isEdit)
-                                    {{-- readonly вигляд --}}
-                                    <div class="mt-1 px-3 py-2 bg-gray-100 border rounded-md text-gray-500 cursor-not-allowed">
-                                        {{ $issued_to_employee }}
-                                    </div>
-                                @else
-                                    {{-- звичайний input --}}
-                                    <input
-                                        type="text"
-                                        wire:model="issued_to_employee"
-                                        class="block w-full mt-1 border-gray-300 rounded-md"
-                                        placeholder="ПІБ співробітника"
-                                    >
-                                @endif
-
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
                         </div>
 
@@ -58,13 +55,19 @@
                         <div class="col-span-6">
                             <label class="block">
                                 <span class="text-gray-700">Хто виписує документ</span>
-                                <input
-                                    type="text"
-                                    wire:model="issued_by_employee"
-                                    {{ $isEdit ? 'disabled' : '' }}
-                                    class="block w-full mt-1 border-gray-300 rounded-md
-                                    @if($isEdit) bg-gray-100 text-gray-400 cursor-not-allowed @endif"
+                                <select
+                                    wire:model="issued_by_user_id"
+                                    class="block w-full mt-1 border-gray-300 rounded-md"
+                                    @disabled($isEdit)
                                 >
+                                    <option value="">Оберіть співробітника</option>
+
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
                         </div>
 

@@ -90,23 +90,6 @@ class MaterialTakeModal extends Component
             MaterialIssuanceItem::create($data);
         }
         $this->editingId = null;
-        //dd($this->selectedMaterialId,$this->materialIssuanceId,$this->currentIndex,$this->takeQty);
-        //dd($this->currentIndex,$this->materialIssuanceId );
-        // Можна робити логіку списання або передавати батьку
-//        MaterialIssuanceItem::create([
-//            'material_issuance_id' => $this->materialIssuanceId,
-//            'material_id' => (int) $this->currentIndex,
-//            'import_material_id' => $this->selectedMaterialId,
-//            'quantity' => $this->takeQty
-//        ]);
-
-
-//        ImportMaterialStock::create([
-//            'import_material_id' => $this->selectedMaterialId,
-//            'amount' => -$this->takeQty,
-//            'type' => 'stock_out',
-//            'document_number' => $this->materialIssuanceId
-//        ]);
         // 🔥 повідомляємо батьківський компонент
         $this->dispatch('materialUpdated');
 

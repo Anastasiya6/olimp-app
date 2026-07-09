@@ -20,11 +20,11 @@
 <p><strong>Дата:</strong> {{ $document->created_at }}</p>
 
 <p><strong>Отримав:</strong>
-    {{ $document->issued_to_employee ?? '—' }}
+    {{ $document->receivedByUser?->name ?? '—' }}
 </p>
 
 <p><strong>Відпустив:</strong>
-    {{ $document->issued_by_employee ?? '—' }}
+    {{ $document->issuedByUser?->name ?? '—' }}
 </p>
 
 <p><strong>Деталь (на що брали):</strong>

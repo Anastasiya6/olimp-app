@@ -6,6 +6,7 @@ use App\Models\Designation;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
 use App\Models\OrderName;
+use App\Models\User;
 use App\Services\HelpService\MaterialService;
 use App\Services\HelpService\PlanService;
 use Livewire\Component;
@@ -21,10 +22,6 @@ class IssuanceMaterialPage extends Component
     public $designation_id;
 
     public $quantity;
-
-    public string $issued_to_employee;
-
-    public string $issued_by_employee;
 
     public $all_materials;
 
@@ -45,6 +42,13 @@ class IssuanceMaterialPage extends Component
 
     public $isEdit = false;
 
+    public $users = [];
+
+    public $received_by_user_id;
+
+    public $issued_by_user_id;
+
+
     protected $listeners = [
         'materialUpdated' => 'loadSelectedMaterials',
         'designationSelected' => 'designationSelected',
@@ -52,6 +56,7 @@ class IssuanceMaterialPage extends Component
 
     public function mount($id = null)
     {
+        $this->users = User::orderBy('name')->get();
         if ($id) {
             $this->isEdit = true;
 
@@ -61,8 +66,8 @@ class IssuanceMaterialPage extends Component
             $this->order_name_id = $issuance->order_name_id;
             $this->designation_id = $issuance->designation_id;
             $this->quantity = $issuance->quantity;
-            $this->issued_to_employee = $issuance->issued_to_employee;
-            $this->issued_by_employee = $issuance->issued_by_employee;
+            $this->received_by_user_id = $issuance->received_by_user_id;
+            $this->issued_by_user_id = $issuance->issued_by_user_id;
 
             $materialService = app(MaterialService::class);
             $this->all_materials = $materialService->material(collect([$issuance]),1,5,'material_id');
@@ -130,8 +135,8 @@ class IssuanceMaterialPage extends Component
     public function generate(MaterialService $materialService)
     {
         $this->validate([
-            'issued_to_employee' => 'required',
-            'issued_by_employee' => 'required',
+            'received_by_user_id' => 'required|exists:users,id',
+            'issued_by_user_id' => 'required|exists:users,id',
             'order_name_id' => 'required',
             'designation_id' => 'required',
             'quantity' => 'required|numeric|min:1',
@@ -145,8 +150,8 @@ class IssuanceMaterialPage extends Component
             'order_name_id' => $this->order_name_id,
             'designation_id' => $this->designation_id,
             'quantity' => $this->quantity,
-            'issued_to_employee' => $this->issued_to_employee,
-            'issued_by_employee' => $this->issued_by_employee,
+            'received_by_user_id' => $this->received_by_user_id,
+            'issued_by_user_id' => $this->issued_by_user_id,
             'plan_task_designation_id' => $plan_task_designation_id
         ]);
         $this->materialIssuanceId = $materialIssuance->id;
@@ -190,7 +195,6 @@ class IssuanceMaterialPage extends Component
 
     public function render()
     {
-       // dd($this->selectedMaterials );
         return view('livewire.issuance-material-page',[
             'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
             'materials' => $this->all_materials

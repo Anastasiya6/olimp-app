@@ -8,6 +8,7 @@ use App\Models\PlanTask;
 use App\Models\Rascex;
 use App\Models\ReportApplicationStatement;
 use App\Models\Specification;
+use App\Models\User;
 use Illuminate\Console\Command;
 use XBase\TableReader;
 
@@ -27,78 +28,136 @@ class rascexDbf extends Command
      */
     protected $description = 'Command description';
 
+    private function normalizeName(string $name, array $aliases): string
+    {
+        $name = trim($name);
+
+        return $aliases[$name] ?? $name;
+    }
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
+
+        $aliases = [
+            'Ніяковська Л. С.' => 'Ніяковська Л.С.',
+            'Ніякавська Л. С.' => 'Ніяковська Л.С.',
+            'Грохольська Т. М.' => 'Грохольська Т.М.',
+            'Черкас М. Р.' => 'Черкас М.Р.',
+            'Черкас' => 'Черкас М.Р.',
+            'Бевз Е. Е.' => 'Бевз Е.Е.',
+        ];
+
+
         MaterialIssuance::whereDoesntHave('items')->delete();
 
         $materialIssuances = MaterialIssuance::with('items')->get();
 
         foreach ($materialIssuances as $materialIssuance ) {
-
-            $designationId = $materialIssuance->designation_id;
-            $orderId = $materialIssuance->order_name_id;
-
-            $saved = false;
-            $checked = [];
-
-            while ($designationId && !in_array($designationId, $checked)) {
-
-                $checked[] = $designationId;
-
-                $planTask = PlanTask::where('designation_id', $designationId)
-                    ->where('order_name_id', $orderId)
-                    ->first();
-
-                if ($planTask) {
-                    $this->saveMaterialIssuance($materialIssuance, $planTask);
-                    $saved = true;
-                    break;
-                }
-
-                $report = ReportApplicationStatement::where('designation_entry_id', $designationId)
-                    ->where('order_name_id', $orderId)
-                    ->first();
-
-                if (!$report) {
-                    break;
-                }
-
-                $designationId = $report->designation_id;
+            if ($materialIssuance->issued_to_employee) {
+                User::firstOrCreate([
+                    'name' => $this->normalizeName($materialIssuance->issued_to_employee, $aliases),
+                ]);
             }
 
-            if(!$saved){
-
-                $designationId = $materialIssuance->designation_id;
-
-                $checked = [];
-
-                while ($designationId && !in_array($designationId, $checked)){
-
-                    $checked[] = $designationId;
-
-                    $planTask = PlanTask::where('designation_id', $designationId)
-                        ->where('order_name_id', $orderId)
-                        ->first();
-
-                    if ($planTask) {
-                        $this->saveMaterialIssuance($materialIssuance, $planTask);
-                        break;
-                    }
-
-                    $specification = Specification::where('designation_entry_id', $designationId)
-                        ->first();
-                    if (!$specification) {
-                        break;
-                    }
-
-                    $designationId = $specification->designation_id;
-                }
+            if ($materialIssuance->issued_by_employee) {
+                User::firstOrCreate([
+                    'name' => $this->normalizeName($materialIssuance->issued_by_employee, $aliases),
+                ]);
             }
 
         }
+        $users = User::pluck('id', 'name');
+
+        $materialIssuances = MaterialIssuance::all();
+
+        foreach ($materialIssuances as $materialIssuance) {
+
+            $issuedByName = trim($materialIssuance->issued_by_employee);
+            $issuedByName = $aliases[$issuedByName] ?? $issuedByName;
+            echo $issuedByName ;
+            echo $users[$issuedByName];
+            $receivedByName = trim($materialIssuance->issued_to_employee);
+            $receivedByName = $aliases[$receivedByName] ?? $receivedByName;
+
+            $materialIssuance->update([
+                'issued_by_user_id' => $users[$issuedByName] ?? null,
+                'received_by_user_id' => $users[$receivedByName] ?? null,
+            ]);
+//            if (!isset($users[$issuedByName])) {
+//                dump("Не знайдено: {$issuedByName}");
+//            }
+//
+//            if (!isset($users[$receivedByName])) {
+//                dump("Не знайдено: {$receivedByName}");
+//            }
+        }
+        return;
+//        foreach ($materialIssuances as $materialIssuance ) {
+//
+//            $designationId = $materialIssuance->designation_id;
+//            $orderId = $materialIssuance->order_name_id;
+//
+//            $saved = false;
+//            $checked = [];
+//
+//            while ($designationId && !in_array($designationId, $checked)) {
+//
+//                $checked[] = $designationId;
+//
+//                $planTask = PlanTask::where('designation_id', $designationId)
+//                    ->where('order_name_id', $orderId)
+//                    ->first();
+//
+//                if ($planTask) {
+//                    $this->saveMaterialIssuance($materialIssuance, $planTask);
+//                    $saved = true;
+//                    break;
+//                }
+//
+//                $report = ReportApplicationStatement::where('designation_entry_id', $designationId)
+//                    ->where('order_name_id', $orderId)
+//                    ->first();
+//
+//                if (!$report) {
+//                    break;
+//                }
+//
+//                $designationId = $report->designation_id;
+//            }
+//
+//            if(!$saved){
+//
+//                $designationId = $materialIssuance->designation_id;
+//
+//                $checked = [];
+//
+//                while ($designationId && !in_array($designationId, $checked)){
+//
+//                    $checked[] = $designationId;
+//
+//                    $planTask = PlanTask::where('designation_id', $designationId)
+//                        ->where('order_name_id', $orderId)
+//                        ->first();
+//
+//                    if ($planTask) {
+//                        $this->saveMaterialIssuance($materialIssuance, $planTask);
+//                        break;
+//                    }
+//
+//                    $specification = Specification::where('designation_entry_id', $designationId)
+//                        ->first();
+//                    if (!$specification) {
+//                        break;
+//                    }
+//
+//                    $designationId = $specification->designation_id;
+//                }
+//            }
+//
+//        }
 
 //            $detail_kuda = PlanTask::where('designation_id', $detail)
 //                ->where('order_name_id', $order)

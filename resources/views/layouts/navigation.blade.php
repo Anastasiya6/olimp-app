@@ -71,6 +71,9 @@
                         <x-dropdown-link wire:navigate :href="route('material_coefficients.index')">
                             {{ __('Коефіцієнти') }}
                         </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('users.index')">
+                            {{ __('Співробітники') }}
+                        </x-dropdown-link>
                     </x-slot>
                 </x-dropdown>
                 <x-nav-link align="right" width="48" :href="route('order-names.index')">
@@ -142,6 +145,9 @@
                         </x-dropdown-link>
                         <x-dropdown-link wire:navigate :href="route('issuance-materials.index')">
                             {{ __('Видача матеріалів') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link wire:navigate :href="route('manual-issuance-materials.index')">
+                            {{ __('Видача матеріалів без замовлення') }}
                         </x-dropdown-link>
                     </x-slot>
                 </x-dropdown>

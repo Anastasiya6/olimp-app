@@ -88,6 +88,10 @@ class MaterialIssueController extends Controller
                     }
                 }
             }
+
+            if ($materialIssuance->isEmpty()) {
+                return $this->noPdf();
+            }
             $record = clone $materialIssuance->first();
             $record->designation_id = $record->plan_task_designation_id;
 
@@ -103,6 +107,9 @@ class MaterialIssueController extends Controller
             ]);
 
             return $pdf->stream("material-issue.pdf");
+        }
+        if (!$designation || !$order) {
+            return $this->noPdf();
         }
 
 
@@ -138,4 +145,18 @@ class MaterialIssueController extends Controller
 //
 //        return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 //    }
+    public function noPdf(){
+        return response('
+                            <html>
+                                <head>
+                                    <title>Помилка</title>
+                                </head>
+                                <body style="font-family: Arial; text-align:center; padding-top:50px;">
+                                    <h2>Неможливо сформувати PDF</h2>
+                                    <p>Відсутні необхідні дані.</p>
+                                </body>
+                            </html>
+                        ');
+    }
+
 }

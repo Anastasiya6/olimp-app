@@ -47,8 +47,10 @@ use App\Http\Controllers\Admin\TypeUnitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WriteOffController;
 use App\Livewire\IssuanceMaterialIndex;
+//use App\Livewire\ManualIssuanceMaterialIndex;
 use App\Livewire\IssuanceMaterialPage;
 use App\Livewire\Login;
+//use App\Livewire\ManualIssuanceMaterialPage;
 use App\Livewire\UserSearch;
 use Illuminate\Support\Facades\Route;
 
@@ -83,7 +85,7 @@ use Illuminate\Support\Facades\Route;
     Route::resource('groups', GroupController::class);
     Route::resource('users', UserController::class);
 
-    Route::get('users', UserSearch::class);
+    //Route::get('users', UserSearch::class);
     Route::resource('group-permissions', GroupPermissionController::class);
 // Route::get('tasks}', [TaskController::class, 'index'])->name('tasks.index');
     //Route::resource('tasks', TaskController::class);
@@ -98,7 +100,11 @@ use Illuminate\Support\Facades\Route;
     Route::get('/issuance-materials/{id}/pdf', [\App\Http\Controllers\IssuanceMaterialPdfController::class, 'show'])->name('issuance-materials.pdf');
     Route::get('/issuance-materials/bulk-pdf', [\App\Http\Controllers\IssuanceMaterialBulkPdfController::class, 'bulkPdf'])->name('issuance-materials.bulk-pdf');
     Route::get('/issuance-materials', IssuanceMaterialIndex::class)->name('issuance-materials.index');
+   // Route::get('/manual-issuance-materials', ManualIssuanceMaterialIndex::class)->name('manual-issuance-materials.index');
+
     Route::get('/issuance-materials/create', IssuanceMaterialPage::class)->name('issuance-materials.create');
+    //Route::get('/manual-issuance-materials/create', ManualIssuanceMaterialPage::class)->name('manual-issuance-materials.create');
+
     Route::get('/issuance-materials/{id}/edit', IssuanceMaterialPage::class)->name('issuance-materials.edit');
     Route::resource('pi0s', PI0Controller::class);
 

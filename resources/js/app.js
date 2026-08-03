@@ -2,9 +2,6 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
-
-Alpine.start();
 
 // ---- TomSelect ----
 import TomSelect from "tom-select";

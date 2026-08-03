@@ -24,23 +24,42 @@ class PlanService
                 ->first();
 
             if ($planTask) {
-               // dd($planTask);
-                return $planTask;
-                //$saved = true;
-                //break;
+                return collect([$planTask]);
             }
 
-            $report = ReportApplicationStatement::where('designation_entry_id', $designationId)
+            $reports = ReportApplicationStatement::where('designation_entry_id', $designationId)
                 ->where('order_name_id', $orderId)
-                ->first();
+                ->get();
 
-            if (!$report) {
+            if ($reports->isEmpty()) {
+                $reports = Specification::where('designation_entry_id', $designationId)
+                    ->get();
+            }
+
+            if ($reports->isEmpty()) {
                 break;
             }
 
-            $designationId = $report->designation_id;
+            $planTasks = collect();
+
+            foreach ($reports as $report) {
+
+                $task = self::getFromSpecification($report->designation_id,$orderId);
+                if ($task) {
+                    $planTasks->push($task);
+                }
+            }
+
+            if ($planTasks->isNotEmpty()) {
+
+                return $planTasks;
+            }
+            break;
         }
 
+    }
+
+    public static function getFromSpecification($designation_id,$orderId){
 
         $designationId = $designation_id;
 
@@ -55,9 +74,7 @@ class PlanService
                 ->first();
 
             if ($planTask) {
-                dd($planTask);
                 return $planTask;
-                //break;
             }
 
             $specification = Specification::where('designation_entry_id', $designationId)
@@ -68,6 +85,5 @@ class PlanService
 
             $designationId = $specification->designation_id;
         }
-
     }
 }

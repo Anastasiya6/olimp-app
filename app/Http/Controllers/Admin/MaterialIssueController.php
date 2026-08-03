@@ -7,6 +7,7 @@ use App\Models\Designation;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssue;
 use App\Models\OrderName;
+use App\Models\PlanTask;
 use App\Services\HelpService\MaterialService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -65,7 +66,7 @@ class MaterialIssueController extends Controller
         $designation = Designation::where('designation', $designation_number)->first();
         $order = OrderName::find($order_name_id);
 
-        if($designation && $order_name_id){
+        if($designation && $order){
             $materialIssuance = MaterialIssuance::with( 'items.material', 'items.importMaterial')->where('order_name_id', $order_name_id)->where('plan_task_designation_id', $designation->id)->get();
             $result = [
                 'material_id' => [],
@@ -93,9 +94,15 @@ class MaterialIssueController extends Controller
                 return $this->noPdf();
             }
             $record = clone $materialIssuance->first();
+            if($record->designation_id == $record->plan_task_designation_id){
+                if($quantity = $this->getQuantityFromPlan($record->designation_id,$order->id)){
+                    $record->quantity = $quantity;
+                }
+            }
             $record->designation_id = $record->plan_task_designation_id;
 
             $records = collect([$record]);
+
             $all_materials = $materialService->material($records,1,5,'material_id');
 
             $pdf = Pdf::loadView('pdf.material-issue', [
@@ -113,6 +120,14 @@ class MaterialIssueController extends Controller
         }
 
 
+    }
+
+    public function getQuantityFromPlan($designation_id,$order_name_id){
+        $plan = PlanTask::where('order_name_id', $order_name_id)->where('designation_id', $designation_id)->first();
+        if($plan){
+            return $plan->quantity;
+        }
+        return null;
     }
     /**
      * Show the form for editing the specified resource.

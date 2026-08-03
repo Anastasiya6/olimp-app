@@ -119,22 +119,53 @@
 
                         <div class="col-span-3">
                             <label class="block">
-                                <span class="text-gray-700">Деталь з плану:</span>
-                                @if($planDesignationName)
-                                    {{-- тільки показуємо --}}
-                                    <div class="mt-1 p-2 border rounded-md bg-gray-100">
-                                        {{ $planDesignationName }}
-                                    </div>
-                                @else
-                                    <div>
-                                        <input readonly
+                                <span class="text-gray-700">Деталь з плану</span>
+
+                                @if($planDetails->isNotEmpty())
+
+                                    @if($planDetails->count() === 1)
+
+                                        <div class="mt-1 p-2 border rounded-md bg-gray-100">
+                                            {{ $planDetails->first()->designation->designation }}
+                                        </div>
+
+                                    @else
+
+                                        <select
+                                            wire:model="selectedPlanTask"
                                             class="block w-full mt-1 border-gray-300 rounded-md"
                                         >
-                                    </div>
+                                            <option value="">— Оберіть деталь —</option>
+
+                                            @foreach($planDetails as $task)
+                                                <option value="{{ $task->designation_id }}">
+                                                    {{ $task->designation->designation }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                    @endif
+
+                                @else
+
+                                    @if($isEdit)
+                                        <input
+                                            type="text"
+                                            readonly
+                                            value="{{ $planDesignationName }}"
+                                            class="block w-full mt-1 border-gray-300 rounded-md bg-gray-100"
+                                        >
+                                    @else
+                                        <input
+                                            type="text"
+                                            readonly
+                                            class="block w-full mt-1 border-gray-300 rounded-md bg-gray-100"
+                                        >
+                                    @endif
+
                                 @endif
                             </label>
                         </div>
-
                         {{-- QUANTITY --}}
                         <div class="col-span-1">
                             <label class="block">

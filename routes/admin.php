@@ -47,10 +47,11 @@ use App\Http\Controllers\Admin\TypeUnitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WriteOffController;
 use App\Livewire\IssuanceMaterialIndex;
-//use App\Livewire\ManualIssuanceMaterialIndex;
+use App\Livewire\ManualIssuanceMaterialIndex;
 use App\Livewire\IssuanceMaterialPage;
 use App\Livewire\Login;
-//use App\Livewire\ManualIssuanceMaterialPage;
+use App\Livewire\ManualIssuanceMaterialPage;
+use App\Livewire\SearchDesignationInPlanIndex;
 use App\Livewire\UserSearch;
 use Illuminate\Support\Facades\Route;
 
@@ -98,12 +99,15 @@ use Illuminate\Support\Facades\Route;
 
     // Route::resource('issuance-materials', IssuanceMaterialController::class);
     Route::get('/issuance-materials/{id}/pdf', [\App\Http\Controllers\IssuanceMaterialPdfController::class, 'show'])->name('issuance-materials.pdf');
+    Route::get('/manual-issuance-materials/{id}/pdf', [\App\Http\Controllers\IssuanceMaterialPdfController::class, 'manualShow'])->name('manual-issuance-materials.pdf');
     Route::get('/issuance-materials/bulk-pdf', [\App\Http\Controllers\IssuanceMaterialBulkPdfController::class, 'bulkPdf'])->name('issuance-materials.bulk-pdf');
     Route::get('/issuance-materials', IssuanceMaterialIndex::class)->name('issuance-materials.index');
-   // Route::get('/manual-issuance-materials', ManualIssuanceMaterialIndex::class)->name('manual-issuance-materials.index');
+    Route::get('/search-designation-in-plan', SearchDesignationInPlanIndex::class)->name('search-designation-in-plan.index');
+
+    Route::get('/manual-issuance-materials', ManualIssuanceMaterialIndex::class)->name('manual-issuance-materials.index');
 
     Route::get('/issuance-materials/create', IssuanceMaterialPage::class)->name('issuance-materials.create');
-    //Route::get('/manual-issuance-materials/create', ManualIssuanceMaterialPage::class)->name('manual-issuance-materials.create');
+    Route::get('/manual-issuance-materials/create', ManualIssuanceMaterialPage::class)->name('manual-issuance-materials.create');
 
     Route::get('/issuance-materials/{id}/edit', IssuanceMaterialPage::class)->name('issuance-materials.edit');
     Route::resource('pi0s', PI0Controller::class);

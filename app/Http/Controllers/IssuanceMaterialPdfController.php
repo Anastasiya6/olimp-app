@@ -18,4 +18,16 @@ class IssuanceMaterialPdfController extends Controller
 
         return $pdf->stream("issuance-{$document->id}.pdf");
     }
+
+    public function manualShow($id)
+    {
+        $document = MaterialIssuance::with( 'items.material',
+            'items.importMaterial')->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.manual-issuance-material', [
+            'document' => $document
+        ]);
+
+        return $pdf->stream("issuance-{$document->id}.pdf");
+    }
 }

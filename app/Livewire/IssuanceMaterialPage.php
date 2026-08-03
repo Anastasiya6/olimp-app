@@ -48,6 +48,10 @@ class IssuanceMaterialPage extends Component
 
     public $issued_by_user_id;
 
+    public $planDetails = [];
+
+    public $selectedPlanTask = null;
+
 
     protected $listeners = [
         'materialUpdated' => 'loadSelectedMaterials',
@@ -56,6 +60,7 @@ class IssuanceMaterialPage extends Component
 
     public function mount($id = null)
     {
+        $this->planDetails = collect();
         $this->users = User::orderBy('name')->get();
         if ($id) {
             $this->isEdit = true;
@@ -81,16 +86,20 @@ class IssuanceMaterialPage extends Component
     public function loadPlanDesignation(){
 
         $this->planDesignationName = null;
-
+        $this->planDetails = collect();
         if (
             $this->designation_id &&
-            $this->order_name_id &&
-            $detail_from_plan = PlanService::getDetailFromPlan(
-                $this->designation_id,
-                $this->order_name_id
-            )
+            $this->order_name_id
+//            &&
+//            $detail_from_plan = PlanService::getDetailFromPlan(
+//                $this->designation_id,
+//                $this->order_name_id
+//            )
         ) {
-            $this->planDesignationName = $detail_from_plan->designation->designation;
+            $this->planDetails = PlanService::getDetailFromPlan(
+                    $this->designation_id,
+                    $this->order_name_id
+                ) ?? collect();
         }
     }
 
@@ -134,6 +143,7 @@ class IssuanceMaterialPage extends Component
 
     public function generate(MaterialService $materialService)
     {
+
         $this->validate([
             'received_by_user_id' => 'required|exists:users,id',
             'issued_by_user_id' => 'required|exists:users,id',
@@ -141,9 +151,18 @@ class IssuanceMaterialPage extends Component
             'designation_id' => 'required',
             'quantity' => 'required|numeric|min:1',
         ]);
+
         $plan_task_designation_id = null;
-        if($detail_from_plan = PlanService::getDetailFromPlan($this->designation_id,$this->order_name_id)){
-            $plan_task_designation_id = $detail_from_plan->designation_id;
+
+        if ($this->planDetails->isNotEmpty()) {
+
+            // якщо знайшлася лише одна деталь
+            if ($this->planDetails->count() === 1) {
+                $plan_task_designation_id = $this->planDetails->first()->designation_id;
+            } else {
+                // якщо декілька — беремо вибір користувача
+                $plan_task_designation_id = $this->selectedPlanTask;
+            }
         }
 
         $materialIssuance = MaterialIssuance::create([

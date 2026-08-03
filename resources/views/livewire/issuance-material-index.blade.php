@@ -72,7 +72,7 @@
                             </td>
                             <td class="p-2 border">{{ $item->id }}</td>
                             <td class="p-2 border">{{ $item->created_at }}</td>
-                            <td class="p-2 border">{{А}}</td>
+                            <td class="p-2 border">{{$item->receivedByUser->name}}</td>
                             <td class="p-2 border">{{$item->order_name->name}}</td>
                             <td class="p-2 border">{{$item->planTaskDesignation?->designation}}</td>
                             <td class="p-2 border">{{$item->designation->designation}}</td>

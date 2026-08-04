@@ -22,6 +22,8 @@ class SearchDesignationInPlanIndex extends Component
             $this->results = PlanService::getDetailFromPlan(
                 $designation->id,
                 $this->selectedOrder)?? [];
+        }else{
+            $this->results = [];
         }
     }
 

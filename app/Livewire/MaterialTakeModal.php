@@ -31,9 +31,8 @@ class MaterialTakeModal extends Component
         $this->selectedMaterialId = $id;
     }
 
-    public function open($currentIndex,$detail_name, $material_name,$materialIssuanceId)
+    public function open($currentIndex,$detail_name, $material_name,$materialIssuanceId,$norm)
     {
-        //dd($currentIndex,$materialIssuanceId);
         $this->currentIndex = $currentIndex;
         $this->detail_name = $detail_name;
         $this->material_name = $material_name;
@@ -41,7 +40,7 @@ class MaterialTakeModal extends Component
         $this->show = true;
         $this->selectedMaterial = null;
         $this->selectedMaterialId = null;
-        $this->takeQty = 0;
+        $this->takeQty = $norm;
     }
 
     public function openEdit($currentIndex,$detail_name, $material_name,$materialIssuanceId)

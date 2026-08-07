@@ -62,31 +62,42 @@
                         </div>
                     </div>
                 </div>
-        {{--                <button wire:click="viewConfirm"--}}
-        {{--                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">--}}
-        {{--                    Перенести дані з відом. застосув. у план--}}
-        {{--                </button>--}}
-{{--                    </div>--}}
-                <div>
-                    @if(session()->has('message'))
-                        <div>{{ session('message') }}</div>
-                    @endif
-
-                </div>
             </div>
+{{--                        <button wire:click="viewConfirm"--}}
+{{--                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">--}}
+{{--                            Перенести дані з відом. застосув. у план--}}
+{{--                        </button>--}}
+{{--                <button wire:click="viewConfirmFromOrder"--}}
+{{--                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">--}}
+{{--                    Перенести дані плану з замовлення на замовлення--}}
+{{--                </button>--}}
+{{--                <div>--}}
+{{--                    @if(session()->has('message'))--}}
+{{--                        <div>{{ session('message') }}</div>--}}
+{{--                    @endif--}}
 
-            <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white px-6">
-                <div class="flex justify-between items-center py-4 gap-4">
-                    <a href="{{ route($route.'.create',['order_name_id'=> $selectedOrder,'sender_department' => $sender_department_id,'receiver_department' => $receiver_department_id]) }}"
-                       class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+{{--                </div>--}}
+{{--            </div>--}}
+
+                <div class="flex items-center justify-between py-4">
+                    <a href="{{ route($route.'.create',[
+                            'order_name_id'=> $selectedOrder,
+                            'sender_department' => $sender_department_id,
+                            'receiver_department' => $receiver_department_id
+                        ]) }}"
+                       class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm hover:bg-gray-50">
                         Створити
                     </a>
-                </div>
 
+                    <button wire:click="viewConfirmFromOrder"
+                            class="inline-flex items-center rounded-md border border-indigo-500 bg-indigo-50 text-indigo-700 px-4 py-2 text-sm font-semibold hover:bg-indigo-100">
+                        📋 Перенести план
+                    </button>
+                </div>
                 <div class="py-4">
                     <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по номеру деталі"/>
                 </div>
-            </div>
+
             <div class="overflow-x-auto rounded-lg shadow">
                 <table class="min-w-full divide-y divide-gray-200 bg-white">
                     <thead class="bg-gray-100">
@@ -219,4 +230,73 @@
         </x-slot:body>
     </x-modal-window>
 
+    <x-modal-window name="viewOrderFromOrder" title="" width="max-w-lg">
+        <x-slot:body>
+            <div class="sm:flex sm:justify-center px-6 py-6 text-xl font-semibold">
+                Перенести план
+            </div>
+            @if (session()->has('error'))
+                <div class="mb-4 rounded bg-red-100 border border-red-400 text-red-700 px-4 py-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if (session()->has('success'))
+                <div class="mb-4 rounded bg-green-100 border border-green-400 text-green-700 px-4 py-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+            <div class="grid grid-cols-2 gap-4 px-6 py-4">
+                <div>
+                    <label class="block">
+                        <span class="text-gray-700">З замовлення</span>
+                        <select
+                            wire:model="from_order_id"
+                            class="block w-full mt-1 rounded-md">
+                            <option value="">—</option>
+                            @foreach($order_names as $order)
+                                <option value="{{ $order->id }}">
+                                    {{ $order->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block">
+                        <span class="text-gray-700">На замовлення</span>
+                        <select
+                            wire:model="to_order_id"
+                            class="block w-full mt-1 rounded-md">
+                            <option value="">—</option>
+                            @foreach($order_names as $order)
+                                <option value="{{ $order->id }}">
+                                    {{ $order->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="sm:flex sm:justify-center px-6 py-6">
+                <x-loading-indicator></x-loading-indicator>
+                <button wire:click="makeFromOrderToOrder"
+                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
+                    Зформувати
+                </button>
+            </div>
+        </x-slot:body>
+    </x-modal-window>
+    @if (session()->has('error'))
+        <div class="mb-4 rounded bg-red-100 border border-red-400 text-red-700 px-4 py-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session()->has('success'))
+        <div class="mb-4 rounded bg-green-100 border border-green-400 text-green-700 px-4 py-3">
+            {{ session('success') }}
+        </div>
+    @endif
 </div>

@@ -90,12 +90,8 @@ class IssuanceMaterialPage extends Component
         if (
             $this->designation_id &&
             $this->order_name_id
-//            &&
-//            $detail_from_plan = PlanService::getDetailFromPlan(
-//                $this->designation_id,
-//                $this->order_name_id
-//            )
         ) {
+
             $this->planDetails = PlanService::getDetailFromPlan(
                     $this->designation_id,
                     $this->order_name_id
@@ -114,9 +110,9 @@ class IssuanceMaterialPage extends Component
         $this->loadPlanDesignation();
     }
 
-    public function openModal($material_id, $detail_name, $material_name)
+    public function openModal($material_id, $detail_name, $material_name, $norm)
     {
-        $this->dispatch('openMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId);
+        $this->dispatch('openMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId, $norm);
     }
 
     public function openEditModal($material_id, $detail_name, $material_name)

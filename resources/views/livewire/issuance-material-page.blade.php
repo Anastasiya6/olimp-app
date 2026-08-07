@@ -37,9 +37,14 @@
                                 <span class="text-gray-700">Хто отримує матеріал</span>
                                 <select
                                     wire:model="received_by_user_id"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
                                     @disabled($isEdit)
-                                >
+                                    class="block w-full mt-1 rounded-md
+                                        @error('received_by_user_id')
+                                            border border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500
+                                        @else
+                                            border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500
+                                        @enderror
+                                        ">
                                     <option value="">Оберіть співробітника</option>
 
                                     @foreach($users as $user)
@@ -48,6 +53,10 @@
                                         </option>
                                     @endforeach
                                 </select>
+
+                                @error('received_by_user_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </label>
                         </div>
 
@@ -57,9 +66,14 @@
                                 <span class="text-gray-700">Хто виписує документ</span>
                                 <select
                                     wire:model="issued_by_user_id"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
                                     @disabled($isEdit)
-                                >
+                                    class="block w-full mt-1 rounded-md
+                                    @error('issued_by_user_id')
+                                        border border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500
+                                    @else
+                                        border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500
+                                    @enderror
+                                        ">
                                     <option value="">Оберіть співробітника</option>
 
                                     @foreach($users as $user)
@@ -68,6 +82,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('issued_by_user_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </label>
                         </div>
 
@@ -82,8 +99,14 @@
                                 <span class="text-gray-700">Замовлення</span>
                                 <select
                                     wire:model="order_name_id" wire:change="updateSearch"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
-                                >
+                                    @disabled($isEdit)
+                                    class="block w-full mt-1 rounded-md
+                                    @error('order_name_id')
+                                        border border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500
+                                    @else
+                                        border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500
+                                    @enderror
+                                        ">
                                     <option value="">—</option>
                                     @foreach($order_names as $order)
                                         <option value="{{ $order->id }}">
@@ -91,6 +114,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('order_name_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </label>
                         </div>
 
@@ -139,7 +165,7 @@
 
                                             @foreach($planDetails as $task)
                                                 <option value="{{ $task->designation_id }}">
-                                                    {{ $task->designation->designation }}
+                                                    {{ $task->designation->designation }} — застосовність: {{ $task->quantity }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -172,9 +198,18 @@
                                 <span class="text-gray-700">Кількість</span>
                                 <input
                                     type="number"
-                                    wire:model="quantity"
-                                    class="block w-full mt-1 border-gray-300 rounded-md"
-                                >
+                                    wire:model.live="quantity"
+                                    class="block w-full mt-1 rounded-md border
+                                    @error('quantity')
+                                        border-red-500 focus:border-red-500 focus:ring-red-500
+                                    @else
+                                        border-gray-300 focus:border-indigo-500 focus:ring-indigo-500
+                                    @enderror"
+                                />
+
+                                @error('quantity')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </label>
                         </div>
 
@@ -245,7 +280,7 @@
                                             wire:click="openModal('{{ $material['material_id'] }}',
                                                                     '{{ $material['detail'] }}',
                                                                     '{{ $material['material'] }}',
-                                                                    '{{ $materialIssuanceId }}')"
+                                                                    '{{ $material['print_value']}}')"
                                             class="bg-black hover:bg-gray-800 text-white"
                                         >
                                             Видати матеріал

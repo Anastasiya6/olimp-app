@@ -47,6 +47,10 @@ class PlanTaskTable extends Component
 
     public $flag = 0;
 
+    public $from_order_id = '';
+
+    public $to_order_id = '';
+
     //public $selectedItems = [];
 
     public function mount()
@@ -91,6 +95,11 @@ class PlanTaskTable extends Component
         $this->dispatch('open-modal',name:'viewLog');
     }
 
+    public function viewConfirmFromOrder()
+    {
+        $this->dispatch('open-modal',name:'viewOrderFromOrder');
+    }
+
     public function updateSearch()
     {
         $this->flag = 0;
@@ -98,6 +107,48 @@ class PlanTaskTable extends Component
         $this->with_material_purchased = (int) $this->with_material_purchased;
         $this->resetPage();
     }
+
+    public function makeFromOrderToOrder()
+    {
+        $this->isProcessing = true;
+
+        if (!$this->from_order_id || !$this->to_order_id) {
+            session()->flash('error', 'Виберіть замовлення, з якого і на яке потрібно перенести план.');
+            $this->isProcessing = false;
+            return;
+        }
+
+        $itemsTo = PlanTask::where('order_name_id', $this->to_order_id)->exists();
+
+        if ($itemsTo) {
+            session()->flash('error', 'На цьому замволенні вже є план.');
+            $this->isProcessing = false;
+            return;
+        }
+
+        $itemsFrom = PlanTask::where('order_name_id', $this->from_order_id)->get();
+
+        $planCount = OrderName::find($this->to_order_id)->quantity; // кількість комплектів
+
+        foreach ($itemsFrom as $item) {
+            $newItem = $item->replicate();
+
+            $newItem->order_name_id = $this->to_order_id;
+
+            // quantity переносимо без змін
+            $newItem->quantity = $item->quantity;
+
+            // quantity_total перераховуємо
+            $newItem->quantity_total = $item->quantity * $planCount;
+
+            $newItem->save();
+        }
+
+        $this->isProcessing = false;
+
+        $this->dispatch('close-modal',name:'viewOrderFromOrder');
+    }
+
 
     public function makeFromDisassembly()
     {

@@ -44,12 +44,11 @@ class PlanService
 
             foreach ($reports as $report) {
 
-                $task = self::getFromSpecification($report->designation_id,$orderId);
-                if ($task) {
-                    $planTasks->push($task);
+                $tasks = self::getFromSpecification($report->designation_id,$orderId);
+                if ($tasks) {
+                    $planTasks = $planTasks->merge($tasks);
                 }
             }
-
             if ($planTasks->isNotEmpty()) {
 
                 return $planTasks;
@@ -59,31 +58,64 @@ class PlanService
 
     }
 
-    public static function getFromSpecification($designation_id,$orderId){
-
-        $designationId = $designation_id;
-
-        $checked = [];
-
-        while ($designationId && !in_array($designationId, $checked)){
-
-            $checked[] = $designationId;
-
-            $planTask = PlanTask::where('designation_id', $designationId)
-                ->where('order_name_id', $orderId)
-                ->first();
-
-            if ($planTask) {
-                return $planTask;
-            }
-
-            $specification = Specification::where('designation_entry_id', $designationId)
-                ->first();
-            if (!$specification) {
-                break;
-            }
-
-            $designationId = $specification->designation_id;
+    public static function getFromSpecification($designationId, $orderId, &$checked = [])
+    {
+        if (in_array($designationId, $checked)) {
+            return collect();
         }
+
+        $checked[] = $designationId;
+
+        $tasks = collect();
+
+        $planTask = PlanTask::where('designation_id', $designationId)
+            ->where('order_name_id', $orderId)
+            ->first();
+
+        if ($planTask) {
+            $tasks->push($planTask);
+        }
+
+        $specifications = Specification::where('designation_entry_id', $designationId)
+            ->get();
+
+        foreach ($specifications as $specification) {
+            $tasks = $tasks->merge(
+                self::getFromSpecification($specification->designation_id, $orderId, $checked)
+            );
+        }
+
+        return $tasks;
     }
+//    public static function getFromSpecification($designation_id,$orderId){
+//
+//        $designationId = $designation_id;
+//
+//        $checked = [];
+//
+//        while ($designationId && !in_array($designationId, $checked)){
+//
+//            $checked[] = $designationId;
+//
+//            $planTask = PlanTask::where('designation_id', $designationId)
+//                ->where('order_name_id', $orderId)
+//                ->first();
+//
+//            if ($planTask) {
+//                //dd( $planTask,$designationId);
+//                return $planTask;
+//            }
+//
+//            $specification = Specification::where('designation_entry_id', $designationId)
+//                ->first();
+//
+//           // dd($specification,$designationId);
+//            if (!$specification) {
+//                break;
+//            }
+//
+//            $designationId = $specification->designation_id;
+//        }
+//       // dd($checked);
+//    }
 }

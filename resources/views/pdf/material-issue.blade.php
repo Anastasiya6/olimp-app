@@ -44,19 +44,25 @@
                 $records = $result['designation_id'][(int)$key] ?? [];
             }
 
-            $groupRecords = $records[$item['detail']] ?? null;
+            $details = array_map('trim', explode(',', $item['detail']));
 
-            if ($groupRecords) {
-                $firstRecord = collect($groupRecords)->first();
-            } else {
-                $firstRecord = null;
-                foreach ($details as $detail) {
-                    if (!empty($records[$detail])) {
-                        $firstRecord = collect($records[$detail])->first();
-                        break;
-                    }
+            $groupRecords = collect();
+
+            foreach ($records as $recordDetails => $items) {
+
+                $recordDetailsArray = array_map('trim', explode(',', $recordDetails));
+
+                // якщо є хоч одна спільна деталь
+                if (count(array_intersect($details, $recordDetailsArray))) {
+                    $groupRecords = $groupRecords->merge($items);
                 }
             }
+
+            $groupRecords = $groupRecords
+                ->unique(fn($r) => $r['item']->id)
+                ->values();
+
+            $firstRecord = $groupRecords->first();
         @endphp
         <tr>
             <td style="white-space: nowrap;">

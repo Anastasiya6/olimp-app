@@ -14,6 +14,7 @@ use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ImportMaterialStockSearch extends Component
 {
@@ -27,28 +28,51 @@ class ImportMaterialStockSearch extends Component
 
     public $file;
 
+    public $stockInDepartmentId = '';
+
+    public $confirmingStockIn = false;
+
     protected $rules = [
         'file' => 'required|mimes:xlsx,xls'
     ];
 
     public function viewStock()
     {
-        $this->dispatch('open-modal',name:'viewStock');
+        $this->reset('file');
+        $this->resetValidation();
+        $this->dispatch('opening-stock-open');
     }
 
     public function viewStockIn()
     {
-        $this->dispatch('open-modal',name:'viewStockIn');
+        $this->reset('file', 'stockInDepartmentId', 'confirmingStockIn');
+        $this->resetValidation();
+        $this->dispatch('stock-in-open');
     }
 
     public function confirmStock()
     {
-        $this->dispatch('open-modal', name: 'confirmStock');
+        $this->validate();
+        $this->dispatch('opening-stock-confirm');
     }
 
     public function confirmStockIn()
     {
-        $this->dispatch('open-modal', name: 'confirmStockIn');
+        $this->validateStockIn();
+        $this->confirmingStockIn = true;
+    }
+
+    private function validateStockIn()
+    {
+        $this->validate([
+            'file' => 'required|mimes:xlsx,xls',
+            'stockInDepartmentId' => 'required|integer|exists:departments,id',
+        ], [
+            'file.required' => 'Оберіть файл приходу з 1С.',
+            'file.mimes' => 'Оберіть файл Excel у форматі .xlsx або .xls.',
+            'stockInDepartmentId.required' => 'Оберіть цех для імпорту.',
+            'stockInDepartmentId.exists' => 'Вибраний цех не знайдено.',
+        ]);
     }
 
 
@@ -105,8 +129,7 @@ class ImportMaterialStockSearch extends Component
 
         $this->reset('file');
 
-        $this->dispatch('close-modal', name: 'confirmStock');
-        $this->dispatch('close-modal', name: 'viewStock');
+        $this->dispatch('opening-stock-close');
 
         session()->flash('success', 'Залишки успішно імпортовано');
 
@@ -115,7 +138,8 @@ class ImportMaterialStockSearch extends Component
     public function unloadingStockIn()
     {
 
-        $this->validate();
+        $this->validateStockIn();
+        $selectedDepartment = Department::findOrFail($this->stockInDepartmentId);
 
         $path = $this->file->getRealPath();
 
@@ -126,108 +150,128 @@ class ImportMaterialStockSearch extends Component
         // Пробігаємось по рядках
         $documentDate = null;
         $currentDepartment = null;
-        $array_department = [25,207,208];
+        $selectedDepartmentCode = trim((string) $selectedDepartment->name);
+        $imported = 0;
+        $conflicts = 0;
+        $skipped = 0;
 
         $units = $this->getUnits();
-        $departments = Department::pluck('id', 'name')->toArray();
 
-        foreach ($worksheet->toArray() as $row) {
 
-            if (str_contains($row[1], 'Переміщення за період')) {
-                preg_match('/з\s*(\d{2}\.\d{2}\.\d{4})/', $row[1], $m);
-                $documentDate = $m[1] ?? null;
-                if ($documentDate) {
-                    $documentDate = \Carbon\Carbon::createFromFormat('d.m.Y', $documentDate)->format('Y-m-d');
+        DB::transaction(function () use ($worksheet, $selectedDepartment, $selectedDepartmentCode, $units, &$documentDate, &$currentDepartment, &$imported, &$conflicts, &$skipped) {
+            foreach ($worksheet->toArray() as $row) {
+
+                if (str_contains((string) ($row[1] ?? ''), 'Переміщення за період')) {
+                    $currentDepartment = null;
+                    preg_match('/з\s*(\d{2}\.\d{2}\.\d{4})/', $row[1], $m);
+                    $documentDate = $m[1] ?? null;
+                    if ($documentDate) {
+                        $documentDate = \Carbon\Carbon::createFromFormat('d.m.Y', $documentDate)->format('Y-m-d');
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            if (str_contains($row[0], 'Кому:')) {
+                if (str_contains((string) ($row[0] ?? ''), 'Кому:')) {
 
-                $raw = trim(str_replace('Кому:', '', $row[1]));
+                    $raw = trim(str_replace('Кому:', '', (string) ($row[1] ?? '')));
 
-                $departmentId = (int) trim(strtok($raw, '-'));
+                    $departmentId = preg_match('/^(\d+)\s*(?:[-–—]|$)/u', $raw, $departmentMatch) ? $departmentMatch[1] : null;
 
-                // например
-                $currentDepartment = $departmentId;
+                    // например
+                    $currentDepartment = $departmentId;
 
-                continue;
-            }
+                    continue;
+                }
 
-            if ($row[0] === '№ накл.' || empty($row[0])) {
+                if (empty($row[0]) || $row[0] === '№ накл.') {
 
-                continue;
-            }
+                    continue;
+                }
 
-            if (is_numeric($row[0]) && in_array($currentDepartment,$array_department)) {
+                if (is_numeric($row[0]) && $currentDepartment !== null
+                    && ctype_digit($selectedDepartmentCode)
+                    && (int) $currentDepartment === (int) $selectedDepartmentCode) {
 
-                $documentNumber = $row[0];
-                $article = $row[1];
-                $name = $row[2];
-                $quantity = $row[4];
+                    $documentNumber = $row[0];
+                    $article = $row[1];
+                    $name = $row[2];
+                    $quantity = $row[4];
 
-                Log::info($row[0]);
-                Log::info($row[1]);
-                Log::info($row[2]);
-                Log::info($row[3]);
-                Log::info($row[4]);
+                    Log::info($row[0]);
+                    Log::info($row[1]);
+                    Log::info($row[2]);
+                    Log::info($row[3]);
+                    Log::info($row[4]);
 
 
-               $unitId  = $this->getKeyUnit($row[3],$units);
-               $departmentId = $this->getDepartmentId($currentDepartment,$departments);
-               Log::info( 'Відділ '.$currentDepartment . ' '.$departmentId.' '.$unitId );
-               if( $departmentId  && $unitId ){
+                   $unitId  = $this->getKeyUnit($row[3],$units);
+                   $departmentId = $selectedDepartment->id;
+                   $material = null;
+                   Log::info( 'Відділ '.$currentDepartment . ' '.$departmentId.' '.$unitId );
+                   if( $departmentId  && $unitId ){
 
-                   $materials = ImportMaterial::where('article', $article)->get();
-                   $materialsCount = $materials->count();
+                       $materials = ImportMaterial::where('article', $article)->get();
+                       $materialsCount = $materials->count();
 
-                   if ($materialsCount === 0) {
-                       $material = ImportMaterial::create([
-                           'article' => $article,
-                           'name' => $name,
-                           'type_unit_id' => $unitId,
-                       ]);
+                       if ($materialsCount === 0) {
+                           $material = ImportMaterial::create([
+                               'article' => $article,
+                               'name' => $name,
+                               'type_unit_id' => $unitId,
+                           ]);
 
-                   } elseif ($materialsCount === 1) {
+                       } elseif ($materialsCount === 1) {
 
-                       $material = $materials->first();
+                           $material = $materials->first();
 
+                       } else {
+                           $conflicts++;
+                           Log::info('conflict');
+                           ImportMaterialStaging::create([
+                               'article' => $article,
+                               'name' => $name,
+                               'quantity' => $quantity,
+                               'document_number' => $documentNumber,
+                               'document_date' => $documentDate,
+                               'department_id' => $departmentId,
+                               'type_unit_id' => $unitId,
+                               'status' => 'conflict',
+                           ]);
+
+
+                       }
+
+                       if($material){
+                           $imported++;
+                           $material->stocks()->create([
+                               'document_number' => $documentNumber,
+                               'document_date' => $documentDate,
+                               'department_id' => $departmentId,
+                               'amount' => $quantity,
+                               'type' => 'stock_in',
+                           ]);
+                       }
                    } else {
-                       Log::info('conflict');
-                       ImportMaterialStaging::create([
-                           'article' => $article,
-                           'name' => $name,
-                           'quantity' => $quantity,
-                           'document_number' => $documentNumber,
-                           'document_date' => $documentDate,
-                           'department_id' => $departmentId,
-                           'type_unit_id' => $unitId,
-                           'status' => 'conflict',
-                       ]);
-
-
-                   }
-
-                   if($material){
-                       $material->stocks()->create([
-                           'document_number' => $documentNumber,
-                           'document_date' => $documentDate,
-                           'department_id' => $departmentId,
-                           'amount' => $quantity,
-                           'type' => 'stock_in',
-                       ]);
+                       $skipped++;
                    }
                }
-           }
+            }
+        });
+        $spreadsheet->disconnectWorksheets();
+
+        if ($imported === 0 && $conflicts === 0) {
+            $this->confirmingStockIn = false;
+            $this->addError('file', 'Для вибраного цеху немає рядків для імпорту. Перевірте цех у секції «Кому:» та одиниці виміру у файлі.');
+            return;
         }
 
-        $this->reset('file');
+        $this->reset('file', 'stockInDepartmentId', 'confirmingStockIn');
+        $this->resetPage();
 
-        $this->dispatch('close-modal', name: 'confirmStockIn');
-        $this->dispatch('close-modal', name: 'viewStock');
+        $this->dispatch('stock-in-close');
 
         //$this->dispatch('open-modal', name: 'viewMaterialConflict');
-        session()->flash('success', 'Залишки успішно імпортовано');
+        session()->flash('success', "Цех {$selectedDepartment->name}: імпортовано рядків — {$imported}; конфліктів артикулів — {$conflicts}; пропущено через невідому одиницю виміру — {$skipped}.");
 
     }
 
@@ -270,8 +314,7 @@ class ImportMaterialStockSearch extends Component
 
         $this->reset('file');
 
-        $this->dispatch('close-modal', name: 'confirmStock');
-        $this->dispatch('close-modal', name: 'viewStock');
+        $this->dispatch('opening-stock-close');
 
         session()->flash('success', 'Залишки успішно імпортовано');
 
@@ -328,7 +371,8 @@ class ImportMaterialStockSearch extends Component
     {
         return view('livewire.import-material-stock-search',[
             'items' => $this->importMaterialStocks(),
-            'route' => $this->route
+            'route' => $this->route,
+            'stockInDepartments' => Department::orderBy('name')->get(),
         ]);
     }
 }

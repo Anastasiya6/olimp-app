@@ -6,6 +6,7 @@ use App\Models\ImportMaterialStock;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
 use App\Models\OrderName;
+use App\Models\User;
 use DB;
 use Livewire\Attributes\Session;
 use Livewire\Component;
@@ -21,6 +22,32 @@ class IssuanceMaterialIndex extends Component
     public $designation_number;
 
     public $selectedOrder = null;
+
+    public $filterPlanDesignation = '';
+
+    public $filterOrder = '';
+
+    public function updatedFilterPlanDesignation()
+    {
+        $this->resetSearchPage();
+    }
+
+    public function updatedFilterOrder()
+    {
+        $this->resetSearchPage();
+    }
+
+    public function resetFilters()
+    {
+        $this->reset('filterPlanDesignation', 'filterOrder');
+        $this->resetSearchPage();
+    }
+
+    private function resetSearchPage()
+    {
+        $this->resetPage();
+        $this->selectedItems = [];
+    }
 
     public function mount()
     {
@@ -94,9 +121,24 @@ class IssuanceMaterialIndex extends Component
 
         return view('livewire.issuance-material-index', [
             'order_names'=> $order_names,
-            'items' => MaterialIssuance::with('items')
+            'recipients' => User::orderBy('name')->get(['id', 'name']),
+            'items' => MaterialIssuance::with('items', 'receivedByUser', 'order_name', 'planTaskDesignation', 'designation')
                 ->byDesignation()
                 ->whereHas('items')
+                ->when($this->filterOrder !== '', function ($query) {
+                    $query->where('order_name_id', $this->filterOrder);
+                })
+                ->when(trim($this->filterPlanDesignation) !== '', function ($query) {
+                    $search = '%'.trim($this->filterPlanDesignation).'%';
+
+                    $query->where(function ($searchQuery) use ($search) {
+                        $searchQuery->whereHas('planTaskDesignation', function ($designationQuery) use ($search) {
+                            $designationQuery->where('designation', 'like', $search);
+                        })->orWhereHas('receivedByUser', function ($recipientQuery) use ($search) {
+                            $recipientQuery->where('name', 'like', $search);
+                        });
+                    });
+                })
                 ->latest()
                 ->paginate(10)
         ]);

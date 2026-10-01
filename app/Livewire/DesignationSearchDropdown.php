@@ -27,7 +27,7 @@ class DesignationSearchDropdown extends Component
 
     public $designation_hidden = 'designation_id';
 
-    public function mount($designation_hidden,$designation_name,$designation_title, $last_record = '')
+    public function mount($designation_hidden,$designation_name,$designation_title, $last_record = '', $restore_input = false)
     {
         $this->designation_hidden = $designation_hidden;
 
@@ -35,7 +35,11 @@ class DesignationSearchDropdown extends Component
 
         $this->designation_title = $designation_title;
 
-        if ($last_record && class_exists($last_record)) {
+        if ($restore_input) {
+            $this->selectedDesignation = old($designation_name, '');
+            $this->selectedDesignationId = old($designation_hidden, 0);
+            $this->search = $this->selectedDesignation;
+        } elseif ($last_record && class_exists($last_record)) {
             $record = $last_record::with('designation')->orderBy('id', 'desc')->first();
 
             if ($record && $record->designation) {

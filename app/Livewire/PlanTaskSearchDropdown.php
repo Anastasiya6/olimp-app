@@ -31,9 +31,15 @@ class PlanTaskSearchDropdown extends Component
 
     public $type = 0;
 
-    public function mount($selectedOrder,$sender_department_id,$receiver_department_id)
+    public function mount($selectedOrder,$sender_department_id,$receiver_department_id, $restore_input = false)
     {
 
+        if ($restore_input) {
+            $this->selectedDesignation = old('designation_designation', '');
+            $this->selectedDesignationId = old('designation_id', '');
+            $this->search = $this->selectedDesignation;
+            $this->type = old('type', 0);
+        }
         $this->message = '';
 
         $this->selectedOrder = $selectedOrder;

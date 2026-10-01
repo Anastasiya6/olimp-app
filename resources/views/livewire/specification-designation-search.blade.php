@@ -1,6 +1,6 @@
 <div>
-    <div class="max-w-lg w-full lg:max-w-xs">
-        <label for="search" class="sr-only">Search for songs</label>
+    <div class="w-full mb-5">
+        <label for="specification-parent" class="compact-search-label catalog-label">Куди</label>
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -13,8 +13,8 @@
                    wire:keyup="searchWhereResult"
                    autocomplete="off"
                    name="designation_designation"
-                   id="search"
-                   class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
+                   id="specification-parent"
+                   class="compact-search block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
                    placeholder="Пошук для 'куди'..." type="search" autocomplete="off">
         </div>
 
@@ -25,7 +25,7 @@
                     <label class="block">
                         <span class="text-gray-700">Куди, найменування</span>
                         <input type="text" name="designation_name" class="block w-full mt-1 rounded-md" placeholder=""
-                               value="" />
+                               value="{{ old('designation_name') }}" />
                     </label>
                     @error('designation_name')
                     <div class="text-sm text-red-600">{{ $message }}</div>
@@ -35,7 +35,7 @@
                     <label class="block">
                         <span class="text-gray-700">Маршрут</span>
                         <input type="text" name="designation_route" class="block w-full mt-1 rounded-md" placeholder=""
-                               value="" />
+                               value="{{ old('designation_route') }}" />
                     </label>
                     @error('designation_route')
                     <div class="text-sm text-red-600">{{ $message }}</div>

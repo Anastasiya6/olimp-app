@@ -15,6 +15,9 @@ class DeliveryNoteSearch extends Component
 
     public $searchTerm;
 
+    public ?DeliveryNote $editingDeliveryNote = null;
+    public int $editFormVersion = 0;
+
     #[Session]
     public $selectedDepartmentSender;
 
@@ -29,10 +32,21 @@ class DeliveryNoteSearch extends Component
 
     public $route = 'delivery-notes';
 
+    public function editDeliveryNote($id)
+    {
+        $this->editingDeliveryNote = DeliveryNote::with('designation')->findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('delivery-note-edit-open');
+    }
+
     public function mount()
     {
-        if(session()->has('message')){
-            $this->dispatch('open-modal',name:'viewLog');
+        if ((old('_delivery_note_create') || old('_delivery_note_edit')) && session()->has('errors')) {
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
+        if (old('_delivery_note_edit')) {
+            $this->editingDeliveryNote = DeliveryNote::with('designation')->find(old('_delivery_note_edit'));
         }
         if($this->selectedOrder==0) {
 
@@ -60,8 +74,9 @@ class DeliveryNoteSearch extends Component
         $deliveryNote = DeliveryNote::findOrFail($id);
         $deliveryNote->delete();
 
-        // Отправить сообщение об успешном удалении
-        session()->flash('message', 'Запис успішно видалено.');
+        if ($this->editingDeliveryNote?->id === (int) $id) {
+            $this->editingDeliveryNote = null;
+        }
     }
 
     public function updateSearch()
@@ -107,6 +122,8 @@ class DeliveryNoteSearch extends Component
     {
         return view('livewire.delivery-note-search',[
             'items'=>$this->deliveryNotes(),
+            'form_departments' => Department::all(),
+            'last_record' => DeliveryNote::orderBy('updated_at', 'desc')->firstOrNew([]),
             'default_first_department' => Department::DEFAULT_FIRST_DEPARTMENT_ID,
             'default_second_department' => Department::DEFAULT_SECOND_DEPARTMENT_ID,
             'departments' => Department::whereIn('id',array(2,3,5))->get(),

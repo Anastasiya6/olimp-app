@@ -2,9 +2,12 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
-
-Alpine.start();
+// Livewire includes and starts its own Alpine instance, with wire:* directives.
+// Only start standalone Alpine on pages where Livewire is not loaded.
+if (!window.Livewire && !document.querySelector('script[data-update-uri]') && !window.livewireScriptConfig) {
+    window.Alpine = Alpine;
+    Alpine.start();
+}
 // ---- TomSelect ----
 import TomSelect from "tom-select";
 import "tom-select/dist/css/tom-select.css";
@@ -36,6 +39,8 @@ function initTomSelect() {
         }
     });
 }
+
+window.initDesignationSelect = initTomSelect;
 
 document.addEventListener('livewire:init', initTomSelect);
 document.addEventListener('livewire:navigated', initTomSelect);

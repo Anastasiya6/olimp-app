@@ -4,10 +4,10 @@
     x-on:opening-stock-open.window="$dispatch('open-modal', 'opening-stock-import')"
     x-on:opening-stock-confirm.window="$dispatch('close-modal', 'opening-stock-import'); $dispatch('open-modal', 'opening-stock-confirmation')"
     x-on:opening-stock-close.window="$dispatch('close-modal', 'opening-stock-import'); $dispatch('close-modal', 'opening-stock-confirmation')">
-    <div class="mb-5 rounded-lg border border-gray-200 bg-gray-50 p-4">
+    <x-catalog.panel class="mb-5">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div class="w-full lg:max-w-sm">
-                <label for="stock-article-search" class="mb-2 block text-sm font-medium text-gray-700">Пошук за артикулом</label>
+                <label for="stock-article-search" class="compact-search-label mb-2 block text-base font-semibold text-slate-800">Пошук за артикулом</label>
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -17,19 +17,19 @@
                     </span>
                     <input id="stock-article-search" type="search" wire:model.live="searchTerm" wire:keydown="updateSearch"
                         placeholder="Введіть артикул"
-                        class="block h-11 w-full rounded-md border-gray-300 bg-white pl-10 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+                        class="compact-search block h-12 w-full rounded-md border-[#a8c8c5] bg-[#f7fbfa] pl-10 text-base text-slate-900 placeholder:text-slate-500 focus:border-teal-600 focus:ring-teal-600" />
                 </div>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row">
                 <button type="button" wire:click="viewStockIn"
-                    class="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-gray-800 bg-gray-800 px-4 text-sm font-medium text-white shadow-sm transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    class="catalog-button catalog-add-button">
                     <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m-4-4 4 4 4-4M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4" />
                     </svg>
                     Вигрузити приход
                 </button>
                 <button type="button" wire:click="viewStock"
-                    class="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    class="catalog-button catalog-add-button">
                     <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9-4 9 4-9 4-9-4Zm0 0v10l9 4 9-4V7M12 11v10" />
                     </svg>
@@ -40,87 +40,57 @@
         @if(session()->has('message'))
             <p role="status" class="mt-3 text-sm text-gray-600">{{ session('message') }}</p>
         @endif
-    </div>
+    </x-catalog.panel>
 
     @if(session()->has('success'))
-        <div role="status" class="my-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
+        <div role="status" class="my-4 rounded-lg border border-[#a8c8c5] bg-[#e3f1ee] px-4 py-3 text-base font-medium text-[#174a47]">{{ session('success') }}</div>
     @endif
-    <div class="overflow-x-auto rounded-lg shadow">
-        <table class="min-w-full divide-y divide-gray-200 bg-white">
-            <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Код 1С
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Артикул
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Назва
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Кількість
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Од.виміру
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Номер приходу
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Дата приходу
-                </th>
-                <th class="px-4 py-3"></th>
-            </tr>
-            </thead>
-
-            <tbody class="divide-y divide-gray-200">
-            @foreach($items as $item)
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->materials->code ?? '' }}
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->materials->article ?? '' }}
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->materials->name ?? '' }}
-                    </td>
-{{--                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">--}}
-{{--                        {{ \Carbon\Carbon::parse($item->document_date)->format('d.m.Y') ?? '' }}--}}
-{{--                    </td>--}}
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->amount ?? '' }}
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->materials->unit->unit ?? '' }}
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->document_number ?? '' }}
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap font-bold text-gray-900">
-                        {{ $item->document_date ? \Carbon\Carbon::parse($item->document_date)->format('d.m.Y') : '' }}
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-
-        <div class="py-4">
-            {{ $items->appends(request()->input())->links() }}
-        </div>
-    </div>
-
+    <x-catalog.table :items="$items">
+        <x-slot:head>
+                    <tr>
+                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Код 1С</th>
+                        <th scope="col" class=" text-left font-bold">Артикул</th>
+                        <th scope="col" class=" text-left font-bold">Назва матеріалу</th>
+                        <th scope="col" class=" text-right font-bold">Кількість</th>
+                        <th scope="col" class="whitespace-nowrap  text-center font-bold">Од. виміру</th>
+                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Номер приходу</th>
+                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Дата приходу</th>
+                    </tr>
+                        </x-slot:head>
+                    @forelse($items as $item)
+                        <tr wire:key="material-stock-row-{{ $item->id }}">
+                            <td class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->materials->code ?? '—' }}</td>
+                            <td class="whitespace-nowrap  font-bold text-slate-900">{{ $item->materials->article ?? '—' }}</td>
+                            <td class=" font-bold leading-relaxed text-slate-900">
+                                <div class="min-w-[16rem] max-w-xl break-words">{{ $item->materials->name ?? '—' }}</div>
+                            </td>
+                            <td class="whitespace-nowrap  text-right font-bold tabular-nums {{ $item->amount < 0 ? 'bg-red-50 text-red-800' : 'text-slate-900' }}">
+                                {{ $item->amount ?? '—' }}
+                            </td>
+                            <td class="whitespace-nowrap  text-center text-slate-900">{{ $item->materials->unit->unit ?? '—' }}</td>
+                            <td class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->document_number ?? '—' }}</td>
+                            <td class="whitespace-nowrap  tabular-nums text-slate-900">
+                                {{ $item->document_date ? \Carbon\Carbon::parse($item->document_date)->format('d.m.Y') : '—' }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-4 py-10 text-center text-slate-900">
+                                {{ trim($searchTerm ?? '') !== '' ? 'За цим артикулом матеріалів не знайдено.' : 'Матеріалів поки немає.' }}
+                            </td>
+                        </tr>
+                    @endforelse
+                    </x-catalog.table>
     <div wire:key="opening-stock-dialog">
         <x-modal name="opening-stock-import" maxWidth="lg" focusable>
             <div class="p-6" role="dialog" aria-modal="true" aria-labelledby="opening-stock-title">
                 <div class="mb-5 flex items-start justify-between gap-4 border-b border-gray-200 pb-4">
                     <div>
                         <h3 id="opening-stock-title" class="text-lg font-semibold text-gray-800">Імпорт залишків з 1С</h3>
-                        <p class="mt-1 text-sm text-gray-500">Оберіть Excel-файл із залишками матеріалів.</p>
+                        <p class="mt-1 text-base text-slate-600">Оберіть Excel-файл із залишками матеріалів.</p>
                     </div>
                     <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити імпорт залишків"
-                        class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-600">
                         <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
@@ -128,18 +98,18 @@
                 </div>
                 <form wire:submit="confirmStock" class="space-y-5">
                     <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
-                        <label for="opening-stock-file" class="mb-2 block text-sm font-medium text-gray-700">Файл залишків</label>
+                        <label for="opening-stock-file" class="mb-2 block text-base font-semibold text-slate-800">Файл залишків</label>
                         <input id="opening-stock-file" type="file" wire:model="file" accept=".xlsx,.xls"
                             class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-white file:px-3 file:py-2 file:text-sm file:font-medium file:text-gray-700" />
-                        <p class="mt-2 text-xs text-gray-500">Формати: Excel (.xlsx, .xls).</p>
+                        <p class="mt-2 text-sm text-slate-600">Формати: Excel (.xlsx, .xls).</p>
                         <p wire:loading wire:target="file" class="mt-2 text-sm text-gray-600">Завантаження файлу…</p>
                         @error('file') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="flex justify-end gap-3 border-t border-gray-200 pt-4">
                         <button type="button" x-on:click="$dispatch('close')"
-                            class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Скасувати</button>
+                            class="min-h-[44px] rounded-md border border-[#a8c8c5] bg-white px-4 py-2 text-base font-medium text-slate-800 hover:bg-[#edf6f3]">Скасувати</button>
                         <button type="submit" wire:loading.attr="disabled" wire:target="file,confirmStock"
-                            class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50">Продовжити</button>
+                            class="min-h-[44px] rounded-md bg-[#286357] px-4 py-2 text-base font-semibold text-white hover:bg-[#1e5046] disabled:opacity-50">Продовжити</button>
                     </div>
                 </form>
             </div>
@@ -164,9 +134,9 @@
                 @error('file') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 <div class="mt-5 flex justify-end gap-3 border-t border-gray-200 pt-4">
                     <button type="button" x-on:click="$dispatch('close')" wire:loading.attr="disabled" wire:target="unloadingStock"
-                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50">Скасувати</button>
+                        class="min-h-[44px] rounded-md border border-[#a8c8c5] bg-white px-4 py-2 text-base font-medium text-slate-800 hover:bg-[#edf6f3] disabled:opacity-50">Скасувати</button>
                     <button type="button" wire:click="unloadingStock" wire:loading.attr="disabled" wire:target="unloadingStock"
-                        class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50">
+                        class="min-h-[44px] rounded-md bg-[#286357] px-4 py-2 text-base font-semibold text-white hover:bg-[#1e5046] disabled:opacity-50">
                         <span wire:loading.remove wire:target="unloadingStock">Імпортувати залишки</span>
                         <span wire:loading wire:target="unloadingStock">Імпортування…</span>
                     </button>
@@ -182,7 +152,7 @@
             <div class="mb-5 flex items-start justify-between gap-4 border-b border-gray-200 pb-4">
                 <div>
                     <h3 id="stock-in-title" class="text-lg font-semibold text-gray-800">Імпорт приходу з 1С</h3>
-                    <p class="mt-1 text-sm text-gray-500">Завантажте файл і виберіть цех, для якого додати прихід.</p>
+                    <p class="mt-1 text-base text-slate-600">Завантажте файл і виберіть цех, для якого додати прихід.</p>
                 </div>
                 <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити"
                     wire:loading.attr="disabled" wire:target="unloadingStockIn"
@@ -195,30 +165,30 @@
             @if(!$confirmingStockIn)
                 <form wire:submit="confirmStockIn" class="space-y-5">
                     <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
-                        <label for="stock-in-file" class="mb-2 block text-sm font-medium text-gray-700">Файл приходу</label>
+                        <label for="stock-in-file" class="mb-2 block text-base font-semibold text-slate-800">Файл приходу</label>
                         <input id="stock-in-file" type="file" wire:model="file" accept=".xlsx,.xls"
                             class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-white file:px-3 file:py-2 file:text-sm file:font-medium file:text-gray-700" />
-                        <p class="mt-2 text-xs text-gray-500">Формати: Excel (.xlsx, .xls).</p>
+                        <p class="mt-2 text-sm text-slate-600">Формати: Excel (.xlsx, .xls).</p>
                         <p wire:loading wire:target="file" class="mt-2 text-sm text-gray-600">Завантаження файлу…</p>
                         @error('file') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="stock-in-department" class="mb-2 block text-sm font-medium text-gray-700">Цех</label>
+                        <label for="stock-in-department" class="mb-2 block text-base font-semibold text-slate-800">Цех</label>
                         <select id="stock-in-department" wire:model="stockInDepartmentId" required
-                            class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                            class="block w-full rounded-md border-[#a8c8c5] text-base focus:border-teal-600 focus:ring-teal-600">
                             <option value="">Оберіть цех</option>
                             @foreach($stockInDepartments as $department)
                                 <option value="{{ $department->id }}">Цех {{ $department->name }}</option>
                             @endforeach
                         </select>
                         @error('stockInDepartmentId') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        <p class="mt-2 text-xs leading-relaxed text-gray-500">Імпортуються лише рядки вибраного цеху із секції «Кому:». Інші цехи у файлі пропускаються.</p>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Імпортуються лише рядки вибраного цеху із секції «Кому:». Інші цехи у файлі пропускаються.</p>
                     </div>
                     <div class="flex justify-end gap-3 border-t border-gray-200 pt-4">
                         <button type="button" x-on:click="$dispatch('close')"
-                            class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Скасувати</button>
+                            class="min-h-[44px] rounded-md border border-[#a8c8c5] bg-white px-4 py-2 text-base font-medium text-slate-800 hover:bg-[#edf6f3]">Скасувати</button>
                         <button type="submit" wire:loading.attr="disabled" wire:target="file,confirmStockIn"
-                            class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50">Продовжити</button>
+                            class="min-h-[44px] rounded-md bg-[#286357] px-4 py-2 text-base font-semibold text-white hover:bg-[#1e5046] disabled:opacity-50">Продовжити</button>
                     </div>
                 </form>
             @else
@@ -232,9 +202,9 @@
                 @error('stockInDepartmentId') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 <div class="mt-5 flex justify-end gap-3 border-t border-gray-200 pt-4">
                     <button type="button" wire:click="$set('confirmingStockIn', false)" wire:loading.attr="disabled" wire:target="unloadingStockIn"
-                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50">Назад</button>
+                        class="min-h-[44px] rounded-md border border-[#a8c8c5] bg-white px-4 py-2 text-base font-medium text-slate-800 hover:bg-[#edf6f3] disabled:opacity-50">Назад</button>
                     <button type="button" wire:click="unloadingStockIn" wire:loading.attr="disabled" wire:target="unloadingStockIn"
-                        class="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50">
+                        class="min-h-[44px] rounded-md bg-[#286357] px-4 py-2 text-base font-semibold text-white hover:bg-[#1e5046] disabled:opacity-50">
                         <span wire:loading.remove wire:target="unloadingStockIn">Імпортувати прихід</span>
                         <span wire:loading wire:target="unloadingStockIn">Імпортування…</span>
                     </button>
@@ -295,7 +265,7 @@
 {{--                            </td>--}}
 {{--                            <td>--}}
 {{--                                <button wire:click="viewLog('{{$item->designation_id}}','{{$item->designation_number}}')" wire:key="{{ $item->designation_id }}"--}}
-{{--                                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">--}}
+{{--                                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:opacity-25">--}}
 {{--                                    зміни по вузлу--}}
 {{--                                </button>--}}
 

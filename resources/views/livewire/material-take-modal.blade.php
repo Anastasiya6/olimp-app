@@ -1,76 +1,80 @@
-<div>
+<div class="material-take-dialog">
     @if($show)
-        <div x-on:click="show = false" class="fixed inset-0 bg-gray-300 opacity-40"></div>
-        <div class="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+        <div x-on:click="show = false" class="fixed inset-0 bg-gray-900/40 z-[60]"></div>
+        <div class="fixed inset-0 z-[60] overflow-y-auto px-3 py-6 sm:px-6">
 
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
+            <div role="dialog" aria-modal="true" aria-labelledby="material-take-title" class="relative mx-auto w-full max-w-2xl rounded-lg border border-[#bfd8d1] bg-white shadow-xl">
 
                 {{-- HEADER --}}
-                <div class="flex justify-between items-center border-b pb-3 mb-4">
-                    <h2 class="text-lg font-semibold">
+                <div class="flex items-center justify-between gap-3 rounded-t-lg border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4 sm:px-6">
+                    <h2 id="material-take-title" class="text-xl font-bold text-[#174a47]">
                         Видача матеріалу
                     </h2>
 
-                    <button wire:click="$set('show', false)" class="text-gray-400 hover:text-gray-600">
+                    <button type="button" wire:click="$set('show', false)" aria-label="Закрити форму видачі матеріалу" class="rounded-md p-2 text-[#245b53] hover:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600">
                         ✕
                     </button>
                 </div>
 
+                <div class="p-5 sm:p-6">
                 {{-- INFO BLOCK --}}
-                <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                    <div class="text-sm text-gray-500">Деталь</div>
-                    <div class="font-medium text-gray-800">
+                <div class="mb-4 rounded-md border border-[#d4e5e0] bg-[#f2f7f6] p-4">
+                    <div class="text-sm text-slate-500">Деталь</div>
+                    <div class="break-words text-base font-semibold text-[#174a47]">
                         {{ $detail_name }}
                     </div>
 
-                    <div class="mt-3 text-sm text-gray-500">Матеріал</div>
-                    <div class="font-medium text-gray-800">
+                    <div class="mt-3 text-sm text-slate-500">Матеріал</div>
+                    <div class="break-words text-base font-semibold text-[#174a47]">
                         {{ $material_name }}
                     </div>
                 </div>
 
                 {{-- SEARCH --}}
-                <div class="mb-4">
+                <div class="material-take-picker mb-4">
                     <livewire:import-material-stock-search-dropdown :material_id="$selectedMaterialId" :material_name="$selectedMaterial"/>
                 </div>
 
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {{-- INPUT --}}
-                <div class="mb-6">
+                <div class="mb-4">
                     <label class="block">
-                        <span class="text-gray-700 text-sm">Кількість</span>
+                        <span class="text-sm font-medium text-[#245b53]">Кількість</span>
                         <input
                             type="number"
                             step="0.01"
                             wire:model="takeQty"
-                            class="block w-full mt-1 rounded-lg border-gray-300 focus:ring focus:ring-blue-200"
+                            class="mt-1 block w-full rounded-md border-slate-300 text-base focus:border-teal-600 focus:ring-teal-600"
                         >
                     </label>
                 </div>
 
                 {{-- INPUT --}}
-                <div class="mb-6">
+                <div class="mb-4">
                     <label class="block">
-                        <span class="text-gray-700 text-sm">Фактична кількість</span>
+                        <span class="text-sm font-medium text-[#245b53]">Фактична кількість</span>
                         <input
                             type="number"
                             step="0.01"
                             wire:model="takeFactQty"
-                            class="block w-full mt-1 rounded-lg border-gray-300 focus:ring focus:ring-blue-200"
+                            class="mt-1 block w-full rounded-md border-slate-300 text-base focus:border-teal-600 focus:ring-teal-600"
                         >
                     </label>
                 </div>
 
+                </div>
                 {{-- ACTIONS --}}
-                <div class="flex justify-end gap-3">
-                    <x-secondary-button wire:click="$set('show', false)">
+                <div class="flex flex-wrap justify-end gap-3 border-t border-[#d4e5e0] pt-5">
+                    <x-catalog.button variant="secondary" wire:click="$set('show', false)">
                         Відмінити
-                    </x-secondary-button>
+                    </x-catalog.button>
 
-                    <x-primary-button wire:click="save">
+                    <x-catalog.button variant="primary" wire:click="save">
                         Зберегти
-                    </x-primary-button>
+                    </x-catalog.button>
                 </div>
 
+                </div>
             </div>
         </div>
     @endif

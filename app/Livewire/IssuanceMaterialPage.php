@@ -15,6 +15,8 @@ class IssuanceMaterialPage extends Component
 {
     public $route = 'issuance-materials';
 
+    public bool $inModal = false;
+
     public $generated = false;
 
     public $order_name_id;

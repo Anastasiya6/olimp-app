@@ -30,7 +30,14 @@ class SpecificationSearchDropdown extends Component
     {
         $last = Specification::orderBy('updated_at','desc')->with('designations')->first();
 
-        $designation = $last->designationEntry->designation;
+        if (old('_specification_create')) {
+            $this->search = old('designation_entry_designation', '');
+            $this->selectedDesignation = $this->search;
+            $this->searchResult();
+            return;
+        }
+
+        $designation = $last?->designationEntry?->designation ?? '';
 
         preg_match('/^[^\d]+/', $designation, $matches);
 

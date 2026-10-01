@@ -19,7 +19,10 @@ class SpecificationDesignationSearch extends Component
     {
         $last = Specification::orderBy('id','desc')->with('designations')->first();
 
-        $this->searchWhere = $last->designation;
+        $this->searchWhere = old('_specification_create') ? old('designation_designation', '') : ($last?->designation ?? '');
+        if (old('_specification_create')) {
+            $this->searchWhereResult();
+        }
     }
 
     public function searchWhereResult()
@@ -34,7 +37,7 @@ class SpecificationDesignationSearch extends Component
                 ->orderBy('designation')
                 ->take(6)->get();
 
-        $this->newDesignation = false;
+        $this->newDesignationWhere = false;
 
         if(count($designations)==0){
 

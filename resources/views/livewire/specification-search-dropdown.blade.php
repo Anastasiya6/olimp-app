@@ -1,6 +1,6 @@
 <div>
-    <div class="max-w-lg w-full lg:max-w-xs">
-        <label for="search" class="sr-only">Search for songs</label>
+    <div class="w-full mb-5">
+        <label for="specification-entry" class="compact-search-label catalog-label">Пошук — що</label>
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -12,11 +12,11 @@
             <input wire:model="search"
                    wire:keyup="searchResult"
                    autocomplete="off"
-                   id="search"
-                   class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
+                   id="specification-entry"
+                   class="compact-search block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
                    placeholder="Пошук для 'що'..." type="search" autocomplete="off">
             @if (strlen($search) > 1)
-                <ul class="absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200">
+                <ul class="absolute z-50 max-h-[200px] overflow-y-auto bg-white w-full rounded-md mt-2 divide-y divide-gray-200">
                     @forelse ($searchResults as $result)
                         <li>
                             <a href="#"
@@ -53,7 +53,7 @@
                     <label class="block">
                         <span class="text-gray-700">Що, найменування</span>
                         <input type="text" name="designation_entry_designation_name" class="block w-full mt-1 rounded-md" placeholder=""
-                               value="" />
+                               value="{{ old('designation_entry_designation_name') }}" />
                     </label>
                     @error('designation_entry_designation')
                     <div class="text-sm text-red-600">{{ $message }}</div>
@@ -66,7 +66,7 @@
                     <label class="block">
                         <span class="text-gray-700">Маршрут</span>
                         <input type="text" name="designation_entry_route" class="block w-full mt-1 rounded-md" placeholder=""
-                               value="" />
+                               value="{{ old('designation_entry_route') }}" />
                     </label>
                     @error('designation_entry_route')
                     <div class="text-sm text-red-600">{{ $message }}</div>
@@ -78,7 +78,7 @@
                     <label class="block">
                         <span class="text-gray-700">ГОСТ</span>
                         <input type="text" name="designation_entry_gost" class="block w-full mt-1 rounded-md" placeholder=""
-                               value="" />
+                               value="{{ old('designation_entry_gost') }}" />
                     </label>
                     @error('designation_entry_gost')
                     <div class="text-sm text-red-600">{{ $message }}</div>
@@ -89,7 +89,7 @@
                         <span class="text-gray-700">Виберіть одиницю виміру</span>
                         <select name="type_unit_id" class="block w-full mt-1 rounded-md">
                             @foreach($units as $unit)
-                                <option value="{{ $unit->id }}">{{ $unit->unit }}</option>
+                                <option value="{{ $unit->id }}" @selected((string) old('type_unit_id') === (string) $unit->id)>{{ $unit->unit }}</option>
                             @endforeach
                         </select>
                     </label>
@@ -100,41 +100,5 @@
             @endif
         </div>
     </div>
-    <style type="text/css">
-        .search-box .clear{
-            clear:both;
-            margin-top: 20px;
-        }
-
-        .search-box ul{
-            list-style: none;
-            padding: 0px;
-            width: 250px;
-            position: absolute;
-            margin: 0;
-            background: white;
-        }
-
-        .search-box ul li{
-            background: lavender;
-            padding: 4px;
-            margin-bottom: 1px;
-        }
-
-        .search-box ul li:nth-child(even){
-            background: cadetblue;
-            color: white;
-        }
-
-        .search-box ul li:hover{
-            cursor: pointer;
-        }
-
-        .search-box input[type=text]{
-            padding: 5px;
-            width: 250px;
-            letter-spacing: 1px;
-        }
-    </style>
 </div>
 

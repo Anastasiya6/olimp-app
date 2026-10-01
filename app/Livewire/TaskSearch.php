@@ -28,6 +28,22 @@ class TaskSearch extends Component
     public $selectedItems = [];
 
     public $type;
+    public ?Task $editingTask = null;
+    public bool $taskFormLoaded = false;
+    public int $taskFormVersion = 0;
+    public $formDepartmentId;
+    public $formDepartmentNumber;
+
+    public function openTaskForm($id = null)
+    {
+        $this->editingTask = $id ? Task::with('designation')->where('type', $this->type)->findOrFail($id) : null;
+        $this->formDepartmentId = $this->editingTask?->department_id ?? $this->selectedDepartmentSender;
+        $this->formDepartmentNumber = Department::find($this->formDepartmentId)?->number ?? '';
+        $this->taskFormLoaded = true;
+        $this->taskFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('task-form-open');
+    }
 
     public function mount(Request $request)
     {
@@ -41,12 +57,21 @@ class TaskSearch extends Component
         if(!$this->selectedDepartmentSender) {
             $this->selectedDepartmentSender = Department::DEFAULT_FIRST_DEPARTMENT_ID;
         }
+        if (old('_task_form') && session()->has('errors') && old('type') === $this->type) {
+            $this->selectedDepartmentSender = old('department_id', $this->selectedDepartmentSender);
+            $this->openTaskForm(old('_task_edit') ?: null);
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
     }
 
     public function deleteTask($id)
     {
         $task = Task::findOrFail($id);
         $task->delete();
+        if ($this->editingTask?->id === (int) $id) {
+            $this->editingTask = null;
+            $this->taskFormLoaded = false;
+        }
 
         // Отправить сообщение об успешном удалении
         session()->flash('message', 'Запис успішно видалено.');

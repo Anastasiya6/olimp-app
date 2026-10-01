@@ -16,19 +16,46 @@ class SpecificationSearch extends Component
 
     public $exactMatch = false;
 
+    public ?Specification $editingSpecification = null;
+
+    public int $editFormVersion = 0;
+
     public function mount()
     {
         $last = Specification::orderBy('updated_at','desc')->with('designations')->first();
 
-        $designation = $last->designations->designation;
+        $designation = $last?->designations?->designation ?? '';
 
         $this->searchTerm = $designation;
+        if ((old('_specification_create') || old('_specification_edit')) && session()->has('errors')) {
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
+        if (old('_specification_edit')) {
+            $this->editingSpecification = Specification::with('designations', 'designationEntry')->find(old('_specification_edit'));
+        }
     }
+
+    public function editSpecification($id)
+    {
+        $this->editingSpecification = Specification::with('designations', 'designationEntry')->findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('specification-edit-open');
+    }
+
+    public function updatedSearchTerm() { $this->resetPage(); }
+
+    public function updatedSearchTermChto() { $this->resetPage(); }
+
+    public function updatedExactMatch() { $this->resetPage(); }
 
     public function deleteSpecification($id)
     {
         $specification = Specification::findOrFail($id);
         $specification->delete();
+        if ($this->editingSpecification?->id === $specification->id) {
+            $this->editingSpecification = null;
+        }
 
         // Отправить сообщение об успешном удалении
         session()->flash('message', 'Запис успішно видалено.');

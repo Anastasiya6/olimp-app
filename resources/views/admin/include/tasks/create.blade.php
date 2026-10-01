@@ -1,23 +1,14 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Створити запис') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12 search-box">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200 max-w-lg w-full lg:max-w-xs">
-                    <form method="POST" action="{{ route($route.'.store',['type' => $type]) }}">
+<x-catalog.page title="Створити завдання" width="max-w-3xl">
+    <x-catalog.panel>
+<form class="catalog-form" method="POST" action="{{ route($route.'.store',['type' => $type]) }}">
                         @csrf
 
-                        @livewire('delivery-note-search-dropdown')
+                        <div class="delivery-note-designation-picker mb-5">@livewire('delivery-note-search-dropdown')</div>
                         <input type="hidden" name="type" value="{{ $type }}">
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Кількість</span>
-                                <input type="text" name="quantity" class="block w-full mt-1 rounded-md" placeholder=""
+                                <input type="text" name="quantity" class="catalog-input" placeholder=""
                                        value="{{ old('quantity') }}" />
                             </label>
                             @error('quantity')
@@ -28,20 +19,19 @@
                         <div class="mb-6">
                             <label class="block">
                                 <span class="text-gray-700">Цех відправник</span>
-                                <input type="text" name="sender_department" readonly class="block w-full mt-1 rounded-md" placeholder=""
+                                <input type="text" name="sender_department" readonly class="catalog-input" placeholder=""
                                        value="{{ $sender_department }}" />
                             </label>
                             @error('sender_department')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
-                        <x-primary-button type="submit">
+                        <div class="flex justify-end gap-3 border-t border-[#d4e5e0] pt-5">
+                        <x-catalog.button :href="route('tasks.index', ['type' => $type])">Скасувати</x-catalog.button>
+                        <x-catalog.button variant="primary" type="submit">
                             Зберегти
-                        </x-primary-button>
+                        </x-catalog.button></div>
 
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+    </x-catalog.panel>
+</x-catalog.page>

@@ -11,6 +11,8 @@ use Livewire\Attributes\On;
 
 class ManualIssuanceMaterialPage extends Component
 {
+    public bool $inModal = false;
+
     public $selectedMaterialId = null;
     public $selectedMaterial = null;
     public $quantity = 0;

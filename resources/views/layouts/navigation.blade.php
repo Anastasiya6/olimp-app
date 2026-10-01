@@ -1,306 +1,125 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-{{--                <div class="shrink-0 flex items-center">--}}
-{{--                    <a href="#">--}}
-{{--                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />--}}
-{{--                    </a>--}}
-{{--                </div>--}}
+@php
+    $navigation = [
+        ['label' => 'Довідники', 'items' => [
+            ['label' => 'Цеха', 'route' => 'departments.index'],
+            ['label' => 'Ділянки', 'route' => 'sections.index'],
+            ['label' => 'Од. вимірювання', 'route' => 'type_units.index'],
+            ['label' => 'Коефіцієнти', 'route' => 'material_coefficients.index'],
+            ['label' => 'Співробітники', 'route' => 'users.index'],
+        ]],
+        ['label' => 'Замовлення', 'route' => 'order-names.index'],
+        ['label' => 'Розузловання', 'route' => 'orders.index'],
+        ['label' => 'Вироби', 'items' => [
+            ['label' => 'Вироби', 'route' => 'designations.index'],
+            ['label' => 'ПИ0', 'route' => 'pi0s.index'],
+            ['label' => 'Матеріалокомплекти', 'route' => 'group-materials.index'],
+            ['label' => 'M0020', 'route' => 'specifications.index'],
+        ]],
+        ['label' => 'Матеріали', 'items' => [
+            ['label' => 'Норми', 'route' => 'designation-materials.index'],
+            ['label' => 'Матеріали', 'route' => 'materials.index'],
+            ['label' => 'Матеріали з 1С', 'route' => 'import-material-stocks.index'],
+            ['label' => 'Видача матеріалів', 'route' => 'issuance-materials.index'],
+            ['label' => 'Видача матеріалів без замовлення', 'route' => 'manual-issuance-materials.index'],
+            ['label' => 'Пошук деталі в плані', 'route' => 'search-designation-in-plan.index'],
+        ]],
+        ['label' => 'Здаточні', 'items' => [
+            ['label' => 'Здаточні', 'route' => 'delivery-notes.index'],
+            ['label' => 'Списання', 'route' => 'write-offs.index'],
+            ['label' => 'Покупні деталі в здаточних', 'route' => 'purchases.index'],
+            ['label' => 'Заміна матеріалів в здаточних', 'route' => 'material-purchases.index'],
+            ['label' => 'План', 'route' => 'plan-tasks.index'],
+        ]],
+        ['label' => 'Завдання', 'items' => [
+            ['label' => 'Завдання цех', 'route' => 'tasks.index', 'parameters' => ['type' => 'department']],
+            ['label' => 'Завдання технолог', 'route' => 'tasks.index', 'parameters' => ['type' => 'technologist']],
+        ]],
+        ['label' => 'Звіти', 'items' => [
+            ['label' => 'Звіти', 'route' => 'reports.index'],
+            ['label' => 'Зміни у специфікації', 'route' => 'specification-logs.index'],
+            ['label' => 'Зміни у нормах', 'route' => 'designation-material-logs.index'],
+        ]],
+    ];
+    $isNavigationActive = function ($item) {
+        return request()->routeIs(str_replace('.index', '.*', $item['route']))
+            && (!isset($item['parameters']['type']) || request()->route('type') === $item['parameters']['type']);
+    };
+    $navigationButton = 'inline-flex min-h-[44px] items-center justify-between gap-2 rounded-lg border px-3 py-2 text-base font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2';
+@endphp
 
-                <!-- Navigation Links -->
-                {{-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                         {{ __('Dashboard') }}
-                     </x-nav-link>
-                 </div>--}}
-
-
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href=" route('home') ">
-                        {{ __('На головну') }}
-                    </x-nav-link>
+<nav x-data="{ mobileOpen: false }" aria-label="Головна навігація"
+    class="relative z-40 border-b-2 border-[#b9d8d3] bg-[#f4faf8] shadow-sm">
+    <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif
+                class="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg border border-[#c4dcd7] bg-white px-3 py-2 text-base font-bold text-[#245b53] shadow-sm hover:bg-[#e3f1ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
+                <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9" />
+                </svg>
+                На головну
+            </a>
+            <button type="button" x-on:click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen.toString()"
+                aria-controls="main-navigation-links"
+                class="ml-auto inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[#b9d8d3] bg-white px-4 py-2 text-base font-semibold text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 lg:hidden">
+                <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+                    <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                Меню
+            </button>
+            <div id="main-navigation-links" :class="mobileOpen ? 'flex' : 'hidden'"
+                class="hidden w-full flex-col gap-1 border-t border-[#d4e5e0] pt-3 lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:flex-wrap lg:items-center lg:justify-end lg:border-0 lg:pt-0">
+                @foreach($navigation as $index => $section)
+                    @php
+                        $sectionActive = isset($section['items'])
+                            ? collect($section['items'])->contains(fn ($item) => $isNavigationActive($item))
+                            : $isNavigationActive($section);
+                        $sectionStyle = $sectionActive
+                            ? 'border-[#9fc6bd] bg-[#dceee7] text-[#194b41]'
+                            : 'border-transparent text-slate-800 hover:border-[#c4dcd7] hover:bg-[#e7f2ef]';
+                    @endphp
+                    @if(isset($section['items']))
+                        <div class="relative" x-data="{ expanded: false }"
+                            x-on:click.outside="expanded = false"
+                            x-on:keydown.escape.stop="if (expanded) { expanded = false; $refs.trigger.focus(); }">
+                            <button type="button" x-ref="trigger" x-on:click="expanded = !expanded"
+                                :aria-expanded="expanded.toString()" aria-controls="main-navigation-section-{{ $index }}"
+                                class="{{ $navigationButton }} {{ $sectionStyle }} w-full lg:w-auto">
+                                {{ $section['label'] }}
+                                <svg aria-hidden="true" class="h-4 w-4 shrink-0 transition-transform" :class="expanded ? 'rotate-180' : ''"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                                </svg>
+                            </button>
+                            <div id="main-navigation-section-{{ $index }}" x-show="expanded" style="display: none;"
+                                x-transition.opacity.duration.150ms
+                                class="z-50 mt-2 w-full rounded-xl border border-[#bfd8d1] bg-white p-2 shadow-lg lg:absolute lg:right-0 lg:w-80">
+                                @foreach($section['items'] as $link)
+                                    @php($linkActive = $isNavigationActive($link))
+                                    <a wire:navigate href="{{ route($link['route'], $link['parameters'] ?? []) }}"
+                                        x-on:click="expanded = false; mobileOpen = false"
+                                        @if($linkActive) aria-current="page" @endif
+                                        class="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 text-base font-medium leading-snug focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 {{ $linkActive ? 'bg-[#e3f1ec] text-[#194b41] font-semibold' : 'text-slate-800 hover:bg-[#eef7f8]' }}">
+                                        <span aria-hidden="true" class="h-2 w-2 shrink-0 rounded-full {{ $linkActive ? 'bg-teal-700' : 'bg-[#b9d8d3]' }}"></span>
+                                        {{ $link['label'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ route($section['route']) }}" @if($sectionActive) aria-current="page" @endif
+                            class="{{ $navigationButton }} {{ $sectionStyle }}">
+                            {{ $section['label'] }}
+                        </a>
+                    @endif
+                @endforeach
+                <div class="mt-2 flex flex-wrap gap-2 border-t border-[#d4e5e0] pt-3 lg:hidden">
+                    <a href="{{ route('dashboard') }}" class="rounded-md px-3 py-2 text-base text-slate-800 hover:bg-[#e3f1ee]">Dashboard</a>
+                    <a href="{{ route('profile.edit') }}" class="rounded-md px-3 py-2 text-base text-slate-800 hover:bg-[#e3f1ee]">Профіль</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="rounded-md px-3 py-2 text-base text-slate-800 hover:bg-[#e3f1ee]">Вийти</button>
+                    </form>
                 </div>
-            </div>
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-{{--                <x-dropdown align="right" width="48">--}}
-{{--                    <x-slot name="trigger">--}}
-{{--                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">--}}
-{{--                            <div>Користувачи</div>--}}
-
-{{--                            <div class="ms-1">--}}
-{{--                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">--}}
-{{--                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />--}}
-{{--                                </svg>--}}
-{{--                            </div>--}}
-{{--                        </button>--}}
-{{--                    </x-slot>--}}
-
-{{--                    <x-slot name="content">--}}
-{{--                        <x-dropdown-link wire:navigate :href="route('groups.index')">--}}
-{{--                            {{ __('Групи') }}--}}
-{{--                        </x-dropdown-link>--}}
-{{--                    </x-slot>--}}
-{{--                </x-dropdown>--}}
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>Довідники</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('departments.index')">
-                            {{ __('Цеха') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('sections.index')">
-                            {{ __('Ділянки') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('type_units.index')">
-                            {{ __('Од. вимірювання') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('material_coefficients.index')">
-                            {{ __('Коефіцієнти') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('users.index')">
-                            {{ __('Співробітники') }}
-                        </x-dropdown-link>
-                    </x-slot>
-                </x-dropdown>
-                <x-nav-link align="right" width="48" :href="route('order-names.index')">
-                    {{ __('Замовлення') }}
-                </x-nav-link>
-                <x-nav-link align="right" width="48" :href="route('orders.index')">
-                    {{ __('Розузловання') }}
-                </x-nav-link>
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>Вироби</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('designations.index')">
-                            {{ __('Вироби') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('pi0s.index')">
-                            {{ __('ПИ0') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('group-materials.index')">
-                            {{ __('Матеріалокомплекти') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('specifications.index')">
-                            {{ __('M0020') }}
-                        </x-dropdown-link>
-                        <!-- Authentication -->
-                        {{--<form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>--}}
-                    </x-slot>
-                </x-dropdown>
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>Матеріали</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('designation-materials.index')">
-                            {{ __('Норми') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('materials.index')">
-                            {{ __('Матеріали') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('import-material-stocks.index')">
-                            {{ __('Матеріали з 1С') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('issuance-materials.index')">
-                            {{ __('Видача матеріалів') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('manual-issuance-materials.index')">
-                            {{ __('Видача матеріалів без замовлення') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('search-designation-in-plan.index')">
-                            {{ __('Пошук деталі в плані') }}
-                        </x-dropdown-link>
-                    </x-slot>
-                </x-dropdown>
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>Здаточні</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('delivery-notes.index')">
-                            {{ __('Здаточні') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('write-offs.index')">
-                            {{ __('Списання') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('purchases.index')">
-                            {{ __('Покупні деталі в здаточних') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('material-purchases.index')">
-                            {{ __('Заміна матеріалів в здаточних') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('plan-tasks.index')">
-                            {{ __('План') }}
-                        </x-dropdown-link>
-                        <!-- Authentication -->
-                        {{--<form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                    <x-dropdown-link :href="route('logout')"
-                                     onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-dropdown-link>
-                    </form>--}}
-                    </x-slot>
-                </x-dropdown>
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>Завдання</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-
-                        <x-dropdown-link wire:navigate :href="route('tasks.index', ['type' => 'department'])">
-                            Завдання цех
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('tasks.index', ['type' => 'technologist'])">
-                            {{ __('Завдання технолог') }}
-                        </x-dropdown-link>
-                    </x-slot>
-                </x-dropdown>
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-base leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>Звіти</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link wire:navigate :href="route('reports.index')">
-                            {{ __('Звіти') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('specification-logs.index')">
-                            {{ __('Зміни у специфікації') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link wire:navigate :href="route('designation-material-logs.index')">
-                            {{ __('Зміни у нормах') }}
-                        </x-dropdown-link>
-                        <!-- Authentication -->
-                        {{--<form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>--}}
-                    </x-slot>
-                </x-dropdown>
-                <!-- Authentication -->
-
-
-            </div>
-{{--            <div class="hidden sm:flex sm:items-center"> <form method="POST" action="{{ route('logout') }}">--}}
-{{--                    @csrf--}}
-
-{{--                    <x-dropdown-link :href="route('logout')"--}}
-{{--                                     onclick="event.preventDefault();--}}
-{{--                                            this.closest('form').submit();">--}}
-{{--                        {{ __('Log Out') }}--}}
-{{--                    </x-dropdown-link>--}}
-{{--                </form>--}}
-{{--            </div>--}}
-
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">name</div>
-                <div class="font-medium text-sm text-gray-500">email</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                                           onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
             </div>
         </div>
     </div>

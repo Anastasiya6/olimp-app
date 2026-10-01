@@ -20,6 +20,34 @@ class PlanTaskTable extends Component
 
     public $isProcessing = false;
 
+    public ?PlanTask $editingPlanTask = null;
+    public bool $planFormLoaded = false;
+    public int $planFormVersion = 0;
+    public array $planFormData = [];
+
+    public function openPlanForm($id = null)
+    {
+        $this->editingPlanTask = $id ? PlanTask::with('designation', 'orderName')->findOrFail($id) : null;
+        $orderId = $this->editingPlanTask?->order_name_id ?? $this->selectedOrder;
+        $senderId = $this->editingPlanTask?->sender_department_id ?? $this->sender_department_id;
+        $receiverId = $this->editingPlanTask?->receiver_department_id ?? $this->receiver_department_id;
+        $order = OrderName::find($orderId);
+        $this->planFormData = [
+            'order_name_id' => $orderId,
+            'order_number' => $order?->name ?? '',
+            'order_name_quantity' => $order?->quantity ?? 0,
+            'sender_department_id' => $senderId,
+            'receiver_department_id' => $receiverId,
+            'sender_department' => Department::find($senderId)?->number ?? '',
+            'receiver_department' => Department::find($receiverId)?->number ?? '',
+        ];
+        $this->planFormLoaded = true;
+        $this->planFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('plan-form-open');
+    }
+
+
     public $searchTerm;
 
     #[Session]
@@ -69,6 +97,13 @@ class PlanTaskTable extends Component
         if(!$this->receiver_department_id) {
             $this->receiver_department_id = $receiver_department_id ?? 0;
         }
+        if (old('_plan_form') && session()->has('errors')) {
+            $this->selectedOrder = old('order_name_id', $this->selectedOrder);
+            $this->sender_department_id = old('sender_department_id', $this->sender_department_id);
+            $this->receiver_department_id = old('receiver_department_id', $this->receiver_department_id);
+            $this->openPlanForm(old('_plan_edit') ?: null);
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
     }
 
     public function deletePlanTask($id)
@@ -76,8 +111,10 @@ class PlanTaskTable extends Component
         $planTask = PlanTask::findOrFail($id);
         $planTask->delete();
 
-        // Отправить сообщение об успешном удалении
-        session()->flash('message', 'Запис успішно видалено.');
+        if ($this->editingPlanTask?->id === (int) $id) {
+            $this->editingPlanTask = null;
+            $this->planFormLoaded = false;
+        }
     }
 
     public function viewConfirm()

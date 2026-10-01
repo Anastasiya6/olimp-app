@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\DesignationMaterial;
 use App\Models\GroupMaterial;
 use App\Models\Material;
+use App\Models\TypeUnit;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,19 +17,21 @@ class MaterialSearch extends Component
 
     public $material_message;
 
-    public function viewConfirm($type)
-    {
-        if($type == 0){
-            $this->material_message = "Матеріал прив'язаний до деталі. Видалити неможливо";
+    public ?Material $editingMaterial = null;
 
-        }elseif($type == 1){
-            $this->material_message = 'Запис успішно видалено.';
-        }
-        $this->dispatch('open-modal',name:'viewLog');
+    public int $editFormVersion = 0;
+
+    public function editMaterial($id)
+    {
+        $this->editingMaterial = Material::findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('material-edit-open');
     }
 
     public function deleteMaterial($id)
     {
+        $this->material_message = '';
         $material = Material::findOrFail($id);
 
         $searchInDesignationMaterial = DesignationMaterial::where('material_id',$material->id)->first();
@@ -36,13 +39,14 @@ class MaterialSearch extends Component
         $searchInGroupMaterial = GroupMaterial::where('material_id',$material->id)->first();
 
         if(isset($searchInDesignationMaterial->id) || isset($searchInGroupMaterial->id)){
-            $this->viewConfirm(0);
-           // session()->flash('message', "Матеріал прив'язаний до деталі. Видалити неможливо");
+            $this->material_message = "Матеріал використовується у деталях або матеріалокомплектах. Видалити його неможливо.";
+            return false;
         }else{
             $material->delete();
-            $this->viewConfirm(1);
-            // Отправить сообщение об успешном удалении
-          //  session()->flash('message', 'Запис успішно видалено.');
+            if ($this->editingMaterial?->id === $material->id) {
+                $this->editingMaterial = null;
+            }
+            return true;
         }
 
     }
@@ -58,6 +62,7 @@ class MaterialSearch extends Component
     {
         return view('livewire.material-search',[
             'items' => $this->materials(),
+            'units' => TypeUnit::all(),
             'route' => 'materials'
         ]);
     }

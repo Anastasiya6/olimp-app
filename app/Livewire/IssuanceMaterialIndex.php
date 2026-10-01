@@ -18,6 +18,22 @@ class IssuanceMaterialIndex extends Component
 
     public $selectedItems = [];
 
+    public ?int $editingDocumentId = null;
+    public bool $documentFormLoaded = false;
+    public int $documentFormVersion = 0;
+
+    public function openDocument(?int $id = null)
+    {
+        if ($id !== null) {
+            MaterialIssuance::findOrFail($id);
+        }
+        $this->editingDocumentId = $id;
+        $this->documentFormLoaded = true;
+        $this->documentFormVersion++;
+        $this->dispatch('issuance-document-open');
+    }
+
+
     #[Session]
     public $designation_number;
 

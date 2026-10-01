@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\DesignationMaterial;
+use App\Models\Department;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,10 +15,35 @@ class DesignationMaterialSearch extends Component
 
     public $searchTermMaterial;
 
+    public ?DesignationMaterial $editingNorm = null;
+
+    public int $editFormVersion = 0;
+
+    public function mount()
+    {
+        if ((old('_norm_create') || old('_norm_edit')) && session()->has('errors')) {
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
+        if (old('_norm_edit')) {
+            $this->editingNorm = DesignationMaterial::with('designation', 'material')->find(old('_norm_edit'));
+        }
+    }
+
+    public function editNorm($id)
+    {
+        $this->editingNorm = DesignationMaterial::with('designation', 'material')->findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('norm-edit-open');
+    }
+
     public function deleteDesignationMaterial($id)
     {
         $designationMaterial = DesignationMaterial::findOrFail($id);
         $designationMaterial->delete();
+        if ($this->editingNorm?->id === $designationMaterial->id) {
+            $this->editingNorm = null;
+        }
 
         // Отправить сообщение об успешном удалении
         session()->flash('message', 'Запис успішно видалено.');
@@ -54,6 +80,8 @@ class DesignationMaterialSearch extends Component
     {
         return view('livewire.designation-material-search',[
             'items' => $this->designationMaterials(),
+            'departments' => Department::all(),
+            'default_department' => Department::DEFAULT_DEPARTMENT,
             'route' => 'designation-materials']);
     }
 }

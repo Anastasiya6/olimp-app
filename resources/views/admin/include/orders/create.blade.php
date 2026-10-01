@@ -1,20 +1,11 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Створити запис') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route($route.'.store') }}">
+<x-catalog.page title="Додати розузловання" width="max-w-5xl">
+    <x-catalog.panel>
+<form class="catalog-form" method="POST" action="{{ route($route.'.store') }}">
                         @csrf
                         <div class="mb-6">
                             <label class="block">
-                                <span class="text-gray-700">Виберіть замволення</span>
-                                <select name="order_name_id" class="block w-full mt-1 rounded-md">
+                                <span class="text-gray-700">Виберіть замовлення</span>
+                                <select name="order_name_id" class="catalog-input">
                                     @foreach($order_names as $order_name)
                                         <option value="{{ $order_name->id }}">
                                             {{ $order_name->name }}
@@ -30,7 +21,7 @@
                             <label class="block">
                                 <span class="text-gray-700">Деталь</span>
                                 <input type="text" name="designation"
-                                       class="block w-full mt-1 rounded-md"
+                                       class="catalog-input"
                                        placeholder="" value="{{old('code')}}" />
                             </label>
                             @error('designation')
@@ -41,7 +32,7 @@
                             <label class="block">
                                 <span class="text-gray-700">Кількість</span>
                                 <input type="text" name="quantity"
-                                       class="block w-full mt-1 rounded-md"
+                                       class="catalog-input"
                                        placeholder="" value="{{old('quantity')}}" />
                             </label>
                             @error('quantity')
@@ -49,13 +40,10 @@
                             @enderror
                         </div>
 
-                        <x-primary-button type="submit">
+                        <x-catalog.button variant="primary" type="submit">
                             Зберегти
-                        </x-primary-button>
+                        </x-catalog.button>
 
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+    </x-catalog.panel>
+</x-catalog.page>

@@ -14,6 +14,38 @@ class DesignationSearch extends Component
 
     public $searchTermChto;
 
+    public ?Designation $editingDesignation = null;
+
+    public int $editFormVersion = 0;
+
+    public function mount()
+    {
+        if ((old('_designation_create') || old('_designation_edit')) && session()->has('errors')) {
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
+        if (old('_designation_edit')) {
+            $this->editingDesignation = Designation::where('type', 0)->find(old('_designation_edit'));
+        }
+    }
+
+    public function editDesignation($id)
+    {
+        $this->editingDesignation = Designation::where('type', 0)->findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('designation-edit-open');
+    }
+
+    public function updatedSearchTerm()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearchTermChto()
+    {
+        $this->resetPage();
+    }
+
     public function updateSearch()
     {
         $this->resetPage();

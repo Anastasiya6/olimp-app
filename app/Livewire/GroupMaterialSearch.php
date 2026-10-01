@@ -12,10 +12,40 @@ class GroupMaterialSearch extends Component
 
     public $searchTerm;
 
+    public ?GroupMaterial $editingGroupMaterial = null;
+
+    public int $editFormVersion = 0;
+
+    public function mount()
+    {
+        if ((old('_group_material_create') || old('_group_material_edit')) && session()->has('errors')) {
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
+        if (old('_group_material_edit')) {
+            $this->editingGroupMaterial = GroupMaterial::with('material', 'materialEntry')->find(old('_group_material_edit'));
+        }
+    }
+
+    public function editGroupMaterial($id)
+    {
+        $this->editingGroupMaterial = GroupMaterial::with('material', 'materialEntry')->findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('group-material-edit-open');
+    }
+
+    public function updatedSearchTerm()
+    {
+        $this->resetPage();
+    }
+
     public function deleteGroupMaterial($id)
     {
         $groupMaterial = GroupMaterial::findOrFail($id);
         $groupMaterial->delete();
+        if ($this->editingGroupMaterial?->id === $groupMaterial->id) {
+            $this->editingGroupMaterial = null;
+        }
 
         // Отправить сообщение об успешном удалении
         session()->flash('message', 'Запис успішно видалено.');
@@ -25,7 +55,7 @@ class GroupMaterialSearch extends Component
     {
         $searchTerm = '%' . trim($this->searchTerm) . '%';
 
-        return $items = GroupMaterial::whereHas('material', function ($query) use ($searchTerm) {
+        return GroupMaterial::whereHas('material', function ($query) use ($searchTerm) {
             $query->where('name', 'like', $searchTerm)
                 ->orderBy("name");
         })->with('material','materialEntry')

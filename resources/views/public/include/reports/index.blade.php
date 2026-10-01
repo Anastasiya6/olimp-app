@@ -1,13 +1,4 @@
 <x-welcome-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __($title) }}
-        </h2>
-    </x-slot>
-    <livewire:report-table/>
+    <x-slot name="header"><h1 class="text-xl font-bold text-[#174a47]">{{ $title }}</h1></x-slot>
+    <livewire:report-table />
 </x-welcome-layout>
-<style>
-    .underline-link {
-        text-decoration: underline;
-    }
-</style>

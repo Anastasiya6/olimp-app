@@ -14,9 +14,13 @@ class QuantityCalculator extends Component
 
     protected $listeners = ['valueGenerated' => 'updateQuantityTotal'];
 
-    public function mount($order_name_quantity)
+    public function mount($order_name_quantity, $restore_input = false)
     {
         $this->order_name_quantity = $order_name_quantity;
+        if ($restore_input) {
+            $this->quantity = old('quantity', '');
+            $this->quantity_total = old('quantity_total', '');
+        }
     }
 
     public function updateQuantityTotal($value)

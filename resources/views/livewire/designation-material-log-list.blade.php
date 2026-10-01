@@ -1,39 +1,41 @@
-<div>
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="py-4">
-                <input type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" placeholder="Пошук по номеру"/>
-            </div>
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white p-6">
+<div class="norm-history-page" x-data="{}" x-on:open-modal.window="if ($event.detail?.name === 'viewLog') $dispatch('open-modal', 'norm-history')">
+    <div>
+        <div>
+            <x-catalog.panel class="mb-4">
+                <input class="compact-search" type="text" wire:model.live="searchTerm" wire:keydown="updateSearch" aria-label="Пошук за номером вузла" placeholder="Пошук по номеру"/>
+            </x-catalog.panel>
+            <div class="overflow-hidden rounded-lg border border-[#a8c8c5] bg-white shadow-sm">
+                <div class="overflow-x-auto">
 
                     <div class="min-w-full align-middle">
-                        <table class="min-w-full border divide-y divide-gray-200">
+                        <table class="catalog-table">
                             <thead>
                             <tr>
-                                <th class="bg-gray-50 px-6 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата</span>
+                                <th scope="col">
+                                    Дата
                                 </th>
-                                <th class="bg-gray-50 px-6 py-3 text-center">
-                                    <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Номер вузла</span>
+                                <th scope="col">
+                                    Номер вузла
                                 </th>
+                                <th scope="col" class="history-actions">Дії</th>
                             </tr>
                             </thead>
 
-                            <tbody class="bg-white divide-y divide-gray-200 divide-solid">
+                            <tbody>
 
                             @foreach($items as $key=>$item)
-                                <tr class="bg-white">
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <strong>{{\Carbon\Carbon::parse($item->created_at)->format('d.m.Y H:i:s')}}</strong>
+                                <tr>
+                                    <td class="align-top">
+                                        {{\Carbon\Carbon::parse($item->created_at)->format('d.m.Y H:i:s')}}
                                     </td>
-                                    <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                        <strong>{!! $item->designation_number !!}</strong>
+                                    <td class="align-top">
+                                        {!! $item->designation_number !!}
                                     </td>
+                                    
                                     <td>
                                         <button wire:click="viewLog('{{$item->designation_id}}','{{$item->designation_number}}')" wire:key="{{ $item->designation_id }}"
-                                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
-                                            зміни по вузлу
+                                                class="catalog-button catalog-button-secondary">
+                                            Зміни по вузлу
                                         </button>
 
                                     </td>
@@ -42,52 +44,58 @@
                             @endforeach
                             </tbody>
                         </table>
-                        <div class="py-4">
-                            {{ $items->appends(request()->input())->links() }}
+                        <div class="border-t border-[#a8c8c5] px-4 py-4">
+                            {{ $items->appends(request()->input())->links('livewire.pagination.material-stocks') }}
                         </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <x-modal-window name="viewLog" title="{{$designation_number}}">
-        <x-slot:body>
+    <x-modal name="norm-history" maxWidth="7xl" focusable>
+        <div role="dialog" aria-modal="true" aria-labelledby="norm-history-title">
+            <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">
+                <h3 id="norm-history-title" class="text-xl font-bold text-[#174a47]">Зміни по вузлу {{ $designation_number }}</h3>
+                <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити зміни" class="rounded-md p-2 text-[#245b53] hover:bg-white">✕</button>
+            </div>
+            <div class="overflow-x-auto p-5">
             <div class="min-w-full align-middle">
-                <table class="min-w-full border divide-y divide-gray-200">
+                <table class="catalog-table">
                     <thead>
                     <tr>
-                        <th class="bg-gray-50 px-6 py-3 text-center">
-                            <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Дата</span>
+                        <th scope="col">
+                            Дата
                         </th>
-                        <th class="bg-gray-50 px-6 py-3 text-center">
-                            <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Матеріал</span>
+                        <th scope="col">
+                            Матеріал
                         </th>
-                        <th class="bg-gray-50 px-6 py-3 text-center">
-                            <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Норма</span>
+                        <th scope="col">
+                            Норма
                         </th>
-                        <th class="bg-gray-50 px-6 py-3 text-center">
-                            <span class="text-xs font-medium uppercase leading-4 tracking-wider text-gray-500">Зміни</span>
+                        <th scope="col">
+                            Зміни
                         </th>
 
                     </tr>
                     </thead>
 
-                    <tbody class="bg-white divide-y divide-gray-200 divide-solid">
+                    <tbody>
                     @if($selectedLog)
                         @foreach($selectedLog as $log)
-                            <tr class="bg-white">
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{{\Carbon\Carbon::parse($log['created_at'])->format('d.m.Y H:i:s')}}</strong>
+                            <tr>
+                                <td class="align-top">
+                                    {{\Carbon\Carbon::parse($log['created_at'])->format('d.m.Y H:i:s')}}
                                 </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{!! $log['material'] !!}</strong>
+                                <td class="align-top">
+                                    {!! $log['material'] !!}
                                 </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{!! $log['norm'] !!}</strong>
+                                <td class="align-top">
+                                    {!! $log['norm'] !!}
                                 </td>
-                                <td class="px-6 py-4 leading-5 text-gray-900 whitespace-no-wrap text-center">
-                                    <strong>{!! $log['message'] !!}</strong>
+                                <td class="align-top">
+                                    {!! $log['message'] !!}
                                 </td>
                             </tr>
                         @endforeach
@@ -95,7 +103,9 @@
                     </tbody>
                 </table>
             </div>
-        </x-slot:body>
-    </x-modal-window>
+            </div>
+            <div class="flex justify-end border-t border-[#d4e5e0] px-5 py-4"><x-catalog.button x-on:click="$dispatch('close')">Закрити</x-catalog.button></div>
+        </div>
+    </x-modal>
 
 </div>

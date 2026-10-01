@@ -1,80 +1,46 @@
 <div>
-
-    {{-- HEADER --}}
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            Пошук деталі в плані (по вибраному замовленню)
-        </h2>
+    <x-slot name="header" compact="true">
+        <h2 class="text-xl font-bold leading-tight text-[#174a47]">Пошук деталі в плані</h2>
     </x-slot>
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+    <div class="bg-[#f2f7f6] py-3 sm:py-4">
+        <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+            <x-catalog.panel class="mb-4">
                 <form wire:submit="search">
-                    <div class="gap-4 sm:flex py-6">
-
-                        <input
-                            class="block rounded-md"
-                            type="text"
-                            wire:model="designation_number"
-                            placeholder="Вузол"
-                        />
-
-                        <label>Замовлення</label>
-
-                        <select
-                            wire:model="selectedOrder"
-                            class="block rounded-md"
-                            style="width:150px"
-                        >
-                            @foreach($order_names as $order_name)
-                                <option value="{{ $order_name->id }}">
-                                    {{ $order_name->name }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        <button
-                            type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded"
-                        >
-                            Шукати
-                        </button>
-
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <div class="w-full sm:w-56">
+                            <label for="plan-designation-search" class="sr-only">Позначення деталі або вузла</label>
+                            <input id="plan-designation-search" type="text" wire:model="designation_number"
+                                class="compact-search" placeholder="Позначення деталі або вузла" />
+                        </div>
+                        <div class="w-full sm:w-48">
+                            <label for="plan-order-search" class="sr-only">Замовлення</label>
+                            <select id="plan-order-search" wire:model="selectedOrder" aria-label="Замовлення"
+                                class="h-9 w-full rounded-md border-slate-300 py-1.5 text-sm focus:border-teal-600 focus:ring-teal-600">
+                                @foreach($order_names as $order_name)
+                                    <option value="{{ $order_name->id }}">{{ $order_name->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <x-catalog.button type="submit" variant="primary" class="catalog-add-button self-start">Шукати</x-catalog.button>
                     </div>
                 </form>
-                {{-- ТАБЛИЦЯ --}}
-                <table class="w-full border">
-                    <thead>
-                    <tr class="bg-gray-100">
-                        <th class="p-2 border">Деталь або вузол в плані</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @forelse($results as $item)
-                        <tr>
-                            <td class="border p-2">
-                                {{ $item->designation->designation }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center p-3">
-                                Нічого не знайдено
-                            </td>
-                        </tr>
-                    @endforelse
-                    </tbody>
-                </table>
-
-                {{-- PAGINATION --}}
-{{--                <div class="mt-4">--}}
-{{--                    {{ $items->links() }}--}}
-{{--                </div>--}}
-
+            </x-catalog.panel>
+            <div class="overflow-hidden rounded-lg border border-[#a8c8c5] bg-white shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="catalog-table">
+                        <thead>
+                            <tr><th scope="col">Деталь або вузол в плані</th></tr>
+                        </thead>
+                        <tbody>
+                            @forelse($results as $item)
+                                <tr><td>{{ $item->designation->designation }}</td></tr>
+                            @empty
+                                <tr><td class="py-8 text-center text-base font-normal text-slate-600">Нічого не знайдено</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
         </div>
     </div>
 </div>
-

@@ -12,7 +12,7 @@
     {{-- Gray Background --}}
     <div x-on:click="show = false" class="fixed inset-0 bg-gray-300 opacity-40"></div>
     {{-- Modal Body --}}
-    <div class="bg-white rounded m-auto fixed inset-0 max-w-2xl" style="max-width:500px;max-height:100px">
+    <div class="bg-white rounded m-auto fixed inset-0 max-w-2xl" style="max-width:500px;max-height:500px">
         @if (isset($title))
             <div class="px-4 py-3 flex items-center justify-between border-b border-gray-300">
                 <div class="text-xl text-gray-800">{{ $title }}</div>

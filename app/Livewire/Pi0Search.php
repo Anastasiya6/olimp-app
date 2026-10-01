@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Designation;
+use App\Models\TypeUnit;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -17,6 +18,38 @@ class Pi0Search extends Component
     public $sortField;
 
     public $sortAsc = false;
+
+    public ?Designation $editingPi0 = null;
+
+    public int $editFormVersion = 0;
+
+    public function mount()
+    {
+        if ((old('_pi0_create') || old('_pi0_edit')) && session()->has('errors')) {
+            $this->setErrorBag(session('errors')->getBag('default'));
+        }
+        if (old('_pi0_edit')) {
+            $this->editingPi0 = Designation::where('type', 1)->find(old('_pi0_edit'));
+        }
+    }
+
+    public function editPi0($id)
+    {
+        $this->editingPi0 = Designation::where('type', 1)->findOrFail($id);
+        $this->editFormVersion++;
+        $this->resetValidation();
+        $this->dispatch('pi0-edit-open');
+    }
+
+    public function updatedSearchTerm()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearchTermChto()
+    {
+        $this->resetPage();
+    }
 
     protected $queryString = ['searchTerm','searchTermChto','sortAsc','sortField'];
 
@@ -78,6 +111,7 @@ class Pi0Search extends Component
         }
 
         $route = 'pi0s';
-        return view('livewire.pi0-search',compact('items','route'));
+        $units = TypeUnit::all();
+        return view('livewire.pi0-search',compact('items','route', 'units'));
     }
 }

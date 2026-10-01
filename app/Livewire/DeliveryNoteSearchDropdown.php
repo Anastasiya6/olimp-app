@@ -15,8 +15,12 @@ class DeliveryNoteSearchDropdown extends Component
 
     public $selectedName = '';
 
-    public function mount()
+    public function mount($restore_input = false)
     {
+        if ($restore_input) {
+            $this->selectedDesignation = old('designation', '');
+            $this->search = $this->selectedDesignation;
+        }
         $this->endDate =  \Carbon\Carbon::now()->format('Y-m-d');
     }
 

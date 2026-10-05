@@ -41,6 +41,8 @@ class IssuanceMaterialIndex extends Component
 
     public $filterPlanDesignation = '';
 
+    public $filterDocumentNumber = '';
+
     public $filterOrder = '';
 
     public function updatedFilterPlanDesignation()
@@ -53,9 +55,14 @@ class IssuanceMaterialIndex extends Component
         $this->resetSearchPage();
     }
 
+    public function updatedFilterDocumentNumber()
+    {
+        $this->resetSearchPage();
+    }
+
     public function resetFilters()
     {
-        $this->reset('filterPlanDesignation', 'filterOrder');
+        $this->reset('filterPlanDesignation', 'filterDocumentNumber', 'filterOrder');
         $this->resetSearchPage();
     }
 
@@ -143,6 +150,9 @@ class IssuanceMaterialIndex extends Component
                 ->whereHas('items')
                 ->when($this->filterOrder !== '', function ($query) {
                     $query->where('order_name_id', $this->filterOrder);
+                })
+                ->when(trim($this->filterDocumentNumber) !== '', function ($query) {
+                    $query->where('id', (int) trim($this->filterDocumentNumber));
                 })
                 ->when(trim($this->filterPlanDesignation) !== '', function ($query) {
                     $search = '%'.trim($this->filterPlanDesignation).'%';

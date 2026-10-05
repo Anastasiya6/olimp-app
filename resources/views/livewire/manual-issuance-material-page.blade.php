@@ -2,7 +2,7 @@
     @unless($inModal)
     <x-slot name="header" compact="true">
         <h2 class="text-xl font-bold leading-tight text-[#174a47]">
-            Видача матеріалів без замовлення
+            Видача матеріалів без норм
         </h2>
     </x-slot>
     @endunless
@@ -13,6 +13,19 @@
             {{-- Дані документа --}}
             <div class="rounded-lg border border-[#bfd8d1] bg-white p-4 shadow-sm">
                 <div class="grid grid-cols-12 gap-4">
+
+                    <div class="col-span-12">
+                        <label class="block">
+                            <span class="text-[#245b53] font-medium">Замовлення</span>
+                            <select wire:model="order_name_id" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
+                                <option value="">Оберіть замовлення</option>
+                                @foreach($order_names as $order)
+                                    <option value="{{ $order->id }}">{{ $order->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        @error('order_name_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    </div>
 
                     <div class="col-span-12 sm:col-span-6">
                         <label class="block">

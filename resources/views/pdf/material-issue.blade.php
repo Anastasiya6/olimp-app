@@ -5,9 +5,10 @@
     <title>Звіт</title>
 
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 6px; }
+        @page { margin: 24px; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 8px; }
+        table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 4px; overflow-wrap: anywhere; }
         th { background: #f3f3f3; }
     </style>
 </head>
@@ -16,7 +17,21 @@
     Звіт по вузлу {{ $designation }}
     Замовлення {{$order}}
 </h2>
+<p style="text-align:center;">{{ ($postedOnly ?? false) ? 'Лише проведені документи.' : 'Усі документи.' }}</p>
 <table>
+    <colgroup>
+        <col style="width: 10%">
+        <col style="width: 12%">
+        <col style="width: 15%">
+        <col style="width: 11%">
+        <col style="width: 4%">
+        <col style="width: 8%">
+        <col style="width: 8%">
+        <col style="width: 7%">
+        <col style="width: 7%">
+        <col style="width: 9%">
+        <col style="width: 9%">
+    </colgroup>
     <thead>
     <tr>
         <th>Деталь</th>

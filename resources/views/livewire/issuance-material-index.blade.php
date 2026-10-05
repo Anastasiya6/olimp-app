@@ -11,13 +11,18 @@
 
             <div class="space-y-4">
                 <x-catalog.panel>
-                    <div class="flex flex-wrap items-end gap-3">
-                        <div class="w-full sm:w-56">
+                    <div class="flex flex-wrap items-end gap-2 lg:flex-nowrap">
+                        <div class="w-full sm:w-72">
                             <label for="issuance-plan-designation" class="compact-search-label">Деталь з плану або отримувач</label>
                             <input id="issuance-plan-designation" type="search" wire:model.live.debounce.350ms="filterPlanDesignation"
-                                placeholder="Позначення деталі або прізвище" class="compact-search" />
+                                placeholder="Позначення деталі або прізвище" class="compact-search issuance-designation-search" />
                         </div>
-                        <div class="w-full sm:w-48">
+                        <div class="w-full sm:w-44">
+                            <label for="issuance-filter-document-number" class="compact-search-label">№ документа</label>
+                            <input id="issuance-filter-document-number" type="search" inputmode="numeric" wire:model.live.debounce.350ms="filterDocumentNumber"
+                                placeholder="Номер документа" class="compact-search" />
+                        </div>
+                        <div class="w-full sm:w-40">
                             <label for="issuance-filter-order" class="sr-only">Замовлення</label>
                             <select id="issuance-filter-order" wire:model.live="filterOrder" class="h-9 w-full rounded-md border-slate-300 py-1.5 text-sm focus:border-teal-600 focus:ring-teal-600">
                                 <option value="">Усі замовлення</option>
@@ -46,17 +51,23 @@
                     </div>
                 </x-modal>
                 <x-modal name="issuance-reports" maxWidth="2xl" focusable>
-                    <div class="p-5 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="issuance-reports-title">
-                        <div class="mb-5 flex items-center justify-between gap-3 border-b border-[#d4e5e0] pb-4">
+                    <div x-data="{ postedOnly: false }" role="dialog" aria-modal="true" aria-labelledby="issuance-reports-title">
+                        <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">
                             <h3 id="issuance-reports-title" class="text-xl font-bold text-[#174a47]">Звіти видачі матеріалів</h3>
                             <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити звіти"
-                                class="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-600">
-                                <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                class="rounded-md p-2 text-[#245b53] hover:bg-white">
+                                <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
+                        <div class="p-5 sm:p-6">
+                        <label class="mb-5 flex items-center gap-2 rounded-md border border-[#bfd8d1] bg-[#f2f7f6] px-3 py-2 text-sm font-medium text-[#245b53]">
+                            <input type="checkbox" x-model="postedOnly" class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
+                            Лише проведені документи
+                        </label>
                         <form method="GET" action="{{ route('material.issue.generate') }}" target="_blank" rel="noopener">
+                        <input type="hidden" name="posted_only" value="1" x-bind:disabled="!postedOnly">
                         <div class="grid grid-cols-1 items-end gap-3 sm:grid-cols-2">
                             <div>
                                 <label for="issuance-report-designation" class="block text-sm text-gray-700">Деталь з плану</label>
@@ -76,11 +87,11 @@
                         </div>
                             <div class="mt-4 flex flex-wrap gap-2">
                                 <button type="submit" name="report" value="detail"
-                                    class="catalog-button catalog-button-secondary">
+                                    class="catalog-button catalog-report-action-button">
                                     Звіт по деталі та замовленню
                                 </button>
                                 <button type="submit" name="report" value="order"
-                                    class="catalog-button catalog-button-secondary">
+                                    class="catalog-button catalog-report-action-button">
                                     Звіт по замовленню
                                 </button>
                             </div>
@@ -89,6 +100,7 @@
                             <label for="issuance-report-recipient" class="block text-sm text-gray-700">Отримувач матеріалів</label>
                             <form method="GET" action="{{ route('material.issue.recipient.generate') }}" target="_blank" rel="noopener"
                                 class="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center">
+                                <input type="hidden" name="posted_only" value="1" x-bind:disabled="!postedOnly">
                                 <select id="issuance-report-recipient" name="recipient" required
                                     class="block w-full min-w-0 rounded-md border-gray-300 sm:flex-1">
                                     <option value="">Оберіть отримувача</option>
@@ -96,7 +108,7 @@
                                         <option value="{{ $recipient->id }}">{{ $recipient->name }}</option>
                                     @endforeach
                                 </select>
-                                <button type="submit" class="shrink-0 catalog-button catalog-button-secondary">
+                                <button type="submit" class="shrink-0 catalog-button catalog-report-action-button">
                                     Звіт по отримувачу
                                 </button>
                             </form>
@@ -107,6 +119,7 @@
                                 class="catalog-button catalog-button-secondary">
                                 Закрити
                             </button>
+                        </div>
                         </div>
                     </div>
                 </x-modal>

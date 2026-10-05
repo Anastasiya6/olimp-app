@@ -67,7 +67,11 @@ class MaterialIssueController extends Controller
         $order = OrderName::find($order_name_id);
 
         if($designation && $order){
-            $materialIssuance = MaterialIssuance::with( 'items.material', 'items.importMaterial')->where('order_name_id', $order_name_id)->where('plan_task_designation_id', $designation->id)->get();
+            $materialIssuance = MaterialIssuance::with('items.material', 'items.importMaterial')
+                ->where('order_name_id', $order_name_id)
+                ->where('plan_task_designation_id', $designation->id)
+                ->when(request()->boolean('posted_only'), fn ($query) => $query->where('status', 'posted'))
+                ->get();
             $result = [
                 'material_id' => [],
                 'designation_id' => [],
@@ -110,8 +114,9 @@ class MaterialIssueController extends Controller
                 'result' => $result,
                 'designation' => $designation->designation,
                 'order' => $order->name,
-                'order_quantity' => $order->quantity
-            ]);
+                'order_quantity' => $order->quantity,
+                'postedOnly' => request()->boolean('posted_only'),
+            ])->setPaper('a4', 'landscape');
 
             return $pdf->stream("material-issue.pdf");
         }

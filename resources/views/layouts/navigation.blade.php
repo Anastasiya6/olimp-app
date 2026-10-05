@@ -20,7 +20,7 @@
             ['label' => 'Матеріали', 'route' => 'materials.index'],
             ['label' => 'Матеріали з 1С', 'route' => 'import-material-stocks.index'],
             ['label' => 'Видача матеріалів', 'route' => 'issuance-materials.index'],
-            ['label' => 'Видача матеріалів без замовлення', 'route' => 'manual-issuance-materials.index'],
+            ['label' => 'Видача матеріалів без норм', 'route' => 'manual-issuance-materials.index'],
             ['label' => 'Пошук деталі в плані', 'route' => 'search-designation-in-plan.index'],
         ]],
         ['label' => 'Здаточні', 'items' => [

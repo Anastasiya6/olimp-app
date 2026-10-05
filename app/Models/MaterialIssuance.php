@@ -60,7 +60,6 @@ class MaterialIssuance extends Model
     public function scopeManual($query)
     {
         return $query
-            ->whereNull('order_name_id')
             ->whereNull('designation_id');
     }
 

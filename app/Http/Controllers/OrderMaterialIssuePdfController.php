@@ -16,7 +16,7 @@ class OrderMaterialIssuePdfController extends Controller
             ->whereIn('material_issuance_id', MaterialIssuance::query()
                 ->select('id')
                 ->where('order_name_id', $order->id)
-                //->where('status', 'posted')
+                ->when(request()->boolean('posted_only'), fn ($query) => $query->where('status', 'posted'))
                 )
             ->orderBy('material_issuance_id')
             ->get();
@@ -25,6 +25,7 @@ class OrderMaterialIssuePdfController extends Controller
             'order' => $order,
             'rows' => $service->summarize($items),
             'generatedAt' => now(),
+            'postedOnly' => request()->boolean('posted_only'),
         ])->setPaper('a4', 'landscape')->stream('order-material-issue-'.$order->id.'.pdf');
     }
 }

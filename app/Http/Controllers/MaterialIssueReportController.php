@@ -12,18 +12,23 @@ class MaterialIssueReportController extends Controller
         $data = $request->validate([
             'order_id' => ['required', 'integer', 'min:1'],
             'report' => ['required', 'in:detail,order'],
+            'posted_only' => ['sometimes', 'boolean'],
             'designation_number' => ['required_if:report,detail', 'nullable', 'string', 'max:255'],
         ], [
             'designation_number.required_if' => 'Вкажіть позначення деталі для звіту по деталі та замовленню.',
         ]);
 
         if ($data['report'] === 'order') {
-            return redirect()->route('material.issue.order.pdf', ['order' => $data['order_id']]);
+            return redirect()->route('material.issue.order.pdf', [
+                'order' => $data['order_id'],
+                'posted_only' => $data['posted_only'] ?? false,
+            ]);
         }
 
         return redirect()->route('material.issue.pdf', [
             'order_name_id' => $data['order_id'],
             'designation_number' => $data['designation_number'],
+            'posted_only' => $data['posted_only'] ?? false,
         ]);
     }
 }

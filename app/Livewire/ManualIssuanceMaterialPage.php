@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
+use App\Models\OrderName;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -21,12 +22,22 @@ class ManualIssuanceMaterialPage extends Component
 
     public $issued_by_user_id;
 
+    public $order_name_id;
+
     public function mount()
     {
         $this->selectedMaterialId = null;
         $this->selectedMaterial = null;
         $this->quantity = 0;
         $this->users = User::orderBy('name')->get();
+
+        $lastOrderId = MaterialIssuance::manual()
+            ->whereNull('designation_id')
+            ->latest('id')
+            ->value('order_name_id');
+        if ($lastOrderId && OrderName::where('is_order', 1)->whereKey($lastOrderId)->exists()) {
+            $this->order_name_id = $lastOrderId;
+        }
     }
 
     #[On('materialSelected')]
@@ -40,6 +51,7 @@ class ManualIssuanceMaterialPage extends Component
         $this->validate([
             'received_by_user_id' => 'required|exists:users,id',
             'issued_by_user_id' => 'required|exists:users,id',
+            'order_name_id' => 'required|exists:order_names,id',
             'selectedMaterialId' => 'required|exists:import_materials,id',
             'quantity' => 'required|numeric|min:0.01',
         ]);
@@ -49,6 +61,7 @@ class ManualIssuanceMaterialPage extends Component
             $issuance = MaterialIssuance::create([
                 'received_by_user_id' => $this->received_by_user_id,
                 'issued_by_user_id' => $this->issued_by_user_id,
+                'order_name_id' => $this->order_name_id ?: null,
                 'quantity' => 0
             ]);
 
@@ -66,7 +79,7 @@ class ManualIssuanceMaterialPage extends Component
     public function render()
     {
         return view('livewire.manual-issuance-material-page',[
-            //'materials' => $this->all_materials
+            'order_names' => OrderName::where('is_order', 1)->orderBy('name')->get(),
         ]);
     }
 }

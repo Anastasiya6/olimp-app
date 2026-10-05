@@ -255,6 +255,9 @@ label:has(> input.compact-search) > span,
     font-size: 14px;
     overflow-wrap: anywhere;
 }
+.issuance-materials-page input.issuance-designation-search {
+    max-width: none;
+}
 .issuance-materials-page .catalog-table th {
     padding-left: 8px;
     padding-right: 8px;
@@ -448,6 +451,19 @@ label:has(> input.compact-search) > span,
     background-color: #cee6e2;
 }
 .catalog-button.catalog-reports-button:focus {
+    --tw-ring-color: #0d9488;
+}
+.catalog-button.catalog-report-action-button {
+    border-color: #a8c8c5;
+    background-color: #e3f1ee;
+    color: #245b53;
+    box-shadow: none;
+}
+.catalog-button.catalog-report-action-button:hover {
+    border-color: #8bb5a9;
+    background-color: #cee6e2;
+}
+.catalog-button.catalog-report-action-button:focus {
     --tw-ring-color: #0d9488;
 }
 

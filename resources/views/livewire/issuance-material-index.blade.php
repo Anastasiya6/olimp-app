@@ -1,4 +1,4 @@
-<div class="issuance-materials-page" x-data="{ pendingDocument: null, posting: false, postError: '' }" x-on:issuance-document-open.window="$dispatch('open-modal', 'issuance-document')">
+<div class="issuance-materials-page" x-data="{ pendingDocument: null, posting: false, postError: '', deleting: false, deleteError: '' }" x-on:issuance-document-open.window="$dispatch('open-modal', 'issuance-document')">
 
     {{-- HEADER --}}
     <x-slot name="header" compact="true">
@@ -191,6 +191,17 @@
                         </div>
                     </div>
                 </x-modal>
+                <x-modal name="confirm-issuance-delete" maxWidth="md" focusable>
+                    <div class="p-6" role="dialog" aria-modal="true" aria-labelledby="confirm-issuance-delete-title">
+                        <h3 id="confirm-issuance-delete-title" class="text-xl font-bold text-[#174a47]">Видалити документ № <span x-text="pendingDocument"></span>?</h3>
+                        <p class="mt-3 text-sm leading-relaxed text-gray-600">Документ буде видалено. Якщо документ проведений, матеріали повернуться на склад.</p>
+                        <p x-show="deleteError" x-text="deleteError" role="alert" class="mt-3 text-sm text-red-600"></p>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button" x-on:click="$dispatch('close')" :disabled="deleting" class="catalog-button catalog-button-secondary disabled:opacity-50">Скасувати</button>
+                            <button type="button" :disabled="deleting || !pendingDocument" x-on:click="deleting = true; deleteError = ''; try { await $wire.deleteDocument(pendingDocument); $dispatch('close-modal', 'confirm-issuance-delete'); } catch (error) { deleteError = 'Не вдалося видалити документ. Оновіть сторінку та перевірте його стан.'; } finally { deleting = false; }" class="catalog-button catalog-button-danger disabled:cursor-wait"><span x-text="deleting ? 'Видалення…' : 'Видалити документ'"></span></button>
+                        </div>
+                    </div>
+                </x-modal>
                 <a
                     href="{{ route('issuance-materials.bulk-pdf', [
                         'ids' => implode(',', $selectedItems)
@@ -216,6 +227,7 @@
                         <th scope="col">Деталі</th>
                         <th scope="col">Дії</th>
                         <th scope="col">Проведення</th>
+                        <th scope="col">Видалення</th>
                         <th scope="col">Звіт</th>
                     </tr>
                     </thead>
@@ -265,9 +277,12 @@
                                         x-on:click="pendingDocument = {{ $item->id }}; postError = ''; $dispatch('open-modal', 'confirm-issuance-unpost')"
                                         class="catalog-button catalog-button-danger"
                                     >
-                                        Відмінити
+                                        Скасувати
                                     </button>
                                 @endif
+                            </td>
+                            <td>
+                                <button type="button" :disabled="deleting" x-on:click="pendingDocument = {{ $item->id }}; deleteError = ''; $dispatch('open-modal', 'confirm-issuance-delete')" class="catalog-button catalog-button-danger">Видалити</button>
                             </td>
                             <td>
                                 <a
@@ -281,7 +296,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="11" class="p-4 text-center">
+                            <td colspan="12" class="p-4 text-center">
                                 @if($filterOrder !== '' || trim($filterPlanDesignation) !== '')
                                     За вказаними умовами документів не знайдено.
                                 @else

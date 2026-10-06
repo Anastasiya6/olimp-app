@@ -246,7 +246,7 @@
                             <th scope="col">Норма</th>
                             <th scope="col">Множник</th>
                             <th scope="col"></th>
-                            <th scope="col">Дії</th>
+                            <th scope="col">Проведення</th>
                         </tr>
                         </thead>
 

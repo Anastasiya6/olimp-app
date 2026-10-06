@@ -9,8 +9,7 @@ class IssuanceMaterialPdfController extends Controller
 {
     public function show($id)
     {
-        $document = MaterialIssuance::with( 'items.material',
-            'items.importMaterial')->findOrFail($id);
+        $document = MaterialIssuance::with('items.material', 'items.importMaterial')->findOrFail($id);
 
         $pdf = Pdf::loadView('pdf.issuance-material', [
             'document' => $document
@@ -21,8 +20,7 @@ class IssuanceMaterialPdfController extends Controller
 
     public function manualShow($id)
     {
-        $document = MaterialIssuance::with( 'items.material',
-            'items.importMaterial')->findOrFail($id);
+        $document = MaterialIssuance::with('items.material', 'items.importMaterial.unit')->findOrFail($id);
 
         $pdf = Pdf::loadView('pdf.manual-issuance-material', [
             'document' => $document

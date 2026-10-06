@@ -134,6 +134,29 @@ class IssuanceMaterialIndex extends Component
         });
     }
 
+    public function deleteDocument(int $id): void
+    {
+        DB::transaction(function () use ($id) {
+            $document = MaterialIssuance::byDesignation()->lockForUpdate()->findOrFail($id);
+
+            if ($document->status === 'posted') {
+                $items = MaterialIssuanceItem::where('material_issuance_id', $document->id)->get();
+
+                foreach ($items as $item) {
+                    ImportMaterialStock::create([
+                        'import_material_id' => $item->import_material_id,
+                        'amount' => $item->quantity,
+                        'type' => 'stock_in',
+                        'document_number' => $document->id,
+                    ]);
+                }
+            }
+
+            $document->update(['status' => 'draft']);
+            $document->delete();
+        });
+    }
+
     public function render()
     {
         $order_names = OrderName::where('is_order', 1)->orderBy('name')->get();

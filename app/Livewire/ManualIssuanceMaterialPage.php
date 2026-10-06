@@ -4,19 +4,20 @@ namespace App\Livewire;
 
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
+use App\Models\ImportMaterial;
 use App\Models\OrderName;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Livewire\Attributes\On;
 
 class ManualIssuanceMaterialPage extends Component
 {
     public bool $inModal = false;
 
-    public $selectedMaterialId = null;
-    public $selectedMaterial = null;
-    public $quantity = 0;
+    public string $materialSearch = '';
+    public array $materialSearchResults = [];
+    public array $issuanceItems = [];
+    public string $materialSearchMessage = '';
     public $users = [];
     public $received_by_user_id;
 
@@ -26,9 +27,6 @@ class ManualIssuanceMaterialPage extends Component
 
     public function mount()
     {
-        $this->selectedMaterialId = null;
-        $this->selectedMaterial = null;
-        $this->quantity = 0;
         $this->users = User::orderBy('name')->get();
 
         $lastOrderId = MaterialIssuance::manual()
@@ -40,10 +38,58 @@ class ManualIssuanceMaterialPage extends Component
         }
     }
 
-    #[On('materialSelected')]
-    public function materialSelected($id)
+    public function updatedMaterialSearch(): void
     {
-        $this->selectedMaterialId = $id;
+        $search = trim($this->materialSearch);
+        $this->materialSearchMessage = '';
+
+        if (mb_strlen($search) < 2) {
+            $this->materialSearchResults = [];
+            return;
+        }
+
+        $this->materialSearchResults = ImportMaterial::withSum('stocks', 'amount')
+            ->where('name', 'like', '%'.$search.'%')
+            ->orderBy('name')
+            ->limit(50)
+            ->get()
+            ->map(fn (ImportMaterial $material) => [
+                'id' => $material->id,
+                'name' => $material->name,
+                'article' => $material->article,
+                'balance' => $material->stocks_sum_amount ?? 0,
+            ])
+            ->all();
+    }
+
+    public function addMaterial(int $id): void
+    {
+        $material = ImportMaterial::withSum('stocks', 'amount')->findOrFail($id);
+
+        if (collect($this->issuanceItems)->contains(fn ($item) => (int) $item['import_material_id'] === $material->id)) {
+            $this->materialSearchMessage = 'Цей матеріал уже доданий до документа.';
+            $this->materialSearch = '';
+            $this->materialSearchResults = [];
+            return;
+        }
+
+        $this->issuanceItems[] = [
+            'import_material_id' => $material->id,
+            'name' => $material->name,
+            'article' => $material->article,
+            'balance' => $material->stocks_sum_amount ?? 0,
+            'quantity' => '',
+        ];
+        $this->materialSearch = '';
+        $this->materialSearchResults = [];
+        $this->materialSearchMessage = '';
+        $this->resetValidation('issuanceItems');
+    }
+
+    public function removeMaterial(int $index): void
+    {
+        unset($this->issuanceItems[$index]);
+        $this->issuanceItems = array_values($this->issuanceItems);
     }
 
     public function save()
@@ -52,8 +98,9 @@ class ManualIssuanceMaterialPage extends Component
             'received_by_user_id' => 'required|exists:users,id',
             'issued_by_user_id' => 'required|exists:users,id',
             'order_name_id' => 'required|exists:order_names,id',
-            'selectedMaterialId' => 'required|exists:import_materials,id',
-            'quantity' => 'required|numeric|min:0.01',
+            'issuanceItems' => 'required|array|min:1',
+            'issuanceItems.*.import_material_id' => 'required|distinct|exists:import_materials,id',
+            'issuanceItems.*.quantity' => 'required|numeric|min:0.01',
         ]);
 
         DB::transaction(function () {
@@ -65,11 +112,13 @@ class ManualIssuanceMaterialPage extends Component
                 'quantity' => 0
             ]);
 
-            MaterialIssuanceItem::create([
-                'material_issuance_id' => $issuance->id,
-                'import_material_id' => $this->selectedMaterialId,
-                'quantity' => $this->quantity,
-            ]);
+            foreach ($this->issuanceItems as $item) {
+                MaterialIssuanceItem::create([
+                    'material_issuance_id' => $issuance->id,
+                    'import_material_id' => $item['import_material_id'],
+                    'quantity' => $item['quantity'],
+                ]);
+            }
 
         });
 

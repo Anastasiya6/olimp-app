@@ -12,11 +12,24 @@ class OrderMaterialIssuePdfController extends Controller
 {
     public function __invoke(OrderName $order, OrderMaterialIssueService $service)
     {
+        $dates = request()->validate([
+            'date_from' => ['nullable', 'date_format:Y-m-d'],
+            'date_to' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+        $dateFrom = $dates['date_from'] ?? null;
+        $dateTo = $dates['date_to'] ?? null;
+
+        if ($dateFrom && $dateTo && $dateTo < $dateFrom) {
+            abort(422, 'Кінцева дата має бути не раніше початкової.');
+        }
+
         $items = MaterialIssuanceItem::with('importMaterial.unit')
             ->whereIn('material_issuance_id', MaterialIssuance::query()
                 ->select('id')
                 ->where('order_name_id', $order->id)
                 ->when(request()->boolean('posted_only'), fn ($query) => $query->where('status', 'posted'))
+                ->when($dateFrom, fn ($query) => $query->whereDate('created_at', '>=', $dateFrom))
+                ->when($dateTo, fn ($query) => $query->whereDate('created_at', '<=', $dateTo))
                 )
             ->orderBy('material_issuance_id')
             ->get();
@@ -26,6 +39,8 @@ class OrderMaterialIssuePdfController extends Controller
             'rows' => $service->summarize($items),
             'generatedAt' => now(),
             'postedOnly' => request()->boolean('posted_only'),
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
         ])->setPaper('a4', 'landscape')->stream('order-material-issue-'.$order->id.'.pdf');
     }
 }

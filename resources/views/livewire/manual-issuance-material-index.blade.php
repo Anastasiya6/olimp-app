@@ -19,7 +19,9 @@
                             Додати документ
                         </x-catalog.button>
                     </div>
+
                 </x-catalog.panel>
+
                 <x-modal name="manual-issuance-reports" maxWidth="2xl" focusable>
                     <div role="dialog" aria-modal="true" aria-labelledby="manual-issuance-reports-title">
                         <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">
@@ -42,9 +44,19 @@
                                     @endforeach
                                 </select>
                             </label>
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <label class="block">
+                                    <span class="font-medium text-[#245b53]">З</span>
+                                    <input type="date" wire:model.live="reportDateFrom" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
+                                </label>
+                                <label class="block">
+                                    <span class="font-medium text-[#245b53]">По</span>
+                                    <input type="date" wire:model.live="reportDateTo" min="{{ $reportDateFrom }}" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
+                                </label>
+                            </div>
                             <div class="flex justify-end">
                                 @if($reportOrderId)
-                                    <a href="{{ route('material.issue.order.pdf', ['order' => $reportOrderId, 'posted_only' => $postedOnly ? 1 : 0]) }}" target="_blank" class="catalog-button catalog-reports-button">Звіт по замовленню</a>
+                                    <a href="{{ route('material.issue.order.pdf', ['order' => $reportOrderId, 'posted_only' => $postedOnly ? 1 : 0, 'date_from' => $reportDateFrom, 'date_to' => $reportDateTo]) }}" target="_blank" class="catalog-button catalog-reports-button">Звіт по замовленню</a>
                                 @else
                                     <button type="button" disabled class="catalog-button catalog-reports-button cursor-not-allowed opacity-50">Звіт по замовленню</button>
                                 @endif
@@ -52,6 +64,7 @@
                         </div>
                     </div>
                 </x-modal>
+
                 <x-modal name="create-manual-issuance" maxWidth="2xl" focusable>
                     <div role="dialog" aria-modal="true" aria-labelledby="create-manual-issuance-title">
                         <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">

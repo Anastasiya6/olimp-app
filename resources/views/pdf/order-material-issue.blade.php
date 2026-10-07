@@ -19,9 +19,10 @@
 </head>
 <body>
     <h1>Звіт видачі матеріалів по замовленню</h1>
-    <p><strong>Замовлення:</strong> {{ $order->name }}</p>
+    <p><strong>Замовлення:</strong> {{ $order->name }} @if(!empty($dateFrom) || !empty($dateTo)) <span> | &#1055;&#1077;&#1088;&#1110;&#1086;&#1076;: {{ $dateFrom ? \Illuminate\Support\Carbon::parse($dateFrom)->format('d.m.Y') : '' }}{{ $dateFrom && $dateTo ? ' — ' : '' }}{{ $dateTo ? \Illuminate\Support\Carbon::parse($dateTo)->format('d.m.Y') : '' }}</span> @endif</p>
     <p>{{ ($postedOnly ?? false) ? 'Лише проведені документи.' : 'Усі документи.' }}</p>
     <p>Сформовано: {{ $generatedAt->format('d.m.Y H:i') }}</p>
+
     <table>
         <thead>
             <tr>

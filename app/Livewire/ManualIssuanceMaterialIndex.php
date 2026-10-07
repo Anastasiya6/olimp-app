@@ -18,6 +18,10 @@ class ManualIssuanceMaterialIndex extends Component
 
     public bool $postedOnly = false;
 
+    public ?string $reportDateFrom = null;
+
+    public ?string $reportDateTo = null;
+
     public function postDocument(int $id): void
     {
         DB::transaction(function () use ($id) {

@@ -283,7 +283,7 @@
                                         <x-catalog.button variant="primary"
                                             wire:click="openModal('{{ $material['material_id'] }}',
                                                                     '{{ $material['detail'] }}',
-                                                                    '{{ $material['material'] }}',odex
+                                                                    '{{ $material['material'] }}',
                                                                     '{{ $material['print_value']}}')"
 
                                         >

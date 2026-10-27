@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Designation;
+use App\Models\Department;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
 use App\Models\OrderName;
@@ -20,6 +21,12 @@ class IssuanceMaterialPage extends Component
     public $generated = false;
 
     public $order_name_id;
+
+    public $department_id;
+
+    public $with_purchased = 0;
+
+    public $with_material_purchased = 0;
 
     public $designation_id;
 
@@ -67,10 +74,14 @@ class IssuanceMaterialPage extends Component
         if ($id) {
             $this->isEdit = true;
 
-            $issuance = MaterialIssuance::findOrFail($id);
+            $issuance = MaterialIssuance::byDesignation()->findOrFail($id);
+            abort_if($issuance->status !== 'draft', 403);
             $this->designationName = $issuance->designation->designation;
             $this->materialIssuanceId = $issuance->id;
             $this->order_name_id = $issuance->order_name_id;
+            $this->department_id = $issuance->department_id;
+            $this->with_purchased = (int) $issuance->with_purchased;
+            $this->with_material_purchased = (int) $issuance->with_material_purchased;
             $this->designation_id = $issuance->designation_id;
             $this->quantity = $issuance->quantity;
             $this->received_by_user_id = $issuance->received_by_user_id;
@@ -82,6 +93,12 @@ class IssuanceMaterialPage extends Component
             $this->generated = true;
             $this->planDesignationName = $issuance->planTaskDesignation?->designation;
             $this->loadSelectedMaterials();
+        } else {
+            $lastIssuance = MaterialIssuance::byDesignation()->latest('id')->first();
+            if ($lastIssuance) {
+                $this->order_name_id = $lastIssuance->order_name_id;
+                $this->department_id = $lastIssuance->department_id;
+            }
         }
     }
 
@@ -146,6 +163,7 @@ class IssuanceMaterialPage extends Component
             'received_by_user_id' => 'required|exists:users,id',
             'issued_by_user_id' => 'required|exists:users,id',
             'order_name_id' => 'required',
+            'department_id' => 'required|exists:departments,id',
             'designation_id' => 'required',
             'quantity' => 'required|numeric|min:1',
         ]);
@@ -165,6 +183,9 @@ class IssuanceMaterialPage extends Component
 
         $materialIssuance = MaterialIssuance::create([
             'order_name_id' => $this->order_name_id,
+            'department_id' => $this->department_id,
+            'with_purchased' => (int) $this->with_purchased,
+            'with_material_purchased' => (int) $this->with_material_purchased,
             'designation_id' => $this->designation_id,
             'quantity' => $this->quantity,
             'received_by_user_id' => $this->received_by_user_id,
@@ -214,6 +235,7 @@ class IssuanceMaterialPage extends Component
     {
         return view('livewire.issuance-material-page',[
             'order_names' => OrderName::where('is_order',1)->orderBy('name')->get(),
+            'departments' => Department::orderBy('number')->get(),
             'materials' => $this->all_materials
         ]);
     }

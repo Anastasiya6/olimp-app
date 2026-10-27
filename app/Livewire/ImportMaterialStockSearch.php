@@ -28,6 +28,8 @@ class ImportMaterialStockSearch extends Component
 
     public $file;
 
+    public $stockDepartmentId = '';
+
     public $stockInDepartmentId = '';
 
     public $confirmingStockIn = false;
@@ -38,7 +40,7 @@ class ImportMaterialStockSearch extends Component
 
     public function viewStock()
     {
-        $this->reset('file');
+        $this->reset('file', 'stockDepartmentId');
         $this->resetValidation();
         $this->dispatch('opening-stock-open');
     }
@@ -52,7 +54,15 @@ class ImportMaterialStockSearch extends Component
 
     public function confirmStock()
     {
-        $this->validate();
+        $this->validate([
+            'file' => 'required|mimes:xlsx,xls',
+            'stockDepartmentId' => 'required|integer|exists:departments,id',
+        ], [
+            'file.required' => 'Оберіть файл залишків з 1С.',
+            'file.mimes' => 'Оберіть файл Excel у форматі .xlsx або .xls.',
+            'stockDepartmentId.required' => 'Оберіть цех для імпорту залишків.',
+            'stockDepartmentId.exists' => 'Вибраний цех не знайдено.',
+        ]);
         $this->dispatch('opening-stock-confirm');
     }
 
@@ -78,15 +88,18 @@ class ImportMaterialStockSearch extends Component
 
     public function unloadingStock()
     {
-        $this->validate();
+        $this->validate([
+            'file' => 'required|mimes:xlsx,xls',
+            'stockDepartmentId' => 'required|integer|exists:departments,id',
+        ]);
 
         $path = $this->file->getRealPath();
-
-        ImportMaterialStock::query()->delete();
-        MaterialIssuanceItem::query()->delete();
-        MaterialIssuance::query()->delete();
-        ImportMaterial::query()->delete();
-        ImportMaterialStaging::query()->delete();
+        //dd('unloadingStock');
+        //ImportMaterialStock::query()->delete();
+        //MaterialIssuanceItem::query()->delete();
+        //MaterialIssuance::withTrashed()->forceDelete();
+        //ImportMaterial::query()->delete();
+        //ImportMaterialStaging::query()->delete();
         // Читаємо файл
         $spreadsheet = IOFactory::load($path);
         $worksheet = $spreadsheet->getActiveSheet();
@@ -120,14 +133,14 @@ class ImportMaterialStockSearch extends Component
 
             if ($quantity > 0) {
                 $material->stocks()->firstOrCreate(
-                    [], // умова пошуку: перший stock
+                    ['type' => 'stock', 'department_id' => $this->stockDepartmentId],
                     ['amount' => 0] // якщо створюємо новий — дефолтне amount
                 )->increment('amount', $quantity);
             }
 
         }
 
-        $this->reset('file');
+        $this->reset('file', 'stockDepartmentId');
 
         $this->dispatch('opening-stock-close');
 
@@ -197,18 +210,11 @@ class ImportMaterialStockSearch extends Component
                     $name = $row[2];
                     $quantity = $row[4];
 
-                    Log::info($row[0]);
-                    Log::info($row[1]);
-                    Log::info($row[2]);
-                    Log::info($row[3]);
-                    Log::info($row[4]);
-
-
-                   $unitId  = $this->getKeyUnit($row[3],$units);
-                   $departmentId = $selectedDepartment->id;
-                   $material = null;
-                   Log::info( 'Відділ '.$currentDepartment . ' '.$departmentId.' '.$unitId );
-                   if( $departmentId  && $unitId ){
+                    $unitId  = $this->getKeyUnit($row[3],$units);
+                    $departmentId = $selectedDepartment->id;
+                    $material = null;
+                    //Log::info( 'Відділ '.$currentDepartment . ' '.$departmentId.' '.$unitId );
+                    if( $departmentId  && $unitId ){
 
                        $materials = ImportMaterial::where('article', $article)->get();
                        $materialsCount = $materials->count();
@@ -280,7 +286,7 @@ class ImportMaterialStockSearch extends Component
         $this->validate();
 
         $path = $this->file->getRealPath();
-
+        dd('unloadingCode');
         ImportMaterialStock::query()->delete();
         ImportMaterial::query()->delete();
         // Читаємо файл
@@ -348,7 +354,7 @@ class ImportMaterialStockSearch extends Component
         if ($searchTerm == '%%') {
 
             return ImportMaterialStock
-                ::with('materials','unit')
+                ::with('materials','unit','department')
                // ->orderBy('document_number','desc')
                 ->orderBy('updated_at','desc')
                 ->paginate(25);
@@ -360,7 +366,7 @@ class ImportMaterialStockSearch extends Component
                     $query->where('article', 'like', $searchTerm)
                         ->orderByRaw("CAST(article AS SIGNED)");
                 })
-                ->with('materials','unit')
+                ->with('materials','unit','department')
                 ->orderBy('document_number','desc')
                 ->orderBy('updated_at','desc')
                 ->paginate(25);

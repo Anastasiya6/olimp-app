@@ -13,6 +13,9 @@ class MaterialIssuance extends Model
 
     protected $fillable = [
         'order_name_id',
+        'department_id',
+        'with_purchased',
+        'with_material_purchased',
         'designation_id',
         'quantity',
         'issued_to_employee',
@@ -46,6 +49,11 @@ class MaterialIssuance extends Model
     public function order_name(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(OrderName::class);
+    }
+
+    public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function receivedByUser()

@@ -100,7 +100,6 @@ class PlanTaskTable extends Component
         if (old('_plan_form') && session()->has('errors')) {
             $this->selectedOrder = old('order_name_id', $this->selectedOrder);
             $this->sender_department_id = old('sender_department_id', $this->sender_department_id);
-            $this->receiver_department_id = old('receiver_department_id', $this->receiver_department_id);
             $this->openPlanForm(old('_plan_edit') ?: null);
             $this->setErrorBag(session('errors')->getBag('default'));
         }

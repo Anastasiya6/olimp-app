@@ -27,4 +27,9 @@ class ImportMaterialStock extends Model
         return $this->belongsTo(TypeUnit::class, 'type_unit_id');
     }
 
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
 }

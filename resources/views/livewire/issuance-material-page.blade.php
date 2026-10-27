@@ -34,7 +34,7 @@
                     <div class="grid grid-cols-12 gap-4">
 
                         {{-- Хто отримує --}}
-                        <div class="col-span-12 sm:col-span-6">
+                        <div class="col-span-12 sm:col-span-4 lg:col-span-5">
                             <label class="block">
                                 <span class="text-[#245b53] font-medium">Хто отримує матеріал</span>
                                 <select
@@ -63,7 +63,7 @@
                         </div>
 
                         {{-- Хто виписує --}}
-                        <div class="col-span-12 sm:col-span-6">
+                        <div class="col-span-12 sm:col-span-4 lg:col-span-5">
                             <label class="block">
                                 <span class="text-[#245b53] font-medium">Хто виписує документ</span>
                                 <select
@@ -90,6 +90,20 @@
                             </label>
                         </div>
 
+                        <div class="col-span-12 sm:col-span-4 lg:col-span-2">
+                            <label class="block">
+                                <span class="text-[#245b53] font-medium">Цех</span>
+                                <select wire:model="department_id" @disabled($isEdit) class="block w-full mt-1 rounded-md border border-gray-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-600">
+                                    <option value="">Оберіть цех</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}">{{ $department->number }}</option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </label>
+                        </div>
                     </div>
 
                     {{-- 🔹 ДРУГИЙ РЯДОК (замовлення + деталь + кількість + кнопка) --}}
@@ -121,6 +135,7 @@
                                 @enderror
                             </label>
                         </div>
+
 
                         {{-- DESIGNATION --}}
                         <div class="col-span-12 sm:col-span-6 lg:col-span-3">
@@ -229,9 +244,22 @@
 
                     </div>
 
-                </div>
+                    @unless($isEdit)
+                        <div class="flex flex-wrap gap-x-6 gap-y-2">
+                            <label class="inline-flex items-center gap-2 text-[#245b53]">
+                                <input type="checkbox" wire:model="with_purchased" value="1" class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
+                                <span>З покупними</span>
+                            </label>
+                            <label class="inline-flex items-center gap-2 text-[#245b53]">
+                                <input type="checkbox" wire:model="with_material_purchased" value="1" class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
+                                <span>Заміна матеріалів</span>
+                            </label>
+                        </div>
+                    @endunless
 
-                {{-- TABLE --}}
+                    </div>
+
+                    {{-- TABLE --}}
                 @if($materials && !empty($materials))
                     <div class="overflow-hidden rounded-lg border border-[#a8c8c5]">
                     <div class="overflow-x-auto">

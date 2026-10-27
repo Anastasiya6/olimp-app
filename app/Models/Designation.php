@@ -20,6 +20,8 @@ class Designation extends Model
         'designation_from_rascex',
         'designation_from_excel',
         'type_unit_id',
+        'drawing_path',
+        'drawing_original_name',
         'code_1с'
     ];
     // Включите временные метки

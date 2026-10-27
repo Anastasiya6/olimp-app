@@ -222,6 +222,7 @@
                         <th scope="col" class="issuance-date-column">Дата</th>
                         <th scope="col">Отримав</th>
                         <th scope="col">Замовлення</th>
+                        <th scope="col">Цех</th>
                         <th scope="col" class="issuance-detail-column">Деталь з плану</th>
                         <th scope="col" class="issuance-detail-column">Деталь (на що брали)</th>
                         <th scope="col">Деталі</th>
@@ -248,6 +249,7 @@
                             </td>
                             <td>{{$item->receivedByUser?->name ?? '-'}}</td>
                             <td>{{$item->order_name->name}}</td>
+                            <td>{{ $item->department?->number ?? '—' }}</td>
                             <td class="issuance-detail-column">{{$item->planTaskDesignation?->designation}}</td>
                             <td class="issuance-detail-column">{{$item->designation->designation}}</td>
                             <td class="text-sm">
@@ -255,10 +257,12 @@
                             </td>
                             <td>
                                 {{-- РЕДАГУВАННЯ --}}
+                                @if($item->status === 'draft')
                                 <button type="button" wire:click="openDocument({{ $item->id }})" wire:loading.attr="disabled" wire:target="openDocument"
                                     aria-haspopup="dialog" class="catalog-button catalog-button-secondary">
                                     Редагувати
                                 </button>
+                                @endif
                             </td>
                             <td>
                                 @if($item->status === 'draft')
@@ -296,7 +300,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="12" class="p-4 text-center">
+                            <td colspan="13" class="p-4 text-center">
                                 @if($filterOrder !== '' || trim($filterPlanDesignation) !== '')
                                     За вказаними умовами документів не знайдено.
                                 @else

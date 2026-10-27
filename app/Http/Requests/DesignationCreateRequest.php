@@ -23,6 +23,7 @@ class DesignationCreateRequest extends FormRequest
     {
         return [
             'designation' => 'required|unique:designations,designation',
+            'drawing' => 'nullable|file|max:51200',
 
         ];
     }

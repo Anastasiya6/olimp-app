@@ -24,6 +24,7 @@
                 <th scope="col">Назва</th>
                 <th scope="col">Маршрут</th>
                 <th scope="col">Код 1С</th>
+                <th scope="col">Креслення</th>
                 <th scope="col">Дії</th>
             </tr>
         </x-slot:head>
@@ -33,13 +34,20 @@
                 <td><div class="min-w-[16rem] max-w-xl break-words">{{ $item->name ?? '—' }}</div></td>
                 <td><div class="max-w-xs break-words">{{ $item->route ?? '—' }}</div></td>
                 <td class="whitespace-nowrap tabular-nums">{{ $item->code_1c ?? '—' }}</td>
+                <td class="whitespace-nowrap">
+                    @if($item->drawing_path)
+                        <a href="{{ route('designations.drawing', $item) }}" target="_blank" rel="noopener" class="font-semibold text-teal-800 underline hover:text-teal-950">Відкрити файл</a>
+                    @else
+                        —
+                    @endif
+                </td>
                 <td>
                     <x-catalog.button wire:click="editDesignation({{ $item->id }})" wire:loading.attr="disabled" wire:target="editDesignation" aria-haspopup="dialog">Редагувати</x-catalog.button>
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="5" class="py-10 text-center text-base font-normal text-slate-700">
+                <td colspan="6" class="py-10 text-center text-base font-normal text-slate-700">
                     {{ trim($searchTerm ?? '') !== '' || trim($searchTermChto ?? '') !== '' ? 'За вашим запитом виробів не знайдено.' : 'Виробів поки немає.' }}
                 </td>
             </tr>

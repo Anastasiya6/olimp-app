@@ -8,6 +8,7 @@ use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DesignationController extends Controller
 {
@@ -43,6 +44,7 @@ class DesignationController extends Controller
         $designation->name = $request->name;
         $designation->route = $request->route;
         $designation->code_1c = $request->code_1c;
+        $this->attachDrawing($request, $designation);
         $designation->save();
 
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
@@ -75,6 +77,7 @@ class DesignationController extends Controller
     {
         $validatedData = $request->validate([
             'designation' => 'required|unique:designations,designation,' . $designation->id,
+            'drawing' => 'nullable|file|max:51200',
         ], [
             'designation.unique' => 'Такий креслярський номер вже є у виробах.',
         ]);
@@ -82,7 +85,11 @@ class DesignationController extends Controller
         $designation->name = $request->name;
         $designation->route = $request->route;
         $designation->code_1c = $request->code_1c;
+        $oldDrawingPath = $this->attachDrawing($request, $designation);
         $designation->save();
+        if ($oldDrawingPath && $designation->wasChanged('drawing_path')) {
+            Storage::disk('local')->delete($oldDrawingPath);
+        }
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 
     }
@@ -122,6 +129,45 @@ class DesignationController extends Controller
         return redirect()->route('specifications.index')->with('status', 'Дані успішно збережено');
 
 
+    }
+
+    private function attachDrawing(Request $request, Designation $designation): ?string
+    {
+        if (!$request->hasFile('drawing')) {
+            return null;
+        }
+
+        $oldPath = $designation->drawing_path;
+        $drawing = $request->file('drawing');
+        $path = $drawing->store('designation-drawings', 'local');
+        abort_if(!$path, 500, 'Не вдалося зберегти файл креслення.');
+
+        $designation->drawing_path = $path;
+        $designation->drawing_original_name = basename(str_replace('\\', '/', $drawing->getClientOriginalName()));
+
+        return $oldPath;
+    }
+
+    public function drawing(Designation $designation)
+    {
+        abort_unless(
+            $designation->drawing_path && Storage::disk('local')->exists($designation->drawing_path),
+            404
+        );
+
+        $path = Storage::disk('local')->path($designation->drawing_path);
+        $name = $designation->drawing_original_name ?: basename($path);
+        $mimeType = Storage::disk('local')->mimeType($designation->drawing_path) ?: 'application/octet-stream';
+        $previewable = in_array($mimeType, [
+            'application/pdf',
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'text/plain',
+        ], true);
+
+        return response()->download($path, $name, ['Content-Type' => $mimeType], $previewable ? 'inline' : 'attachment');
     }
 
     public function search(Request $request)

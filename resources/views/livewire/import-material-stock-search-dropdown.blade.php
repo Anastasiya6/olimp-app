@@ -23,7 +23,7 @@
                     <ul class="absolute z-50 bg-white border-gray-300 w-full rounded-md mt-2 text-gray-700 text-sm divide-y divide-gray-200 max-h-[200px]  overflow-y-auto">
                         @forelse ($searchResults as $result)
                             <li>
-                                <a href="#" wire:click.prevent="selectSearch('{{ $result['id'] }}', '{{ $result['name'] }}')"
+                                <a href="#" wire:click.prevent="selectSearch({{ $result['id'] }}, @js($result['name']))"
                                    wire:key="{{ $result['id'] }}"
                                    class="flex items-center px-4 py-4 hover:bg-gray-200 transition ease-in-out duration-150">
                                     <div class="ml-4 leading-tight">

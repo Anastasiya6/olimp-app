@@ -21,6 +21,13 @@
                 </div>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row">
+                <button type="button" x-on:click="$dispatch('open-modal', 'material-stock-report')"
+                    class="catalog-button catalog-reports-button">
+                    <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 17v-3m4 3v-6m4 6v-2" />
+                    </svg>
+                    Звіти
+                </button>
                 <button type="button" wire:click="viewStockIn"
                     class="catalog-button catalog-add-button">
                     <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -48,17 +55,29 @@
     <x-catalog.table :items="$items">
         <x-slot:head>
                     <tr>
+                        <th scope="col" class="whitespace-nowrap text-left font-bold">Цех</th>
+                        <th scope="col" class="whitespace-nowrap text-left font-bold">Операція</th>
                         <th scope="col" class="whitespace-nowrap  text-left font-bold">Код 1С</th>
                         <th scope="col" class=" text-left font-bold">Артикул</th>
                         <th scope="col" class=" text-left font-bold">Назва матеріалу</th>
                         <th scope="col" class=" text-right font-bold">Кількість</th>
                         <th scope="col" class="whitespace-nowrap  text-center font-bold">Од. виміру</th>
-                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Номер приходу</th>
-                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Дата приходу</th>
+                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Документ</th>
+                        <th scope="col" class="whitespace-nowrap  text-left font-bold">Дата операції</th>
                     </tr>
                         </x-slot:head>
                     @forelse($items as $item)
                         <tr wire:key="material-stock-row-{{ $item->id }}">
+                            <td class="whitespace-nowrap text-left text-slate-900">{{ $item->department?->name ?? '—' }}</td>
+                            <td class="whitespace-nowrap text-left text-slate-900">
+                                @switch($item->type)
+                                    @case('stock') Початковий залишок @break
+                                    @case('stock_in') Прихід @break
+                                    @case('stock_out') Витрата @break
+                                    @case('return') Повернення @break
+                                    @default {{ $item->type }}
+                                @endswitch
+                            </td>
                             <td class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->materials->code ?? '—' }}</td>
                             <td class="whitespace-nowrap  font-bold text-slate-900">{{ $item->materials->article ?? '—' }}</td>
                             <td class=" font-bold leading-relaxed text-slate-900">
@@ -75,12 +94,41 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-10 text-center text-slate-900">
+                            <td colspan="9" class="px-4 py-10 text-center text-slate-900">
                                 {{ trim($searchTerm ?? '') !== '' ? 'За цим артикулом матеріалів не знайдено.' : 'Матеріалів поки немає.' }}
                             </td>
                         </tr>
                     @endforelse
                     </x-catalog.table>
+    <x-modal name="material-stock-report" maxWidth="7xl" focusable>
+        <div role="dialog" aria-modal="true" aria-labelledby="material-stock-report-title">
+            <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">
+                <div>
+                    <h3 id="material-stock-report-title" class="text-xl font-bold text-[#174a47]">Загальна відомість залишків по складах</h3>
+                </div>
+                <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити звіт" class="rounded-md p-2 text-[#245b53] hover:bg-white">✕</button>
+            </div>
+
+            <div class="space-y-5 p-5 sm:p-6">
+                <form method="GET" action="{{ route('import-material-stocks.report') }}" target="_blank" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                    <div class="w-full sm:max-w-md">
+                        <label for="stock-report-department" class="mb-2 block text-sm font-semibold text-slate-800">Склад / цех</label>
+                        <select id="stock-report-department" name="department_id" required class="block w-full rounded-md border-gray-300 text-base shadow-sm focus:border-teal-600 focus:ring-teal-600">
+                            <option value="">Оберіть склад</option>
+                            @foreach($stockInDepartments as $department)
+                                <option value="{{ $department->id }}">{{ $department->number }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="catalog-button catalog-reports-button">Відкрити звіт</button>
+                </form>
+            </div>
+            <div class="flex justify-end border-t border-[#d4e5e0] px-5 py-4">
+                <button type="button" x-on:click="$dispatch('close')" class="catalog-button">Закрити</button>
+            </div>
+        </div>
+    </x-modal>
+
     <div wire:key="opening-stock-dialog">
         <x-modal name="opening-stock-import" maxWidth="lg" focusable>
             <div class="p-6" role="dialog" aria-modal="true" aria-labelledby="opening-stock-title">
@@ -97,6 +145,17 @@
                     </button>
                 </div>
                 <form wire:submit="confirmStock" class="space-y-5">
+                    <div>
+                        <label for="opening-stock-department" class="mb-2 block text-base font-semibold text-slate-800">Цех</label>
+                        <select id="opening-stock-department" wire:model="stockDepartmentId" required
+                            class="block w-full rounded-md border-gray-300 text-base shadow-sm focus:border-teal-600 focus:ring-teal-600">
+                            <option value="">Оберіть цех</option>
+                            @foreach($stockInDepartments as $department)
+                                <option value="{{ $department->id }}">Цех {{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('stockDepartmentId') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
                     <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
                         <label for="opening-stock-file" class="mb-2 block text-base font-semibold text-slate-800">Файл залишків</label>
                         <input id="opening-stock-file" type="file" wire:model="file" accept=".xlsx,.xls"
@@ -130,7 +189,9 @@
                     </button>
                 </div>
                 <p class="break-words text-sm text-gray-700">Файл: {{ $file?->getClientOriginalName() }}</p>
-                <p class="mt-3 text-sm leading-relaxed text-gray-600">Поточні матеріали, залишки та документи видачі буде видалено перед імпортом залишків із файлу.</p>
+
+                <p class="mt-2 text-sm text-gray-700">Цех: <strong>{{ $stockInDepartments->firstWhere('id', $stockDepartmentId)?->name }}</strong></p>
+
                 @error('file') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 <div class="mt-5 flex justify-end gap-3 border-t border-gray-200 pt-4">
                     <button type="button" x-on:click="$dispatch('close')" wire:loading.attr="disabled" wire:target="unloadingStock"
@@ -195,6 +256,7 @@
                 <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
                     <p class="font-medium">Підтвердьте імпорт приходу</p>
                     <p class="mt-3 break-words">Файл: {{ $file?->getClientOriginalName() }}</p>
+
                     <p class="mt-2">Цех: <strong>{{ $stockInDepartments->firstWhere('id', $stockInDepartmentId)?->name }}</strong></p>
                     <p class="mt-3 text-gray-500">Буде додано прихід лише для цього цеху.</p>
                 </div>

@@ -28,14 +28,17 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
-                        <input type="hidden" name="receiver_department_id" value="{{ $receiver_department_id }}">
                         <div class="mb-4">
                             <label class="block">
                                 <span class="text-gray-700">Цех отримувач</span>
-                                <input type="text" name="receiver_department" readonly class="catalog-input" placeholder=""
-                                       value="{{ $receiver_department }}" />
+                                <select name="receiver_department_id" class="catalog-input @error('receiver_department_id') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror" aria-invalid="{{ $errors->has('receiver_department_id') ? 'true' : 'false' }}">
+                                    <option value="" @selected((string) old('receiver_department_id', $receiver_department_id) === '' || (string) old('receiver_department_id', $receiver_department_id) === '0')>Усі цехи — оберіть цех</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}" @selected((string) old('receiver_department_id', $receiver_department_id) === (string) $department->id)>{{ $department->number }}</option>
+                                    @endforeach
+                                </select>
                             </label>
-                            @error('receiver_department')
+                            @error('receiver_department_id')
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>

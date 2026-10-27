@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
 use App\Models\ImportMaterialStock;
+use App\Models\Department;
 use App\Models\OrderName;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -21,6 +22,45 @@ class ManualIssuanceMaterialIndex extends Component
     public ?string $reportDateFrom = null;
 
     public ?string $reportDateTo = null;
+
+    public ?int $editingDocumentId = null;
+
+    public bool $documentFormLoaded = false;
+
+    public int $documentFormVersion = 0;
+
+    public function openDocument(?int $id = null): void
+    {
+        if ($id !== null) {
+            $document = MaterialIssuance::manual()->findOrFail($id);
+            abort_if($document->status === 'posted', 403);
+        }
+
+        $this->editingDocumentId = $id;
+        $this->documentFormLoaded = true;
+        $this->documentFormVersion++;
+        $this->dispatch('manual-issuance-document-open');
+    }
+
+    public string $filterDocumentNumber = '';
+
+    public string $filterOrder = '';
+
+    public function updatedFilterDocumentNumber(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterOrder(): void
+    {
+        $this->resetPage();
+    }
+
+    public function resetFilters(): void
+    {
+        $this->reset('filterDocumentNumber', 'filterOrder');
+        $this->resetPage();
+    }
 
     public function postDocument(int $id): void
     {
@@ -39,6 +79,7 @@ class ManualIssuanceMaterialIndex extends Component
                     'amount' => -$item->quantity,
                     'type' => 'stock_out',
                     'document_number' => $document->id,
+                    'department_id' => $document->department_id,
                 ]);
             }
 
@@ -63,6 +104,7 @@ class ManualIssuanceMaterialIndex extends Component
                     'amount' => $item->quantity,
                     'type' => 'stock_in',
                     'document_number' => $document->id,
+                    'department_id' => $document->department_id,
                 ]);
             }
 
@@ -84,6 +126,7 @@ class ManualIssuanceMaterialIndex extends Component
                         'amount' => $item->quantity,
                         'type' => 'stock_in',
                         'document_number' => $document->id,
+                        'department_id' => $document->department_id,
                     ]);
                 }
             }
@@ -97,9 +140,16 @@ class ManualIssuanceMaterialIndex extends Component
     {
         return view('livewire.manual-issuance-material-index', [
             'order_names' => OrderName::where('is_order', 1)->orderBy('name')->get(),
-            'items' => MaterialIssuance::with(['items.importMaterial', 'order_name', 'receivedByUser'])
+            'departments' => Department::orderBy('number')->get(),
+            'items' => MaterialIssuance::with(['items.importMaterial', 'order_name', 'department', 'receivedByUser'])
                 ->manual()
                 ->whereHas('items')
+                ->when($this->filterOrder !== '', function ($query) {
+                    $query->where('order_name_id', $this->filterOrder);
+                })
+                ->when(trim($this->filterDocumentNumber) !== '', function ($query) {
+                    $query->where('id', (int) trim($this->filterDocumentNumber));
+                })
                 ->latest()
                 ->paginate(10)
         ]);

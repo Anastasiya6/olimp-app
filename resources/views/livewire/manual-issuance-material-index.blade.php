@@ -1,4 +1,4 @@
-<div class="issuance-materials-page" x-data="{ pendingDocument: null, posting: false, postError: '', deleting: false, deleteError: '' }">
+<div class="issuance-materials-page" x-data="{ pendingDocument: null, posting: false, postError: '', deleting: false, deleteError: '' }" x-on:manual-issuance-document-open.window="$dispatch('open-modal', 'manual-issuance-document')">
 
     <x-slot name="header" compact="true">
         <h2 class="text-xl font-bold leading-tight text-[#174a47]">
@@ -9,15 +9,31 @@
         <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
 
                 <x-catalog.panel class="mb-4">
-                    <div class="flex flex-wrap justify-end gap-3">
+                    <div class="flex flex-wrap items-end gap-2 lg:flex-nowrap">
+                        <div class="w-full sm:w-44">
+                            <label for="manual-issuance-filter-document-number" class="compact-search-label">№ документа</label>
+                            <input id="manual-issuance-filter-document-number" type="search" inputmode="numeric" wire:model.live.debounce.350ms="filterDocumentNumber" placeholder="Номер документа" class="compact-search" />
+                        </div>
+                        <div class="w-full sm:w-48">
+                            <label for="manual-issuance-filter-order" class="sr-only">Замовлення</label>
+                            <select id="manual-issuance-filter-order" wire:model.live="filterOrder" class="h-9 w-full rounded-md border-slate-300 py-1.5 text-sm focus:border-teal-600 focus:ring-teal-600">
+                                <option value="">Усі замовлення</option>
+                                @foreach($order_names as $order)
+                                    <option value="{{ $order->id }}">{{ $order->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="button" wire:click="resetFilters" class="catalog-button catalog-button-secondary">Скинути пошук</button>
+                        <div class="ml-auto flex flex-wrap gap-3">
                         <x-catalog.button class="catalog-reports-button" x-on:click="$dispatch('open-modal', 'manual-issuance-reports')" aria-haspopup="dialog">
                             <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 17v-3m4 3v-6m4 6v-2" /></svg>
                             Звіти
                         </x-catalog.button>
-                        <x-catalog.button variant="primary" class="catalog-add-button" x-on:click="$dispatch('open-modal', 'create-manual-issuance')" aria-haspopup="dialog">
+                        <x-catalog.button variant="primary" class="catalog-add-button" wire:click="openDocument" wire:loading.attr="disabled" wire:target="openDocument" aria-haspopup="dialog">
                             <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M12 5v14M5 12h14" /></svg>
                             Додати документ
                         </x-catalog.button>
+                        </div>
                     </div>
 
                 </x-catalog.panel>
@@ -65,15 +81,17 @@
                     </div>
                 </x-modal>
 
-                <x-modal name="create-manual-issuance" maxWidth="2xl" focusable>
+                <x-modal name="manual-issuance-document" maxWidth="2xl" focusable>
                     <div role="dialog" aria-modal="true" aria-labelledby="create-manual-issuance-title">
                         <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">
-                            <h3 id="create-manual-issuance-title" class="text-xl font-bold text-[#174a47]">Видача матеріалів без норм</h3>
+                            <h3 id="create-manual-issuance-title" class="text-xl font-bold text-[#174a47]">{{ $editingDocumentId ? 'Редагування документа №'.$editingDocumentId : 'Видача матеріалів без норм' }}</h3>
                             <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити" class="rounded-md p-2 text-[#245b53] hover:bg-white">
                                 <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M6 18 18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
-                        <livewire:manual-issuance-material-page :in-modal="true" />
+                        @if($documentFormLoaded)
+                            <livewire:manual-issuance-material-page :id="$editingDocumentId" :in-modal="true" :key="'manual-issuance-document-'.$documentFormVersion" />
+                        @endif
                     </div>
                 </x-modal>
                 <x-modal name="confirm-manual-issuance-post" maxWidth="md" focusable>
@@ -117,9 +135,11 @@
                         <th scope="col" class="issuance-id-column">ID</th>
                         <th scope="col" class="issuance-date-column">Дата</th>
                         <th scope="col">Замовлення</th>
+                        <th scope="col">Цех</th>
                         <th scope="col">Отримав</th>
                         <th scope="col">Матеріал</th>
                         <th scope="col">Кількість</th>
+                        <th scope="col">Дії</th>
                         <th scope="col">Проведення</th>
                         <th scope="col">Видалити</th>
 
@@ -136,6 +156,7 @@
                                 <span class="block whitespace-nowrap">{{ $item->created_at?->format('H:i:s') }}</span>
                             </td>
                             <td>{{ $item->order_name?->name ?? '—' }}</td>
+                            <td>{{ $item->department?->number ?? '—' }}</td>
                             <td>{{$item->receivedByUser->name}}</td>
                             <td>
                                 @foreach($item->items as $issuanceItem)
@@ -146,6 +167,11 @@
                                 @foreach($item->items as $issuanceItem)
                                     <div>{{ $issuanceItem->quantity }}</div>
                                 @endforeach
+                            </td>
+                            <td>
+                                @if($item->status !== 'posted')
+                                    <button type="button" wire:click="openDocument({{ $item->id }})" wire:loading.attr="disabled" wire:target="openDocument" class="catalog-button catalog-button-secondary">Редагувати</button>
+                                @endif
                             </td>
                             <td>
                                 @if($item->status === 'posted')
@@ -171,7 +197,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="p-4 text-center">
+                            <td colspan="11" class="p-4 text-center">
                                 Немає документів
                             </td>
                         </tr>

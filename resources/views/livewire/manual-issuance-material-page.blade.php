@@ -14,7 +14,7 @@
             <div class="rounded-lg border border-[#bfd8d1] bg-white p-4 shadow-sm">
                 <div class="grid grid-cols-12 gap-4">
 
-                    <div class="col-span-12">
+                    <div class="col-span-12 sm:col-span-6">
                         <label class="block">
                             <span class="text-[#245b53] font-medium">Замовлення</span>
                             <select wire:model="order_name_id" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
@@ -25,6 +25,19 @@
                             </select>
                         </label>
                         @error('order_name_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    </div>
+
+                    <div class="col-span-12 sm:col-span-6">
+                        <label class="block">
+                            <span class="text-[#245b53] font-medium">Цех</span>
+                            <select wire:model="department_id" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
+                                <option value="">Оберіть цех</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->number }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        @error('department_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
 
                     <div class="col-span-12 sm:col-span-6">

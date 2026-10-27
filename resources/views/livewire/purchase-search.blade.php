@@ -9,6 +9,15 @@
                 <label for="purchase-entry-search" class="compact-search-label catalog-label">Що</label>
                 <input id="purchase-entry-search" type="search" wire:model.live="searchTermChto" placeholder="Номер складової — що" class="compact-search catalog-input" />
             </div>
+            <div class="w-full sm:w-40">
+                <label for="purchase-filter-order" class="compact-search-label catalog-label">Замовлення</label>
+                <select id="purchase-filter-order" wire:model.live="filterOrder" class="h-9 w-full rounded-md border-slate-300 py-1.5 text-sm focus:border-teal-600 focus:ring-teal-600">
+                    <option value="">Усі замовлення</option>
+                    @foreach($order_names as $order_name)
+                        <option value="{{ $order_name->id }}">{{ $order_name->name }}</option>
+                    @endforeach
+                </select>
+            </div>
             <x-catalog.button x-on:click="$dispatch('open-modal', 'create-purchase')" aria-haspopup="dialog" variant="primary" class="catalog-add-button shrink-0 lg:ml-auto">
                 <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                     <path stroke-linecap="round" d="M12 5v14M5 12h14" />
@@ -49,7 +58,7 @@
         @empty
             <tr>
                 <td colspan="7" class="py-10 text-center text-base font-normal text-slate-700">
-                    {{ trim($searchTerm ?? '') !== '' || trim($searchTermChto ?? '') !== '' ? 'За вашим запитом покупних деталей не знайдено.' : 'Покупних деталей поки немає.' }}
+                    {{ trim($searchTerm ?? '') !== '' || trim($searchTermChto ?? '') !== '' || $filterOrder !== '' ? 'За заданими фільтрами покупних деталей не знайдено.' : 'Покупних деталей поки немає.' }}
                 </td>
             </tr>
         @endforelse

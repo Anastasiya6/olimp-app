@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\ImportMaterialStock;
+use App\Models\Department;
 use App\Models\MaterialIssuance;
 use App\Models\MaterialIssuanceItem;
 use App\Models\OrderName;
@@ -25,7 +26,8 @@ class IssuanceMaterialIndex extends Component
     public function openDocument(?int $id = null)
     {
         if ($id !== null) {
-            MaterialIssuance::findOrFail($id);
+            $document = MaterialIssuance::byDesignation()->findOrFail($id);
+            abort_if($document->status !== 'draft', 403);
         }
         $this->editingDocumentId = $id;
         $this->documentFormLoaded = true;
@@ -97,7 +99,8 @@ class IssuanceMaterialIndex extends Component
                 'import_material_id' => $item->import_material_id,
                 'amount' => -$item->quantity,
                 'type' => 'stock_out',
-                'document_number' => $item->material_issuance_id
+                'document_number' => $item->material_issuance_id,
+                'department_id' => $doc->department_id,
             ]);
         }
 
@@ -124,7 +127,8 @@ class IssuanceMaterialIndex extends Component
                     'import_material_id' => $item->import_material_id,
                     'amount' => $item->quantity, // 🔥 ПЛЮС замість мінуса
                     'type' => 'stock_in',
-                    'document_number' => $doc->id
+                    'document_number' => $doc->id,
+                    'department_id' => $doc->department_id,
                 ]);
             }
 
@@ -148,6 +152,7 @@ class IssuanceMaterialIndex extends Component
                         'amount' => $item->quantity,
                         'type' => 'stock_in',
                         'document_number' => $document->id,
+                        'department_id' => $document->department_id,
                     ]);
                 }
             }
@@ -167,8 +172,9 @@ class IssuanceMaterialIndex extends Component
 
         return view('livewire.issuance-material-index', [
             'order_names'=> $order_names,
+            'departments' => Department::orderBy('number')->get(),
             'recipients' => User::orderBy('name')->get(['id', 'name']),
-            'items' => MaterialIssuance::with('items', 'receivedByUser', 'order_name', 'planTaskDesignation', 'designation')
+            'items' => MaterialIssuance::with('items', 'receivedByUser', 'order_name', 'department', 'planTaskDesignation', 'designation')
                 ->byDesignation()
                 ->whereHas('items')
                 ->when($this->filterOrder !== '', function ($query) {

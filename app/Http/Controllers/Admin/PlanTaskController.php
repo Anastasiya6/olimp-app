@@ -51,9 +51,10 @@ class PlanTaskController extends Controller
             'order_name_id' => $order_name_id,
             'sender_department_id' => $sender_department_id,
             'receiver_department_id' => $receiver_department_id,
+            'departments' => Department::orderBy('number')->get(),
             'order_number' => $order_number,
             'sender_department' => Department::where('id', $sender_department_id)->first()->number,
-            'receiver_department' => Department::where('id', $receiver_department_id)->first()->number,
+            'receiver_department' => Department::where('id', $receiver_department_id)->first()?->number ?? '',
         ]);
     }
 

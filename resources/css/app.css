@@ -39,8 +39,14 @@
     .catalog-button-secondary {
         @apply border-[#a8c8c5] bg-white text-[#245b53] hover:bg-[#edf6f3];
     }
-    .catalog-button-danger {
+.catalog-button-danger {
         @apply border-red-200 bg-white text-red-700 hover:bg-red-50 focus:ring-red-500;
+    }
+    .issuance-materials-page .catalog-panel > div > .catalog-button {
+        min-height: 36px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.4;
     }
     .catalog-table {
         @apply min-w-full border-collapse text-lg leading-relaxed;

@@ -244,18 +244,16 @@
 
                     </div>
 
-                    @unless($isEdit)
-                        <div class="flex flex-wrap gap-x-6 gap-y-2">
-                            <label class="inline-flex items-center gap-2 text-[#245b53]">
-                                <input type="checkbox" wire:model="with_purchased" value="1" class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
-                                <span>З покупними</span>
-                            </label>
-                            <label class="inline-flex items-center gap-2 text-[#245b53]">
-                                <input type="checkbox" wire:model="with_material_purchased" value="1" class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
-                                <span>Заміна матеріалів</span>
-                            </label>
-                        </div>
-                    @endunless
+                    <div class="hidden flex-wrap gap-x-6 gap-y-2">
+                        <label class="inline-flex items-center gap-2">
+                            <input type="checkbox" wire:model="with_purchased" value="1" @disabled($isEdit) class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
+                            <span class="text-[#245b53] font-medium">З покупними</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2">
+                            <input type="checkbox" wire:model="with_material_purchased" value="1" @disabled($isEdit) class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
+                            <span class="text-[#245b53] font-medium">Заміна матеріалів</span>
+                        </label>
+                    </div>
 
                     </div>
 

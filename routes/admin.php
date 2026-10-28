@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\Admin\GroupMaterialController;
 use App\Http\Controllers\Admin\GroupPermissionController;
 use App\Http\Controllers\Admin\ImportMaterialStockController;
+use App\Http\Controllers\ImportMaterialStockReportController;
 use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\IssuanceMaterialController;
 use App\Http\Controllers\Admin\Logs\DesignationMaterialLogController;
@@ -50,6 +51,7 @@ use App\Livewire\IssuanceMaterialIndex;
 use App\Livewire\ManualIssuanceMaterialIndex;
 use App\Livewire\IssuanceMaterialPage;
 use App\Livewire\Login;
+use App\Livewire\MaterialReturnIndex;
 use App\Livewire\ManualIssuanceMaterialPage;
 use App\Livewire\SearchDesignationInPlanIndex;
 use App\Livewire\UserSearch;
@@ -77,6 +79,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('/', [IndexController::class, 'index'])->name('admin.home');
     Route::resource('specifications', \App\Http\Controllers\Admin\SpecificationController::class);
+    Route::get('designations/{designation}/drawing', [DesignationController::class, 'drawing'])->name('designations.drawing');
     Route::resource('designations', DesignationController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('sections', SectionController::class);
@@ -116,6 +119,9 @@ use Illuminate\Support\Facades\Route;
 
 
     Route::resource('materials', MaterialController::class);
+    Route::get('material-returns', MaterialReturnIndex::class)->name('material-returns.index');
+    Route::get('import-material-stocks/report', ImportMaterialStockReportController::class)
+        ->name('import-material-stocks.report');
     Route::resource('import-material-stocks', ImportMaterialStockController::class);
     Route::get('delivery-note/{designation}', [DeliveryNoteDesignationController::class,'deliveryNoteDesignation'])->name('import.material.stock');
 

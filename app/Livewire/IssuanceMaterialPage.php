@@ -194,7 +194,7 @@ class IssuanceMaterialPage extends Component
         ]);
         $this->materialIssuanceId = $materialIssuance->id;
 
-        $this->all_materials = $materialService->material(collect([$materialIssuance]),1,5,'material_id');
+        $this->all_materials = $materialService->material(collect([$materialIssuance]),1,5,'material_id',$this->order_name_id);
        // dd($this->all_materials);
         $this->generated = true;
 

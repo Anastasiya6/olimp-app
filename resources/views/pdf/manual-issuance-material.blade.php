@@ -32,7 +32,6 @@
         <th>Артикул 1С</th>
         <th>Матеріал 1С</th>
         <th>Кількість</th>
-        <th>Факт кількість</th>
         <th>од.</th>
     </tr>
     </thead>
@@ -42,7 +41,6 @@
         <tr>
             <td>{{ $item->importMaterial->article ?? '—' }}</td>
             <td>{{ $item->importMaterial->name ?? '—' }}</td>
-            <td>{{ $item->quantity ?? 0 }}</td>
             <td>{{ $item->fact_quantity ?? 0 }}</td>
             <td>{{ $item->importMaterial->unit->unit ?? '—' }}</td>
         </tr>

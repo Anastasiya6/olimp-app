@@ -76,7 +76,7 @@ class ManualIssuanceMaterialIndex extends Component
             foreach ($items as $item) {
                 ImportMaterialStock::create([
                     'import_material_id' => $item->import_material_id,
-                    'amount' => -$item->quantity,
+                    'amount' => -$item->fact_quantity,
                     'type' => 'stock_out',
                     'document_number' => $document->id,
                     'department_id' => $document->department_id,
@@ -101,7 +101,7 @@ class ManualIssuanceMaterialIndex extends Component
             foreach ($items as $item) {
                 ImportMaterialStock::create([
                     'import_material_id' => $item->import_material_id,
-                    'amount' => $item->quantity,
+                    'amount' => $item->fact_quantity,
                     'type' => 'stock_in',
                     'document_number' => $document->id,
                     'department_id' => $document->department_id,
@@ -123,7 +123,7 @@ class ManualIssuanceMaterialIndex extends Component
                 foreach ($items as $item) {
                     ImportMaterialStock::create([
                         'import_material_id' => $item->import_material_id,
-                        'amount' => $item->quantity,
+                        'amount' => $item->fact_quantity,
                         'type' => 'stock_in',
                         'document_number' => $document->id,
                         'department_id' => $document->department_id,

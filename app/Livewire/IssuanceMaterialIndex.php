@@ -97,7 +97,7 @@ class IssuanceMaterialIndex extends Component
             // списання зі складу (твій сервіс)
             ImportMaterialStock::create([
                 'import_material_id' => $item->import_material_id,
-                'amount' => -$item->quantity,
+                'amount' => -$item->fact_quantity,
                 'type' => 'stock_out',
                 'document_number' => $item->material_issuance_id,
                 'department_id' => $doc->department_id,

@@ -118,8 +118,8 @@
                                 </div>
                                 <label class="col-span-8 sm:col-span-3">
                                     <span class="text-sm text-[#245b53]">Кількість</span>
-                                    <input type="number" step="0.01" min="0.01" wire:model="issuanceItems.{{ $index }}.quantity" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
-                                    @error('issuanceItems.'.$index.'.quantity')<span class="mt-1 block text-sm text-red-600">{{ $message }}</span>@enderror
+                                    <input type="number" step="0.01" min="0.01" wire:model="issuanceItems.{{ $index }}.fact_quantity" class="mt-1 block w-full rounded-md border-slate-300 focus:border-teal-600 focus:ring-teal-600">
+                                    @error('issuanceItems.'.$index.'.fact_quantity')<span class="mt-1 block text-sm text-red-600">{{ $message }}</span>@enderror
                                 </label>
                                 <button type="button" wire:click="removeMaterial({{ $index }})" aria-label="Видалити {{ $item['name'] }}" class="col-span-4 mt-6 rounded-md px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 sm:col-span-2">Видалити</button>
                             </div>

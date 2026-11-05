@@ -165,7 +165,7 @@
                             </td>
                             <td>
                                 @foreach($item->items as $issuanceItem)
-                                    <div>{{ $issuanceItem->quantity }}</div>
+                                    <div>{{ $issuanceItem->fact_quantity }}</div>
                                 @endforeach
                             </td>
                             <td>

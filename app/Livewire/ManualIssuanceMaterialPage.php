@@ -49,7 +49,7 @@ class ManualIssuanceMaterialPage extends Component
                 'name' => $item->importMaterial?->name ?? '',
                 'article' => $item->importMaterial?->article,
                 'balance' => $item->importMaterial?->stocks()->sum('amount') ?? 0,
-                'quantity' => $item->quantity,
+                'fact_quantity' => $item->fact_quantity,
             ])->all();
 
             return;
@@ -108,7 +108,7 @@ class ManualIssuanceMaterialPage extends Component
             'name' => $material->name,
             'article' => $material->article,
             'balance' => $material->stocks_sum_amount ?? 0,
-            'quantity' => '',
+            'fact_quantity' => '',
         ];
         $this->materialSearch = '';
         $this->materialSearchResults = [];
@@ -131,7 +131,7 @@ class ManualIssuanceMaterialPage extends Component
             'department_id' => 'nullable|exists:departments,id',
             'issuanceItems' => 'required|array|min:1',
             'issuanceItems.*.import_material_id' => 'required|distinct|exists:import_materials,id',
-            'issuanceItems.*.quantity' => 'required|numeric|min:0.01',
+            'issuanceItems.*.fact_quantity' => 'required|numeric|min:0.01',
         ]);
 
         DB::transaction(function () {
@@ -154,7 +154,7 @@ class ManualIssuanceMaterialPage extends Component
                 MaterialIssuanceItem::create([
                     'material_issuance_id' => $issuance->id,
                     'import_material_id' => $item['import_material_id'],
-                    'quantity' => $item['quantity'],
+                    'fact_quantity' => $item['fact_quantity'],
                 ]);
             }
 

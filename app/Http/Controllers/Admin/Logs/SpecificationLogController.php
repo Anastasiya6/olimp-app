@@ -12,10 +12,16 @@ class SpecificationLogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+         $request->validate(['detail_name' => ['nullable', 'string', 'max:255']]);
+         $detailName = trim((string) $request->input('detail_name', ''));
+
          return view('administrator::include.specification-logs.index', [
-            'items' => SpecificationLog::orderBy('updated_at','desc')->paginate(25),
+            'items' => SpecificationLog::when($detailName !== '', function ($query) use ($detailName) {
+                $query->where('detail', 'like', '%'.$detailName.'%');
+            })->orderBy('updated_at','desc')->paginate(25)->withQueryString(),
+            'detailName' => $detailName,
             'route' => $this->route,
             'title' => 'Зміни у специфікації']);
     }

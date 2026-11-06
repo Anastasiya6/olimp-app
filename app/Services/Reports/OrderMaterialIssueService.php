@@ -19,7 +19,7 @@ class OrderMaterialIssueService
                 'article' => $material?->article ?? '-',
                 'name' => $material?->name ?? 'Матеріал 1С #'.$group->first()->import_material_id,
                 'unit' => $material?->unit?->unit ?? '-',
-                'quantity' => $group->sum('quantity'),
+                'quantity' => $group->sum('fact_quantity'),
                 'documents' => $group->pluck('material_issuance_id')->unique()->values()->all(),
             ];
         })->sortBy('name')->values();

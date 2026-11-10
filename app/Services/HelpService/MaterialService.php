@@ -288,6 +288,8 @@ class MaterialService
                                     'material' => $specification->designationEntry->name,
                                     'material_id' => $this->type_group == 'detail' ? $specification->designationEntry->name : $specification->designationEntry->id . $type,
                                     'designation_id' => $specification->designationEntry->id,
+                                    'quantity_per_product' => $specification->quantity
+                                        * array_product(array_slice($array_pred_quantity_node, 1)),
                                     'norm' => $specification->quantity,
                                     'pred_quantity_node' => $pred_quantity_node,
                                     'quantity_node' => $quantity_node,
@@ -318,6 +320,11 @@ class MaterialService
             return;
         }
 
+        // Calculate once per detail, excluding the root document/plan quantity.
+        $quantityPerProduct = empty($array_pred_quantity_node)
+            ? 1
+            : $quantity_node * array_product(array_slice($array_pred_quantity_node, 1));
+
         foreach ($array_materials as $array_material){
 
             if($array_material['unit']  == 'шт'){
@@ -337,6 +344,7 @@ class MaterialService
                     'detail' => $designation->designation,
                     //'designation_name' => $designation_name.$designation ?? '',
                     'designation_id' => null,
+                    'quantity_per_product' => $quantityPerProduct,
                     'material' => $array_material['material'],
                     'material_id' => $array_material['material_id'],
                     'norm' => $array_material['norm'],
@@ -399,8 +407,9 @@ class MaterialService
                             'pred_quantity_node' => $group->sum('pred_quantity_node'),
 
                             'specification_quantity' => $group
-                                                            ->pluck('quantity_node', 'detail')
-                                                            ->toArray(),
+                                ->groupBy('detail')
+                                ->map(fn ($items) => $items->sum('quantity_per_product'))
+                                ->toArray(),
                             'quantity_node' => $group->sum('quantity_node'),
                             'print_number' => $group->sum('print_value'),
                             'print_value' => $group->sum('print_value'),

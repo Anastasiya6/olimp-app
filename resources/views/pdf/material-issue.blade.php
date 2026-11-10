@@ -173,65 +173,6 @@
                     <br>
                 @endforeach
             </td>
-{{--                @else--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                @endif--}}
-{{--            @else--}}
-{{--                @php--}}
-{{--                    $designationKey = (int)$key;--}}
-{{--                @endphp--}}
-
-{{--                @if(!empty($result['designation_id'][$designationKey]))--}}
-{{--                    <td>--}}
-{{--                        @if(isset($result['designation_id'][$designationKey][$item['detail']]))--}}
-{{--                            @foreach($result['designation_id'][$designationKey][$item['detail']] as $record)--}}
-{{--                                {{ $record['item']->material_issuance_id }}@if(!$loop->last), @endif--}}
-{{--                            @endforeach--}}
-{{--                        @else--}}
-{{--                            @foreach($details as $detail)--}}
-{{--                                @foreach($result['designation_id'][$designationKey][$detail] ?? [] as $record)--}}
-{{--                                    {{ $record['item']->material_issuance_id }}@if(!$loop->last), @endif--}}
-{{--                                @endforeach--}}
-{{--                                <br>--}}
-{{--                            @endforeach--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                    <td>--}}
-{{--                        @if(isset($result['designation_id'][$designationKey][$item['detail']]))--}}
-{{--                            @foreach($result['designation_id'][$designationKey][$item['detail']] as $record)--}}
-{{--                                {{ $record['quantity'] }}@if(!$loop->last), @endif--}}
-{{--                            @endforeach--}}
-{{--                        @else--}}
-{{--                            @foreach($details as $detail)--}}
-{{--                                @foreach($result['designation_id'][$designationKey][$detail] ?? [] as $record)--}}
-{{--                                    {{ $record['quantity'] }}@if(!$loop->last), @endif--}}
-{{--                                @endforeach--}}
-{{--                                <br>--}}
-{{--                            @endforeach--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                    <td>--}}
-{{--                        @if(isset($result['designation_id'][$designationKey][$item['detail']]))--}}
-{{--                            @foreach($result['designation_id'][$designationKey][$item['detail']] as $record)--}}
-{{--                                {{ $record['item']->quantity }}@if(!$loop->last), @endif--}}
-{{--                            @endforeach--}}
-{{--                        @else--}}
-{{--                            @foreach($details as $detail)--}}
-{{--                                @foreach($result['designation_id'][$designationKey][$detail] ?? [] as $record)--}}
-{{--                                    {{ $record['item']->quantity }}@if(!$loop->last), @endif--}}
-{{--                                @endforeach--}}
-{{--                                <br>--}}
-{{--                            @endforeach--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                @else--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                @endif--}}
-{{--            @endif--}}
         </tr>
     @endforeach
     </tbody>

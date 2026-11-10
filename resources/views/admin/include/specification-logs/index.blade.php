@@ -6,6 +6,17 @@
     </x-slot>
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <x-catalog.panel class="mb-4">
+                <form method="GET" action="{{ route('specification-logs.index') }}" class="flex flex-wrap items-end gap-3">
+                    <label class="flex-1">
+                        <span class="block text-sm font-medium text-[#245b53]">Назва деталі</span>
+                        <input type="search" name="detail_name" value="{{ $detailName }}" maxlength="255" placeholder="Введіть назву або її частину" class="compact-search mt-1 w-full">
+                    </label>
+                    <x-catalog.button type="submit" variant="primary">Знайти</x-catalog.button>
+                    <x-catalog.button :href="route('specification-logs.index')" variant="secondary">Скинути</x-catalog.button>
+                </form>
+                @error('detail_name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+            </x-catalog.panel>
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="overflow-hidden overflow-x-auto border-b border-gray-200 bg-white p-6">
 

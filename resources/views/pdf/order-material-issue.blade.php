@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="utf-8">
-    <title>Видача матеріалів по замовленню {{ $order->name }}</title>
+    <title>{{ $reportTitle ?? 'Видача матеріалів за замовленням' }} {{ $order->name }}</title>
     <style>
         @page { margin: 28px; }
         body { font-family: DejaVu Sans, sans-serif; font-size: 10px; }
@@ -18,7 +18,7 @@
     </style>
 </head>
 <body>
-    <h1>Звіт видачі матеріалів по замовленню</h1>
+    <h1>{{ $reportTitle ?? 'Видача матеріалів за замовленням' }}</h1>
     <p><strong>Замовлення:</strong> {{ $order->name }} @if(!empty($dateFrom) || !empty($dateTo)) <span> | &#1055;&#1077;&#1088;&#1110;&#1086;&#1076;: {{ $dateFrom ? \Illuminate\Support\Carbon::parse($dateFrom)->format('d.m.Y') : '' }}{{ $dateFrom && $dateTo ? ' — ' : '' }}{{ $dateTo ? \Illuminate\Support\Carbon::parse($dateTo)->format('d.m.Y') : '' }}</span> @endif</p>
     <p>{{ ($postedOnly ?? false) ? 'Лише проведені документи.' : 'Усі документи.' }}</p>
     <p>Сформовано: {{ $generatedAt->format('d.m.Y H:i') }}</p>

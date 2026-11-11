@@ -72,7 +72,7 @@
                             </div>
                             <div class="flex justify-end">
                                 @if($reportOrderId)
-                                    <a href="{{ route('material.issue.order.pdf', ['order' => $reportOrderId, 'posted_only' => $postedOnly ? 1 : 0, 'date_from' => $reportDateFrom, 'date_to' => $reportDateTo]) }}" target="_blank" class="catalog-button catalog-reports-button">Звіт по замовленню</a>
+                                    <a href="{{ route('material.issue.order.pdf', ['order' => $reportOrderId, 'source' => 'manual', 'posted_only' => $postedOnly ? 1 : 0, 'date_from' => $reportDateFrom, 'date_to' => $reportDateTo]) }}" target="_blank" class="catalog-button catalog-reports-button">Звіт по замовленню</a>
                                 @else
                                     <button type="button" disabled class="catalog-button catalog-reports-button cursor-not-allowed opacity-50">Звіт по замовленню</button>
                                 @endif

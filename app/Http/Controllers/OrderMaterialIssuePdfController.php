@@ -15,7 +15,11 @@ class OrderMaterialIssuePdfController extends Controller
         $dates = request()->validate([
             'date_from' => ['nullable', 'date_format:Y-m-d'],
             'date_to' => ['nullable', 'date_format:Y-m-d'],
+            'source' => ['nullable', 'in:issuance,manual'],
         ]);
+        $reportTitle = ($dates['source'] ?? 'issuance') === 'manual'
+            ? 'Видача матеріалів за замовленням без норм'
+            : 'Видача матеріалів за замовленням з нормами та без норм';
         $dateFrom = $dates['date_from'] ?? null;
         $dateTo = $dates['date_to'] ?? null;
 
@@ -36,6 +40,7 @@ class OrderMaterialIssuePdfController extends Controller
 
         return Pdf::loadView('pdf.order-material-issue', [
             'order' => $order,
+            'reportTitle' => $reportTitle,
             'rows' => $service->summarize($items),
             'generatedAt' => now(),
             'postedOnly' => request()->boolean('posted_only'),

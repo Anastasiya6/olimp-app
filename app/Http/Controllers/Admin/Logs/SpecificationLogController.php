@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Logs;
 
 use App\Http\Controllers\Controller;
-use App\Models\SpecificationLog;
 use Illuminate\Http\Request;
 
 class SpecificationLogController extends Controller
@@ -18,9 +17,6 @@ class SpecificationLogController extends Controller
          $detailName = trim((string) $request->input('detail_name', ''));
 
          return view('administrator::include.specification-logs.index', [
-            'items' => SpecificationLog::when($detailName !== '', function ($query) use ($detailName) {
-                $query->where('detail', 'like', '%'.$detailName.'%');
-            })->orderBy('updated_at','desc')->paginate(25)->withQueryString(),
             'detailName' => $detailName,
             'route' => $this->route,
             'title' => 'Зміни у специфікації']);

@@ -21,6 +21,7 @@ class MaterialIssueReportController extends Controller
         if ($data['report'] === 'order') {
             return redirect()->route('material.issue.order.pdf', [
                 'order' => $data['order_id'],
+                'source' => 'issuance',
                 'posted_only' => $data['posted_only'] ?? false,
             ]);
         }

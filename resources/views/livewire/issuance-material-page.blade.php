@@ -244,7 +244,7 @@
 
                     </div>
 
-                    <div class="hidden flex-wrap gap-x-6 gap-y-2">
+                    <div class="flex flex-wrap gap-x-6 gap-y-2">
                         <label class="inline-flex items-center gap-2">
                             <input type="checkbox" wire:model="with_purchased" value="1" @disabled($isEdit) class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
                             <span class="text-[#245b53] font-medium">З покупними</span>
@@ -279,7 +279,10 @@
                         <tbody>
                         @foreach($materials as $index => $material)
                             @php
-                                if (is_numeric($material['material_id'])) {
+                                if ($material['type'] === 'purchase') {
+                                    $hasTaken = array_key_exists($material['material_id'], $selectedMaterials['purchase'] ?? []);
+                                    $taken = $selectedMaterials['purchase'][$material['material_id']] ?? 0;
+                                } elseif (is_numeric($material['material_id'])) {
                                     $hasTaken = array_key_exists(
                                         $material['material_id'],
                                         $selectedMaterials['material_id']
@@ -307,10 +310,7 @@
                                 <td>
                                     @if(!$hasTaken)
                                         <x-catalog.button variant="primary"
-                                            wire:click="openModal('{{ $material['material_id'] }}',
-                                                                    '{{ $material['detail'] }}',
-                                                                    '{{ $material['material'] }}',
-                                                                    '{{ $material['print_value']}}')"
+                                            wire:click="openModal('{{ $index }}')"
 
                                         >
                                             Видати матеріал
@@ -318,10 +318,7 @@
                                     @endif
                                     @if($isEdit && $hasTaken)
                                         <x-catalog.button variant="primary"
-                                        wire:click="openEditModal('{{ $material['material_id']}}',
-                                                                    '{{ $material['detail'] }}',
-                                                                    '{{ $material['material'] }}',
-                                                                    '{{ $materialIssuanceId }}')">
+                                        wire:click="openEditModal('{{ $index }}')">
                                             Редагувати
                                         </x-catalog.button>
                                     @endif

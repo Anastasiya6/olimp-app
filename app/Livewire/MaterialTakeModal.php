@@ -19,6 +19,9 @@ class MaterialTakeModal extends Component
     public $detail_name = null;
     public $material_name = null;
     public $editingId = null;
+    public $type = null;
+    public $designationId = null;
+    public $purchaseId = null;
 
     protected $listeners = [
         'openMaterialModal' => 'open',
@@ -31,8 +34,14 @@ class MaterialTakeModal extends Component
         $this->selectedMaterialId = $id;
     }
 
-    public function open($currentIndex,$detail_name, $material_name,$materialIssuanceId,$norm)
+    public function open($currentIndex,$detail_name, $material_name,$materialIssuanceId,$norm, $type = null, $designationId = null, $purchaseId = null)
     {
+        $this->resetValidation();
+        $this->editingId = null;
+        $this->takeFactQty = 0;
+        $this->type = $type;
+        $this->designationId = $designationId;
+        $this->purchaseId = $purchaseId;
         $this->currentIndex = $currentIndex;
         $this->detail_name = $detail_name;
         $this->material_name = $material_name;
@@ -43,17 +52,23 @@ class MaterialTakeModal extends Component
         $this->takeQty = $norm;
     }
 
-    public function openEdit($currentIndex,$detail_name, $material_name,$materialIssuanceId)
+    public function openEdit($currentIndex,$detail_name, $material_name,$materialIssuanceId, $type = null, $designationId = null, $purchaseId = null)
     {
+        $this->type = $type;
+        $this->designationId = $designationId;
+        $this->purchaseId = $purchaseId;
         $this->currentIndex = $currentIndex;
         $this->materialIssuanceId = $materialIssuanceId;
         $this->detail_name = $detail_name;
         $this->material_name = $material_name;
-        if (is_numeric($this->currentIndex)) {
+        if ($this->type === 'purchase') {
+            $item = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId)
+                ->where('designation_id', $this->designationId)->where('purchase_id', $this->purchaseId)->firstOrFail();
+        } elseif (is_numeric($this->currentIndex)) {
             $item = MaterialIssuanceItem::where('material_id',$this->currentIndex)->where('material_issuance_id',$this->materialIssuanceId)->first();
 
         } else {
-            $item = MaterialIssuanceItem::where('designation_id',$this->currentIndex)->where('material_issuance_id',$this->materialIssuanceId)->first();
+            $item = MaterialIssuanceItem::where('designation_id', (int) $this->currentIndex)->whereNull('purchase_id')->where('material_issuance_id',$this->materialIssuanceId)->firstOrFail();
 
         }
         $this->editingId = $item->id;
@@ -66,6 +81,13 @@ class MaterialTakeModal extends Component
 
     public function save()
     {
+        if ($this->type === 'purchase') {
+            $this->validate([
+                'designationId' => ['required', 'integer', 'exists:designations,id'],
+                'purchaseId' => ['required', 'integer', \Illuminate\Validation\Rule::exists('purchases', 'id')
+                    ->where('designation_entry_id', $this->designationId)],
+            ]);
+        }
         $data = [
             'material_issuance_id' => $this->materialIssuanceId,
             'import_material_id' => $this->selectedMaterialId,
@@ -74,9 +96,13 @@ class MaterialTakeModal extends Component
             'fact_quantity' => $this->takeFactQty,
             'material_id' => null,
             'designation_id' => null,
+            'purchase_id' => null,
         ];
 
-        if (is_numeric($this->currentIndex)) {
+        if ($this->type === 'purchase') {
+            $data['designation_id'] = $this->designationId;
+            $data['purchase_id'] = $this->purchaseId;
+        } elseif (is_numeric($this->currentIndex)) {
             $data['material_id'] = (int) $this->currentIndex;
         } else {
             //dd($this->currentIndex,(int) $this->currentIndex);

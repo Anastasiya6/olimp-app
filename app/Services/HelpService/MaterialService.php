@@ -165,7 +165,9 @@ class MaterialService
         if ($purchase) {
             return array([
                 'type' => 'purchase',
-                'material_id' => $purchase->purchase,
+                'material_id' => $this->type_group === 'issuance' ? $designation_entry_id . 'p' . $purchase->id : $purchase->purchase,
+                'designation_id' => $designation_entry_id,
+                'purchase_id' => $purchase->id,
                 'material' => $purchase->purchase,
                 'norm' => 1,
                 'quantity' => $quantity,
@@ -343,7 +345,8 @@ class MaterialService
                     'type' => $array_material['type'],
                     'detail' => $designation->designation,
                     //'designation_name' => $designation_name.$designation ?? '',
-                    'designation_id' => null,
+                    'designation_id' => $array_material['designation_id'] ?? null,
+                    'purchase_id' => $array_material['purchase_id'] ?? null,
                     'quantity_per_product' => $quantityPerProduct,
                     'material' => $array_material['material'],
                     'material_id' => $array_material['material_id'],
@@ -390,7 +393,7 @@ class MaterialService
 
             $records = collect($records->materials);
 
-            if($this->type_group == 'material_id'){
+            if(in_array($this->type_group, ['material_id', 'issuance'], true)){
                 //for plan-task-specification-norm
                 return $records->groupBy('material_id')->map(function ($group) {
                     return [
@@ -398,6 +401,7 @@ class MaterialService
                             'detail' => $group->pluck('detail')->unique()->implode(', '),
                             //'designation_name' => $group->pluck('designation_name')->unique()->implode(', '),
                             'designation_id' => $group->first()['designation_id'],
+                            'purchase_id' => $group->first()['purchase_id'] ?? null,
                             'material' => $group->first()['material'],
                             'material_id' => $group->first()['material_id'],
                             'norm' => $group->sum('norm'),

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Department;
 use App\Models\ImportMaterial;
 use App\Models\ImportMaterialStock;
+use App\Models\MaterialReturn;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,11 +18,12 @@ class MaterialReturnIndex extends Component
     public string $quantity = '';
     public string $departmentId = '';
     public ?int $selectedMaterialId = null;
+    public ?int $editingId = null;
 
     public function openCreate(): void
     {
         $this->resetValidation();
-        $this->reset(['articleSearch', 'quantity', 'selectedMaterialId']);
+        $this->reset(['articleSearch', 'quantity', 'selectedMaterialId', 'editingId']);
         $this->departmentId = (string) session('material_return_department_id', '');
         $this->dispatch('material-return-open');
     }
@@ -29,6 +31,29 @@ class MaterialReturnIndex extends Component
     public function updatedArticleSearch(): void
     {
         $this->selectedMaterialId = null;
+    }
+
+    public function openEdit(int $id): void
+    {
+        $document = MaterialReturn::with('material')->findOrFail($id);
+        abort_unless($document->status === 'draft', 403);
+        $this->resetValidation();
+        $this->editingId = $document->id;
+        $this->selectedMaterialId = $document->import_material_id;
+        $this->articleSearch = (string) $document->material?->article;
+        $this->quantity = (string) $document->quantity;
+        $this->departmentId = (string) $document->department_id;
+        $this->dispatch('material-return-open');
+    }
+
+    public function deleteDocument(int $id): void
+    {
+        DB::transaction(function () use ($id) {
+            $document = MaterialReturn::lockForUpdate()->findOrFail($id);
+            abort_unless($document->status === 'draft', 403);
+            $document->delete();
+        });
+        $this->resetPage();
     }
 
     public function selectMaterial(int $id): void
@@ -54,20 +79,56 @@ class MaterialReturnIndex extends Component
         ]);
 
         DB::transaction(function () use ($data) {
-            ImportMaterialStock::create([
+            $document = $this->editingId
+                ? MaterialReturn::lockForUpdate()->findOrFail($this->editingId)
+                : new MaterialReturn;
+            abort_unless($document->status === 'draft', 403);
+            $document->fill([
                 'import_material_id' => $data['selectedMaterialId'],
-                'amount' => $data['quantity'],
-                'type' => 'return',
-                'document_date' => now(),
+                'quantity' => $data['quantity'],
+                'status' => 'draft',
                 'department_id' => $data['departmentId'],
-            ]);
+            ])->save();
         });
 
         session(['material_return_department_id' => $data['departmentId']]);
         $this->resetPage();
-        $this->reset(['articleSearch', 'quantity', 'selectedMaterialId']);
+        $this->reset(['articleSearch', 'quantity', 'selectedMaterialId', 'editingId']);
         $this->dispatch('material-return-close');
-        session()->flash('success', 'Повернення матеріалу успішно додано.');
+        session()->flash('success', 'Повернення збережено. Для зарахування на склад проведіть документ.');
+    }
+
+    public function postDocument(int $id): void
+    {
+        $this->changePostingStatus($id, true);
+    }
+
+    public function unpostDocument(int $id): void
+    {
+        $this->changePostingStatus($id, false);
+    }
+
+    private function changePostingStatus(int $id, bool $post): void
+    {
+        DB::transaction(function () use ($id, $post) {
+            $document = MaterialReturn::lockForUpdate()->findOrFail($id);
+            $status = $post ? 'posted' : 'draft';
+
+            if ($document->status === $status) {
+                return;
+            }
+
+            ImportMaterialStock::create([
+                'import_material_id' => $document->import_material_id,
+                'amount' => $post ? $document->quantity : -$document->quantity,
+                'type' => 'return',
+                'document_number' => $document->id,
+                'document_date' => now(),
+                'department_id' => $document->department_id,
+            ]);
+
+            $document->update(['status' => $status]);
+        });
     }
 
     public function render()
@@ -84,10 +145,8 @@ class MaterialReturnIndex extends Component
                 ->get(['id', 'article', 'name', 'type_unit_id']);
         }
 
-        $returns = ImportMaterialStock::query()
-            ->with(['materials.unit', 'department'])
-            ->where('type', 'return')
-            ->orderByDesc('document_date')
+        $returns = MaterialReturn::query()
+            ->with(['material.unit', 'department'])
             ->orderByDesc('id')
             ->paginate(25);
 

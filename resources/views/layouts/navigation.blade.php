@@ -1,6 +1,7 @@
 @php
     $navigation = [
         ['label' => 'Довідники', 'items' => [
+            ['label' => 'Матеріал 1С', 'route' => 'import-materials.index'],
             ['label' => 'Цеха', 'route' => 'departments.index'],
             ['label' => 'Ділянки', 'route' => 'sections.index'],
             ['label' => 'Од. вимірювання', 'route' => 'type_units.index'],
@@ -19,6 +20,7 @@
             ['label' => 'Норми', 'route' => 'designation-materials.index'],
             ['label' => 'Матеріали', 'route' => 'materials.index'],
             ['label' => 'Матеріали з 1С', 'route' => 'import-material-stocks.index'],
+            ['label' => 'Повернення матеріалів', 'route' => 'material-returns.index'],
             ['label' => 'Видача матеріалів', 'route' => 'issuance-materials.index'],
             ['label' => 'Видача матеріалів без норм', 'route' => 'manual-issuance-materials.index'],
             ['label' => 'Пошук деталі в плані', 'route' => 'search-designation-in-plan.index'],

@@ -88,7 +88,7 @@ class IssuanceMaterialPage extends Component
             $this->issued_by_user_id = $issuance->issued_by_user_id;
 
             $materialService = app(MaterialService::class);
-            $this->all_materials = $materialService->material(collect([$issuance]),1,5,'material_id');
+            $this->all_materials = $materialService->material(collect([$issuance]),1,5,'issuance',$this->order_name_id);
 
             $this->generated = true;
             $this->planDesignationName = $issuance->planTaskDesignation?->designation;
@@ -129,26 +129,38 @@ class IssuanceMaterialPage extends Component
         $this->loadPlanDesignation();
     }
 
-    public function openModal($material_id, $detail_name, $material_name, $norm)
+    public function openModal($material_id)
     {
-        $this->dispatch('openMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId, $norm);
+        $material = collect($this->all_materials)->get($material_id);
+        abort_unless($material, 404);
+
+        $this->dispatch('openMaterialModal', $material['material_id'], $material['detail'],
+            $material['material'], $this->materialIssuanceId, $material['print_value'],
+            $material['type'], $material['designation_id'] ?? null, $material['purchase_id'] ?? null);
     }
 
-    public function openEditModal($material_id, $detail_name, $material_name)
+    public function openEditModal($material_id)
     {
-        $this->dispatch('openEditMaterialModal', $material_id, $detail_name, $material_name, $this->materialIssuanceId);
+        $material = collect($this->all_materials)->get($material_id);
+        abort_unless($material, 404);
+
+        $this->dispatch('openEditMaterialModal', $material['material_id'], $material['detail'],
+            $material['material'], $this->materialIssuanceId,
+            $material['type'], $material['designation_id'] ?? null, $material['purchase_id'] ?? null);
     }
 
     public function removeMaterial($materialId)
     {
         $query = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId);
 
-        if (is_numeric($materialId)) {
+        if (preg_match('/^(\d+)p(\d+)$/', (string) $materialId, $matches)) {
+            $query->where('designation_id', $matches[1])->where('purchase_id', $matches[2]);
+        } elseif (is_numeric($materialId)) {
             // це material
             $query->where('material_id', $materialId);
         } else {
             // це designation → чистимо id
-            $query->where('designation_id', (int) $materialId);
+            $query->where('designation_id', (int) $materialId)->whereNull('purchase_id');
         }
 
         $query->delete();
@@ -194,7 +206,7 @@ class IssuanceMaterialPage extends Component
         ]);
         $this->materialIssuanceId = $materialIssuance->id;
 
-        $this->all_materials = $materialService->material(collect([$materialIssuance]),1,5,'material_id',$this->order_name_id);
+        $this->all_materials = $materialService->material(collect([$materialIssuance]),1,5,'issuance',$this->order_name_id);
        // dd($this->all_materials);
         $this->generated = true;
 
@@ -215,7 +227,9 @@ class IssuanceMaterialPage extends Component
         ];
 
         foreach ($items as $item) {
-            if ($item->designation_id) {
+            if ($item->purchase_id) {
+                $result['purchase'][$item->designation_id . 'p' . $item->purchase_id] = $item->quantity;
+            } elseif ($item->designation_id) {
 
                 $result['designation_id'][$item->designation_id] = $item->quantity;
             }elseif ($item->material_id) {

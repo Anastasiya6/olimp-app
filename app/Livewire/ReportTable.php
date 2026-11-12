@@ -8,9 +8,12 @@ use App\Services\Reports\EntryDetailService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Session;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ReportTable extends Component
 {
+    use WithPagination;
+
     public $selectedDepartment = [];
 
     #[Session]

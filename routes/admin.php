@@ -78,6 +78,7 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth')->group(function () {
 
     Route::get('/', [IndexController::class, 'index'])->name('admin.home');
+    Route::get('import-materials', \App\Livewire\ImportMaterialIndex::class)->name('import-materials.index');
     Route::resource('specifications', \App\Http\Controllers\Admin\SpecificationController::class);
     Route::get('designations/{designation}/drawing', [DesignationController::class, 'drawing'])->name('designations.drawing');
     Route::resource('designations', DesignationController::class);

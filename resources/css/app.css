@@ -2,6 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+.stock-movements-responsive { min-width: 0; }
+.stock-movements-responsive .catalog-table { width: 100%; min-width: 0; table-layout: fixed; }
+.stock-movements-responsive .catalog-table th,
+.stock-movements-responsive .catalog-table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    padding: 8px 6px;
+    font-size: 13px;
+}
+.stock-movements-responsive .catalog-table th:nth-child(5) { width: 22%; }
+.stock-movements-responsive .catalog-table .catalog-button {
+    min-width: 0;
+    min-height: 36px;
+    max-width: 100%;
+    padding: 6px;
+    font-size: 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+@media (min-width: 1024px) {
+    .stock-movements-responsive .catalog-table th:last-child {
+        width: 110px;
+    }
+    .stock-movements-responsive .catalog-table td:last-child .catalog-button {
+        width: 100%;
+        box-sizing: border-box;
+        white-space: nowrap;
+    }
+}
+@media (max-width: 1023px) {
+    .stock-movements-responsive .catalog-table,
+    .stock-movements-responsive .catalog-table tbody,
+    .stock-movements-responsive .catalog-table tr { display: block; width: 100%; }
+    .stock-movements-responsive .catalog-table thead { display: none; }
+    .stock-movements-responsive .catalog-table tr + tr { border-top: 3px solid #a8c8c5; }
+    .stock-movements-responsive .catalog-table td {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        gap: 12px;
+        text-align: left;
+        align-items: center;
+    }
+    .stock-movements-responsive .catalog-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #245b53;
+    }
+    .stock-movements-responsive .catalog-table td > * { min-width: 0; }
+    .stock-movements-responsive .catalog-table td[colspan] { display: block; }
+    .stock-movements-responsive .catalog-table td[colspan]::before { content: none; }
+}
+
 @layer components {
     .catalog-panel {
         @apply rounded-lg border border-[#bfd8d1] bg-white p-4 shadow-sm sm:p-5;

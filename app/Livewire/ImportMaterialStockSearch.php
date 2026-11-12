@@ -34,6 +34,18 @@ class ImportMaterialStockSearch extends Component
 
     public $confirmingStockIn = false;
 
+    public function deleteStockIn(int $id): void
+    {
+        DB::transaction(function () use ($id) {
+            $stock = ImportMaterialStock::lockForUpdate()->findOrFail($id);
+            abort_unless($stock->type === 'stock_in', 403);
+            $stock->delete();
+        });
+
+        $this->resetPage();
+        session()->flash('success', 'Прихід видалено.');
+    }
+
     protected $rules = [
         'file' => 'required|mimes:xlsx,xls'
     ];

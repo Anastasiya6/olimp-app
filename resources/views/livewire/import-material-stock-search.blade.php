@@ -1,4 +1,4 @@
-<div x-data
+<div x-data="{ pendingStock: null, deleteStep: 1, deleting: false, deleteError: '' }"
     x-on:stock-in-open.window="$dispatch('open-modal', 'stock-in-import')"
     x-on:stock-in-close.window="$dispatch('close-modal', 'stock-in-import')"
     x-on:opening-stock-open.window="$dispatch('open-modal', 'opening-stock-import')"
@@ -49,9 +49,12 @@
         @endif
     </x-catalog.panel>
 
-    @if(session()->has('success'))
-        <div role="status" class="my-4 rounded-lg border border-[#a8c8c5] bg-[#e3f1ee] px-4 py-3 text-base font-medium text-[#174a47]">{{ session('success') }}</div>
-    @endif
+    <div wire:key="stock-movements-notifications" aria-live="polite">
+        @if(session()->has('success'))
+            <div role="status" class="my-4 rounded-lg border border-[#a8c8c5] bg-[#e3f1ee] px-4 py-3 text-base font-medium text-[#174a47]">{{ session('success') }}</div>
+        @endif
+    </div>
+    <div class="stock-movements-responsive" wire:key="stock-movements-table">
     <x-catalog.table :items="$items">
         <x-slot:head>
                     <tr>
@@ -64,12 +67,13 @@
                         <th scope="col" class="whitespace-nowrap  text-center font-bold">Од. виміру</th>
                         <th scope="col" class="whitespace-nowrap  text-left font-bold">Документ</th>
                         <th scope="col" class="whitespace-nowrap  text-left font-bold">Дата операції</th>
+                        <th scope="col">Видалення</th>
                     </tr>
                         </x-slot:head>
                     @forelse($items as $item)
                         <tr wire:key="material-stock-row-{{ $item->id }}">
-                            <td class="whitespace-nowrap text-left text-slate-900">{{ $item->department?->name ?? '—' }}</td>
-                            <td class="whitespace-nowrap text-left text-slate-900">
+                            <td data-label="Цех" class="whitespace-nowrap text-left text-slate-900">{{ $item->department?->name ?? '—' }}</td>
+                            <td data-label="Операція" class="whitespace-nowrap text-left text-slate-900">
                                 @switch($item->type)
                                     @case('stock') Початковий залишок @break
                                     @case('stock_in') Прихід @break
@@ -78,28 +82,57 @@
                                     @default {{ $item->type }}
                                 @endswitch
                             </td>
-                            <td class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->materials->code ?? '—' }}</td>
-                            <td class="whitespace-nowrap  font-bold text-slate-900">{{ $item->materials->article ?? '—' }}</td>
-                            <td class=" font-bold leading-relaxed text-slate-900">
-                                <div class="min-w-[16rem] max-w-xl break-words">{{ $item->materials->name ?? '—' }}</div>
+                            <td data-label="Код 1С" class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->materials->code ?? '—' }}</td>
+                            <td data-label="Артикул" class="whitespace-nowrap  font-bold text-slate-900">{{ $item->materials->article ?? '—' }}</td>
+                            <td data-label="Назва матеріалу" class=" font-bold leading-relaxed text-slate-900">
+                                <div class="break-words">{{ $item->materials->name ?? '—' }}</div>
                             </td>
-                            <td class="whitespace-nowrap  text-right font-bold tabular-nums {{ $item->amount < 0 ? 'bg-red-50 text-red-800' : 'text-slate-900' }}">
+                            <td data-label="Кількість" class="whitespace-nowrap  text-right font-bold tabular-nums {{ $item->amount < 0 ? 'bg-red-50 text-red-800' : 'text-slate-900' }}">
                                 {{ $item->amount ?? '—' }}
                             </td>
-                            <td class="whitespace-nowrap  text-center text-slate-900">{{ $item->materials->unit->unit ?? '—' }}</td>
-                            <td class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->document_number ?? '—' }}</td>
-                            <td class="whitespace-nowrap  tabular-nums text-slate-900">
+                            <td data-label="Од. виміру" class="whitespace-nowrap  text-center text-slate-900">{{ $item->materials->unit->unit ?? '—' }}</td>
+                            <td data-label="Документ" class="whitespace-nowrap  tabular-nums text-slate-900">{{ $item->document_number ?? '—' }}</td>
+                            <td data-label="Дата операції" class="whitespace-nowrap  tabular-nums text-slate-900">
                                 {{ $item->document_date ? \Carbon\Carbon::parse($item->document_date)->format('d.m.Y') : '—' }}
+                            </td>
+                            <td data-label="Видалення">
+                                @if($item->type === 'stock_in')
+                                    <x-catalog.button variant="danger" x-bind:disabled="deleting" aria-haspopup="dialog"
+                                        x-on:click="pendingStock = {{ $item->id }}; deleteStep = 1; deleteError = ''; $dispatch('open-modal', 'delete-stock-in')">Видалити</x-catalog.button>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-4 py-10 text-center text-slate-900">
+                            <td colspan="10" class="px-4 py-10 text-center text-slate-900">
                                 {{ trim($searchTerm ?? '') !== '' ? 'За цим артикулом матеріалів не знайдено.' : 'Матеріалів поки немає.' }}
                             </td>
                         </tr>
                     @endforelse
                     </x-catalog.table>
+    </div>
+    <div wire:key="stock-movements-delete-dialog">
+    <x-modal name="delete-stock-in" maxWidth="md" focusable>
+        <div class="p-6" role="dialog" aria-modal="true" aria-labelledby="delete-stock-in-title">
+            <h3 id="delete-stock-in-title" class="text-xl font-bold text-[#174a47]">Видалити запис приходу № <span x-text="pendingStock"></span>?</h3>
+            <p class="mt-3 text-sm text-gray-600" x-show="deleteStep === 1">Ви дійсно хочете видалити цей прихід? Його кількість більше не враховуватиметься в залишках складу.</p>
+            <p class="mt-3 text-sm font-medium text-red-700" x-show="deleteStep === 2">Підтвердіть видалення ще раз. Запис буде позначено видаленим, а залишок складу зменшиться на кількість цього приходу.</p>
+            <p x-show="deleteError" x-text="deleteError" role="alert" class="mt-3 text-sm text-red-600"></p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" class="catalog-button catalog-button-secondary" :disabled="deleting" x-on:click="$dispatch('close')">Скасувати</button>
+                <template x-if="deleteStep === 1">
+                    <button type="button" class="catalog-button catalog-button-danger" x-on:click="deleteStep = 2">Так, продовжити</button>
+                </template>
+                <template x-if="deleteStep === 2">
+                    <button type="button" class="catalog-button catalog-button-danger" :disabled="deleting || !pendingStock"
+                        x-on:click="deleting = true; deleteError = ''; try { await $wire.deleteStockIn(pendingStock); $dispatch('close-modal', 'delete-stock-in'); } catch (error) { deleteError = 'Не вдалося видалити прихід. Оновіть сторінку та перевірте запис.'; } finally { deleting = false; }"
+                        x-text="deleting ? 'Видалення…' : 'Підтверджую видалення'"></button>
+                </template>
+            </div>
+        </div>
+    </x-modal>
+
+    </div>
     <x-modal name="material-stock-report" maxWidth="7xl" focusable>
         <div role="dialog" aria-modal="true" aria-labelledby="material-stock-report-title">
             <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">

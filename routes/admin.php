@@ -121,6 +121,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::resource('materials', MaterialController::class);
     Route::get('material-returns', MaterialReturnIndex::class)->name('material-returns.index');
+    Route::get('material-surpluses', \App\Livewire\MaterialSurplusIndex::class)->name('material-surpluses.index');
     Route::get('import-material-stocks/report', ImportMaterialStockReportController::class)
         ->name('import-material-stocks.report');
     Route::resource('import-material-stocks', ImportMaterialStockController::class);

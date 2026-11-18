@@ -17,6 +17,8 @@ class MaterialPurchaseSearch extends Component
 
     public $searchTermChto;
 
+    public $filterOrder = '';
+
     public ?MaterialPurchase $editingMaterialPurchase = null;
 
     public int $editFormVersion = 0;
@@ -43,6 +45,8 @@ class MaterialPurchaseSearch extends Component
 
     public function updatedSearchTermChto() { $this->resetPage(); }
 
+    public function updatedFilterOrder() { $this->resetPage(); }
+
     public function updateSearch()
     {
         $this->resetPage();
@@ -62,28 +66,28 @@ class MaterialPurchaseSearch extends Component
 
     protected function purchases()
     {
-        $searchTerm = '%' . trim($this->searchTerm) . '%';
+        $searchTerm = trim($this->searchTerm ?? '');
+        $searchTermChto = trim($this->searchTermChto ?? '');
 
-        $searchTermChto = '%' . trim($this->searchTermChto) . '%';
-
-        if ($searchTerm == '%%' && $searchTermChto == '%%') {
-            $purchases = MaterialPurchase::with('designation', 'designationEntry', 'order_names', 'material.unit')
-                ->orderBy('updated_at', 'desc')
-                ->paginate(25);
-        } else {
-            $purchases = MaterialPurchase::whereHas('designation', function ($query) use ($searchTerm) {
-                $query->where('designation', 'like', $searchTerm)
-                    ->orderByRaw("CAST(designation AS SIGNED)");
+        return MaterialPurchase::query()
+            ->with('designation', 'designationEntry', 'order_names', 'material.unit')
+            ->when($searchTerm !== '', function ($query) use ($searchTerm) {
+                $query->whereHas('designation', function ($designationQuery) use ($searchTerm) {
+                    $designationQuery->where('designation', 'like', '%' . $searchTerm . '%');
+                });
             })
-                ->whereHas('designationEntry', function ($query) use ($searchTermChto) {
-                    $query->where('designation', 'like', $searchTermChto)
-                        ->orderByRaw("CAST(designation AS SIGNED)");
-                })
-                ->with('designation', 'designationEntry', 'order_names', 'material.unit')
-                ->paginate(25);
-        }
-
-        return $purchases;
+            ->when($searchTermChto !== '', function ($query) use ($searchTermChto) {
+                $query->whereHas('designationEntry', function ($designationQuery) use ($searchTermChto) {
+                    $designationQuery->where('designation', 'like', '%' . $searchTermChto . '%');
+                });
+            })
+            ->when($this->filterOrder !== '', function ($query) {
+                $query->whereHas('order_names', function ($orderQuery) {
+                    $orderQuery->where('order_names.id', $this->filterOrder);
+                });
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate(25);
     }
 
     public function render()

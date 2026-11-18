@@ -5,7 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        @php
+            $pageHeading = (string) ($header ?? '');
+            if (preg_match('/<h[1-6]\b[^>]*>(.*?)<\/h[1-6]>/is', $pageHeading, $headingMatch)) {
+                $pageHeading = $headingMatch[1];
+            }
+            $pageHeading = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($pageHeading), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+        @endphp
+        <title>{{ $pageHeading !== '' ? $pageHeading : ($title ?? 'Робочий кабінет') }}</title>
 
         <!-- Fonts -->
         <style>

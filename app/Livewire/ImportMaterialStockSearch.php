@@ -375,7 +375,10 @@ class ImportMaterialStockSearch extends Component
 
             return ImportMaterialStock
                 ::whereHas('materials', function ($query) use ($searchTerm) {
-                    $query->where('article', 'like', $searchTerm)
+                    $query->where(function ($query) use ($searchTerm) {
+                        $query->where('article', 'like', $searchTerm)
+                            ->orWhere('name', 'like', $searchTerm);
+                    })
                         ->orderByRaw("CAST(article AS SIGNED)");
                 })
                 ->with('materials','unit','department')

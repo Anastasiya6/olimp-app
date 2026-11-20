@@ -139,7 +139,10 @@ class MaterialSurplusIndex extends Component
         if ($search !== '' && $this->selectedMaterialId === null) {
             $materialOptions = ImportMaterial::query()
                 ->with('unit:id,unit')
-                ->where('article', 'like', '%'.$search.'%')
+                ->where(function ($query) use ($search) {
+                    $query->where('article', 'like', '%'.$search.'%')
+                        ->orWhere('name', 'like', '%'.$search.'%');
+                })
                 ->orderBy('article')
                 ->limit(10)
                 ->get(['id', 'article', 'name', 'type_unit_id']);

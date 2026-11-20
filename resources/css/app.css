@@ -320,10 +320,19 @@ label:has(> input.compact-search) > span,
     padding-left: 8px;
     padding-right: 8px;
 }
+.material-stock-documents-page .catalog-table .catalog-button {
+    min-height: 30px;
+    padding: 4px 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
 .issuance-materials-page .catalog-table .catalog-button {
-    min-height: 36px;
-    padding: 6px 8px;
-    font-size: 14px;
+    min-height: 28px;
+    padding: 3px 6px;
+    font-size: 12px;
+    line-height: 1.4;
     white-space: nowrap;
 }
 .issuance-materials-page .issuance-toolbar-button {
@@ -333,8 +342,42 @@ label:has(> input.compact-search) > span,
 }
 
 .issuance-materials-page .catalog-table .issuance-date-column {
-    min-width: 7rem;
+    width: 1%;
+    min-width: 5.5rem;
+    padding-left: 4px;
+    padding-right: 4px;
     white-space: nowrap;
+}
+
+.issuance-materials-page .catalog-table .issuance-order-column {
+    width: 1%;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.issuance-materials-page .catalog-table .issuance-details-column {
+    width: 10rem;
+    min-width: 10rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.issuance-materials-page .catalog-table .issuance-posting-column {
+    width: 1%;
+    padding-left: 4px;
+    padding-right: 4px;
+    line-height: 1.2;
+}
+
+.catalog-table .document-author-column,
+.issuance-materials-page .catalog-table .issuance-author-column {
+    width: 1%;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow-wrap: normal;
 }
 
 .issuance-materials-page .catalog-table .issuance-id-column {

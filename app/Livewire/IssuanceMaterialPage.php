@@ -163,7 +163,14 @@ class IssuanceMaterialPage extends Component
             $query->where('designation_id', (int) $materialId)->whereNull('purchase_id');
         }
 
-        $query->delete();
+        \Illuminate\Support\Facades\DB::transaction(function () use ($query) {
+            $document = MaterialIssuance::lockForUpdate()->findOrFail($this->materialIssuanceId);
+            abort_unless($document->status === 'draft', 403);
+            if ($query->delete()) {
+                // $document->updated_by = auth()->id();
+                $document->touch();
+            }
+        });
 
         $this->loadSelectedMaterials();
     }

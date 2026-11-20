@@ -33,6 +33,9 @@
                 {{-- SEARCH --}}
                 <div class="material-take-picker mb-4">
                     <livewire:import-material-stock-search-dropdown :material_id="$selectedMaterialId" :material_name="$selectedMaterial"/>
+                    @error('selectedMaterialId')
+                        <p role="alert" class="mt-2 text-sm text-red-700">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">

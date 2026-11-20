@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\ImportMaterialStock;
 use App\Models\MaterialIssuanceItem;
+use App\Models\MaterialIssuance;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class MaterialTakeModal extends Component
@@ -32,6 +34,7 @@ class MaterialTakeModal extends Component
     public function setMaterial($id)
     {
         $this->selectedMaterialId = $id;
+        $this->resetValidation('selectedMaterialId');
     }
 
     public function open($currentIndex,$detail_name, $material_name,$materialIssuanceId,$norm, $type = null, $designationId = null, $purchaseId = null)
@@ -54,6 +57,7 @@ class MaterialTakeModal extends Component
 
     public function openEdit($currentIndex,$detail_name, $material_name,$materialIssuanceId, $type = null, $designationId = null, $purchaseId = null)
     {
+        $this->resetValidation();
         $this->type = $type;
         $this->designationId = $designationId;
         $this->purchaseId = $purchaseId;
@@ -81,6 +85,14 @@ class MaterialTakeModal extends Component
 
     public function save()
     {
+        $this->validate([
+            'selectedMaterialId' => ['required', 'integer', 'exists:import_materials,id'],
+        ], [
+            'selectedMaterialId.required' => 'Оберіть матеріал із довідника матеріалів 1С.',
+            'selectedMaterialId.integer' => 'Оберіть матеріал із довідника матеріалів 1С.',
+            'selectedMaterialId.exists' => 'Матеріал не знайдено. Оберіть матеріал із довідника матеріалів 1С.',
+        ]);
+
         if ($this->type === 'purchase') {
             $this->validate([
                 'designationId' => ['required', 'integer', 'exists:designations,id'],
@@ -109,11 +121,17 @@ class MaterialTakeModal extends Component
             $data['designation_id'] = (int) $this->currentIndex;
         }
        // dd($this->currentIndex,$data);
-        if ($this->editingId) {
-            MaterialIssuanceItem::where('id', $this->editingId)->update($data);
-        } else {
-            MaterialIssuanceItem::create($data);
-        }
+        DB::transaction(function () use ($data) {
+            $document = MaterialIssuance::lockForUpdate()->findOrFail($this->materialIssuanceId);
+            abort_unless($document->status === 'draft', 403);
+            if ($this->editingId) {
+                $document->items()->findOrFail($this->editingId)->update($data);
+            } else {
+                MaterialIssuanceItem::create($data);
+            }
+            $document->updated_by = auth()->id();
+            $document->touch();
+        });
         $this->editingId = null;
         // 🔥 повідомляємо батьківський компонент
         $this->dispatch('materialUpdated');

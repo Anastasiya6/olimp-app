@@ -7,7 +7,7 @@
     <x-catalog.panel class="mb-5">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div class="w-full lg:max-w-sm">
-                <label for="stock-article-search" class="compact-search-label mb-2 block text-base font-semibold text-slate-800">Пошук за артикулом</label>
+                <label for="stock-article-search" class="compact-search-label mb-2 block text-base font-semibold text-slate-800">Пошук за артикулом або назвою</label>
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -16,7 +16,7 @@
                         </svg>
                     </span>
                     <input id="stock-article-search" type="search" wire:model.live="searchTerm" wire:keydown="updateSearch"
-                        placeholder="Введіть артикул"
+                        placeholder="Введіть артикул або назву матеріалу"
                         class="compact-search block h-12 w-full rounded-md border-[#a8c8c5] bg-[#f7fbfa] pl-10 text-base text-slate-900 placeholder:text-slate-500 focus:border-teal-600 focus:ring-teal-600" />
                 </div>
             </div>
@@ -79,6 +79,7 @@
                                     @case('stock_in') Прихід @break
                                     @case('stock_out') Витрата @break
                                     @case('return') Повернення @break
+                                    @case('surplus') Надлишки @break
                                     @default {{ $item->type }}
                                 @endswitch
                             </td>
@@ -105,7 +106,7 @@
                     @empty
                         <tr>
                             <td colspan="10" class="px-4 py-10 text-center text-slate-900">
-                                {{ trim($searchTerm ?? '') !== '' ? 'За цим артикулом матеріалів не знайдено.' : 'Матеріалів поки немає.' }}
+                                {{ trim($searchTerm ?? '') !== '' ? 'За цим артикулом або назвою матеріалів не знайдено.' : 'Матеріалів поки немає.' }}
                             </td>
                         </tr>
                     @endforelse

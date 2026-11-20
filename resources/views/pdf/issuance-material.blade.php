@@ -47,7 +47,16 @@
     <tbody>
     @foreach($document->items as $item)
         <tr>
-            <td>{{ $item->details }}</td>
+            <td>
+                @foreach($detailNumbersByItem[$item->id] as $number)
+                    <div>
+                        {{ $number }}
+                        @if(filled($detailNames[$number] ?? null))
+                            <br>{{ $detailNames[$number] }}
+                        @endif
+                    </div>
+                @endforeach
+            </td>
             <td>{{ $item->material->name ?? $item->designation->name ?? '—' }}</td>
             <td>{{ $item->importMaterial->article ?? '—' }}</td>
             <td>{{ $item->importMaterial->name ?? '—' }}</td>

@@ -1,4 +1,4 @@
-<div x-data="{ pendingDocument: null, deleting: false, deleteError: '' }" x-on:material-return-open.window="$dispatch('open-modal', 'create-material-return')" x-on:material-return-close.window="$dispatch('close-modal', 'create-material-return')">
+<div class="material-stock-documents-page" x-data="{ pendingDocument: null, deleting: false, deleteError: '' }" x-on:material-return-open.window="$dispatch('open-modal', 'create-material-return')" x-on:material-return-close.window="$dispatch('close-modal', 'create-material-return')">
     <x-slot name="header" compact="true">
         <h2 class="text-xl font-bold leading-tight text-[#174a47]">Повернення матеріалів</h2>
     </x-slot>
@@ -7,7 +7,13 @@
         <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
             <div class="space-y-4">
     <x-catalog.panel>
-        <div class="flex justify-end">
+        <div class="flex flex-wrap justify-end gap-2">
+            <x-catalog.button x-on:click="$dispatch('open-modal', 'material-return-reports')" aria-haspopup="dialog" class="catalog-reports-button">
+                <svg aria-hidden="true" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 17v-3m4 3v-6m4 6v-2" />
+                </svg>
+                Звіти
+            </x-catalog.button>
             <x-catalog.button wire:click="openCreate" aria-haspopup="dialog" variant="primary" class="catalog-add-button">
                 <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                     <path stroke-linecap="round" d="M12 5v14M5 12h14" />
@@ -17,6 +23,34 @@
         </div>
     </x-catalog.panel>
 
+    <x-modal name="material-return-reports" maxWidth="2xl" focusable>
+        <div role="dialog" aria-modal="true" aria-labelledby="material-return-reports-title">
+            <div class="flex items-center justify-between gap-3 border-b border-[#bfd8d1] bg-[#e3f1ee] px-5 py-4">
+                <h3 id="material-return-reports-title" class="text-xl font-bold text-[#174a47]">Звіти повернення матеріалів</h3>
+                <button type="button" x-on:click="$dispatch('close')" aria-label="Закрити звіти" class="rounded-md p-2 text-[#245b53] hover:bg-white">
+                    <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-5 sm:p-6">
+                <form method="GET" action="{{ route('material.return.report') }}" target="_blank" rel="noopener">
+                    <label class="mb-5 flex items-center gap-2 rounded-md border border-[#bfd8d1] bg-[#f2f7f6] px-3 py-2 text-sm font-medium text-[#245b53]">
+                        <input type="checkbox" name="posted_only" value="1" class="rounded border-gray-300 text-teal-700 focus:ring-teal-600">
+                        Лише проведені документи
+                    </label>
+                    <button type="submit" class="catalog-button catalog-report-action-button">
+                        Повернення — підсумок за матеріалами
+                    </button>
+                    <p class="mt-2 text-xs text-gray-500">Усі повернення за весь час, підсумовані за матеріалами, за всіма цехами.</p>
+                </form>
+                <div class="mt-5 flex justify-end border-t border-[#d4e5e0] pt-4">
+                    <x-catalog.button x-on:click="$dispatch('close')">Закрити</x-catalog.button>
+                </div>
+            </div>
+        </div>
+    </x-modal>
+
     @if(session()->has('success'))
         <div role="status" class="my-4 rounded-lg border border-[#a8c8c5] bg-[#e3f1ee] px-4 py-3 text-base font-medium text-[#174a47]">{{ session('success') }}</div>
     @endif
@@ -24,13 +58,17 @@
     <x-catalog.table :items="$returns">
         <x-slot:head>
             <tr>
-                <th scope="col">№ документа</th>
+                <th scope="col">№</th>
+                <th scope="col" class="text-left">Дата створення</th>
+                {{--
+                <th scope="col" class="text-left document-author-column">Створив</th>
+                <th scope="col" class="text-left document-author-column">Остання<br>зміна</th>
+                --}}
                 <th scope="col" class="text-left">Цех</th>
                 <th scope="col" class="text-left">Артикул</th>
                 <th scope="col" class="text-left">Матеріал</th>
                 <th scope="col" class="text-right">Кількість повернення</th>
                 <th scope="col" class="text-center">Од. виміру</th>
-                <th scope="col" class="text-left">Дата створення</th>
                 <th scope="col">Дії</th>
                 <th scope="col">Проведення</th>
                 <th scope="col">Видалення</th>
@@ -39,12 +77,16 @@
         @forelse($returns as $return)
             <tr wire:key="material-return-{{ $return->id }}">
                 <td>{{ $return->id }}</td>
+                <td>{{ $return->created_at?->format('d.m.Y H:i') }}</td>
+                {{--
+                <td class="document-author-column">{{ $return->creator?->name ?? '' }}</td>
+                <td class="document-author-column">{{ $return->updater?->name ?? '' }}</td>
+                --}}
                 <td>{{ $return->department?->number ?? '—' }}</td>
                 <td class="font-bold">{{ $return->material?->article ?? '—' }}</td>
                 <td>{{ $return->material?->name ?? '—' }}</td>
                 <td class="text-right font-bold tabular-nums">{{ $return->quantity }}</td>
                 <td class="text-center">{{ $return->material?->unit?->unit ?? '—' }}</td>
-                <td>{{ $return->created_at?->format('d.m.Y H:i') }}</td>
                 <td>
                     @if($return->status === 'draft')
                         <x-catalog.button wire:click="openEdit({{ $return->id }})" wire:loading.attr="disabled">Редагувати</x-catalog.button>
@@ -98,9 +140,9 @@
 
             <form wire:submit="save" class="space-y-5 p-5 sm:p-6">
                 <div>
-                    <label for="return-material-article" class="mb-2 block text-sm font-semibold text-slate-800">Артикул матеріалу</label>
+                    <label for="return-material-article" class="mb-2 block text-sm font-semibold text-slate-800">Артикул або назва матеріалу</label>
                     <input id="return-material-article" type="search" wire:model.live.debounce.250ms="articleSearch" autocomplete="off"
-                        placeholder="Введіть артикул матеріалу"
+                        placeholder="Введіть артикул або назву матеріалу"
                         class="block h-11 w-full rounded-md border-gray-300 text-base shadow-sm focus:border-teal-600 focus:ring-teal-600" />
                     @error('selectedMaterialId') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
                     @if($selectedMaterial)
@@ -119,7 +161,7 @@
                             @endforeach
                         </ul>
                     @elseif(mb_strlen(trim($articleSearch)) >= 1)
-                        <p class="mt-1 text-sm text-slate-600">Матеріалів із таким артикулом не знайдено.</p>
+                        <p class="mt-1 text-sm text-slate-600">Матеріалів за таким артикулом або назвою не знайдено.</p>
                     @endif
                 </div>
 

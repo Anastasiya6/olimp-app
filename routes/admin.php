@@ -150,6 +150,8 @@ Route::get('write-off/{ids}/{order_name_id}/{start_date}/{end_date}/{sender_depa
     Route::get('not-in-application-statement/{sender_department}/{order_name_id}', [NotInApplicationStatement::class,'notInApplicationStatement'])->name('report.not.in.application.statement');
     Route::get('department-list/{filter}/{order_name_id}/{department}', [ReportDepartmentList::class,'reportDepartmentList'])->name('department.list');
 
+    Route::get('material-surplus-report', \App\Http\Controllers\MaterialSurplusReportController::class)->name('material.surplus.report');
+    Route::get('material-return-report', \App\Http\Controllers\MaterialReturnReportController::class)->name('material.return.report');
     Route::get('material-issuance-report', \App\Http\Controllers\MaterialIssueReportController::class)->name('material.issue.generate');
     Route::get('material-issuance-recipient-pdf', [\App\Http\Controllers\RecipientMaterialIssuePdfController::class, 'generate'])->name('material.issue.recipient.generate');
     Route::get('material-issuance-recipient-pdf/{recipient}', \App\Http\Controllers\RecipientMaterialIssuePdfController::class)->whereNumber('recipient')->name('material.issue.recipient.pdf');

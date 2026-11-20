@@ -13,6 +13,35 @@ class MaterialReturn extends Model
 
     protected $casts = ['quantity' => 'decimal:3'];
 
+    // Temporarily disabled: automatic creator and editor tracking.
+    /*
+    protected static function booted(): void
+    {
+        static::creating(function (self $document) {
+            $document->created_by = auth()->id();
+            $document->updated_by = auth()->id();
+        });
+
+        static::updating(function (self $document) {
+            $document->created_by = $document->getOriginal('created_by');
+            if (auth()->check()) {
+                $document->updated_by = auth()->id();
+            }
+        });
+    }
+
+    */
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function material(): BelongsTo
     {
         return $this->belongsTo(ImportMaterial::class, 'import_material_id');

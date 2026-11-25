@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ImportMaterial;
 use App\Models\TypeUnit;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -17,6 +18,8 @@ class ImportMaterialIndex extends Component
     public string $code = '';
     public string $article = '';
     public $type_unit_id = '';
+    #[Locked]
+    public ?int $editingMaterialId = null;
 
     public function updatedSearch(): void
     {
@@ -25,7 +28,20 @@ class ImportMaterialIndex extends Component
 
     public function openCreate(): void
     {
-        $this->reset('name', 'code', 'article', 'type_unit_id');
+        $this->reset('name', 'code', 'article', 'type_unit_id', 'editingMaterialId');
+        $this->resetValidation();
+        $this->dispatch('open-modal', 'create-import-material');
+    }
+
+    public function openEdit(int $id): void
+    {
+        $material = ImportMaterial::findOrFail($id);
+        $this->editingMaterialId = $material->id;
+        $this->name = $material->name;
+        $this->code = $material->code ?? '';
+        $this->article = $material->article ?? '';
+        $this->type_unit_id = $material->type_unit_id ?? '';
+
         $this->resetValidation();
         $this->dispatch('open-modal', 'create-import-material');
     }
@@ -35,23 +51,35 @@ class ImportMaterialIndex extends Component
         $this->name = trim($this->name);
         $this->code = trim($this->code);
         $this->article = trim($this->article);
+        $material = $this->editingMaterialId === null
+            ? new ImportMaterial()
+            : ImportMaterial::findOrFail($this->editingMaterialId);
+        $uniqueCode = Rule::unique('import_materials', 'code')
+            ->where(fn ($query) => $query->where('article', $this->article === '' ? null : $this->article));
+        if ($material->exists) {
+            $uniqueCode->ignore($material);
+        }
 
         $data = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'code' => ['nullable', 'string', 'max:255', Rule::unique('import_materials', 'code')
-                ->where(fn ($query) => $query->where('article', $this->article === '' ? null : $this->article))],
+            'code' => ['nullable', 'string', 'max:255', $uniqueCode],
             'article' => ['nullable', 'string', 'max:255'],
-            'type_unit_id' => ['required', 'integer', 'exists:type_units,id'],
+            'type_unit_id' => [$material->exists ? 'nullable' : 'required', 'integer', 'exists:type_units,id'],
         ]);
 
         $data['code'] = $this->code === '' ? null : $this->code;
         $data['article'] = $this->article === '' ? null : $this->article;
-        ImportMaterial::create($data);
+        $data['type_unit_id'] = $data['type_unit_id'] === '' ? null : $data['type_unit_id'];
+        $editing = $material->exists;
+        $material->fill($data)->save();
 
-        $this->reset('name', 'code', 'article', 'type_unit_id', 'search');
-        $this->resetPage();
+        $this->reset('name', 'code', 'article', 'type_unit_id', 'editingMaterialId');
+        if (!$editing) {
+            $this->reset('search');
+            $this->resetPage();
+        }
         $this->dispatch('close-modal', 'create-import-material');
-        session()->flash('success', 'Матеріал 1С додано.');
+        session()->flash('success', $editing ? 'Матеріал 1С оновлено.' : 'Матеріал 1С додано.');
     }
 
     public function render()

@@ -16,7 +16,7 @@ class PlanTaskRepository implements PlanTaskRepositoryInterface
             ->get();
     }
 
-    public function getByOrderDepartments($order_name_id,$sender_department_id,$receiver_department_id)
+    public function getByOrderDepartments($order_name_id, $sender_department_id, $receiver_department_id, ?int $sectionId = null)
     {
         return PlanTask
             ::where('order_name_id',$order_name_id)
@@ -24,7 +24,7 @@ class PlanTaskRepository implements PlanTaskRepositoryInterface
             ->when($receiver_department_id!= 0, function ($query) use ($receiver_department_id) {
                 return $query->where('receiver_department_id', $receiver_department_id);
             })
-           // ->where('receiver_department_id',$receiver_department_id)
+            ->when($sectionId !== null, fn ($query) => $query->where('section_id', $sectionId))
             ->with('designation','designationMaterial.material')
             ->get();
     }

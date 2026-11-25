@@ -58,12 +58,13 @@ class EntryDetailDesignationService
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'Комплектовочна відомість','Деталь '.$designation->designation.' '.$this->department_str);
 
         // Добавление названия детали
+        $rowHeight = $this->getNameRowHeight(1, $designation->name);
         $this->pdf->MultiCell($this->width[0], $this->height, $designation->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-        $this->pdf->MultiCell($this->width[1], $this->height, $designation->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+        $this->writeNameCell(1, $designation->name, $rowHeight);
 
         /*Інфо по матеріалам по головному вузлу*/
 
-        $this->getInfoMaterial();
+        $this->getInfoMaterial($rowHeight);
 
         $this->node($designation->id,0,1);
 
@@ -130,11 +131,13 @@ class EntryDetailDesignationService
             /* 0 - відображаємо інфо для всіх цехів*/
             if($route == 0 || $route == $this->department) {
                 if ($level == 1) {
+                    $rowHeight = $this->getNameRowHeight(2, $designation_name);
+                    $this->newList($rowHeight);
                     $this->pdf->MultiCell($this->width[0], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[1], $this->height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                    $this->pdf->MultiCell($this->width[2], $this->height, $designation_name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->writeNameCell(2, $designation_name, $rowHeight);
 
-                    $this->pdf->Ln();
+                    $this->pdf->Ln($rowHeight);
                 }
             }
             foreach ($specifications as $specification) {
@@ -144,11 +147,13 @@ class EntryDetailDesignationService
                 $route = SpecificationService::getRoute($specification,$tm,$this->department);
 
                 if($route == 0 || $route == $this->department) {
+                    $rowHeight = $this->getNameRowHeight(3, $specification->designationEntry->name);
+                    $this->newList($rowHeight);
 
                     $this->pdf->MultiCell($this->width[0], $this->height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[2], $this->height, $specification->designationEntry->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                    $this->pdf->MultiCell($this->width[3], $this->height, $specification->designationEntry->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->writeNameCell(3, $specification->designationEntry->name, $rowHeight);
 
                     $str = $pred_quantity_node ? $quantity_node . ' x ' . $pred_quantity_node : $quantity_node;
 
@@ -164,7 +169,7 @@ class EntryDetailDesignationService
                             $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                             $this->pdf->MultiCell($this->width[7], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                            $this->pdf->Ln();
+                            $this->pdf->Ln($rowHeight);
 
                         }else{
                             foreach ($specification->designationMaterial as $material) {
@@ -196,7 +201,7 @@ class EntryDetailDesignationService
                                     $this->pdf->MultiCell($this->width[6], $this->height, $material->norm . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                                     $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                                    $this->pdf->Ln();
+                                    $this->pdf->Ln($rowHeight);
                                 }
                             }
                         }
@@ -213,7 +218,7 @@ class EntryDetailDesignationService
                         $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                         $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                        $this->pdf->Ln();
+                        $this->pdf->Ln($rowHeight);
                     }
                 }elseif($route != 0) {
                     if(SpecificationService::checkSameRoute($specification->designationEntry->route)){
@@ -229,7 +234,8 @@ class EntryDetailDesignationService
                             continue;
                         }
                     }
-                    $this->newList();
+                    $rowHeight = $this->getNameRowHeight(3, $specification->designationEntry->name);
+                    $this->newList($rowHeight);
                     $total_array = array_merge([
                         $specification->quantity,
                     ], $array_pred_quantity_node);
@@ -238,14 +244,14 @@ class EntryDetailDesignationService
                     $this->pdf->MultiCell($this->width[0], $this->height, $designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[1], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[2], $this->height, $specification->designationEntry->designation, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                    $this->pdf->MultiCell($this->width[3], $this->height, $specification->designationEntry->name, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
+                    $this->writeNameCell(3, $specification->designationEntry->name, $rowHeight);
                     $this->pdf->MultiCell($this->width[4], $this->height, $tm, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[5], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[6], $this->height, '', 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[7], $this->height, $specification->quantity, 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                     $this->pdf->MultiCell($this->width[8], $this->height, $str . "=" . round($total,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
 
-                    $this->pdf->Ln();
+                    $this->pdf->Ln($rowHeight);
                    // continue;
                 }
                     $this->newList();
@@ -281,10 +287,12 @@ class EntryDetailDesignationService
         return false;
     }
 
-    public function getInfoMaterial()
+    public function getInfoMaterial($rowHeight = null)
     {
+        $rowHeight ??= $this->height;
+
         if(!$this->checkDesignationDepartment()){
-            $this->pdf->Ln();
+            $this->pdf->Ln($rowHeight);
             return;
         }
 
@@ -303,11 +311,12 @@ class EntryDetailDesignationService
                 $this->pdf->MultiCell($this->width[6], $this->height, $material->norm . " х", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                 $this->pdf->MultiCell($this->width[7], $this->height, "1", 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
                 $this->pdf->MultiCell($this->width[8], $this->height, "=".round($material->norm,4), 0, 'L', 0, 0, '', '', true, 0, false, true, $this->max_height, 'T');
-                $this->pdf->Ln();
+                $this->pdf->Ln($rowHeight);
+                $rowHeight = $this->height;
                 $not_first_material++;
             }
         }else{
-            $this->pdf->Ln();
+            $this->pdf->Ln($rowHeight);
         }
     }
 
@@ -323,10 +332,22 @@ class EntryDetailDesignationService
         return false;
     }
 
-    public function newList()
+    private function getNameRowHeight($column, $name)
     {
-        if ($this->pdf->getY() >= 185) {
-            $this->pdf->Cell(0, 5, $this->department_str.' '.'ЛИСТ ' . $this->page, 0, 1, 'C'); // 'C' - выравнивание по центру, '0' - без рамки, '1' - переход на новую строку
+        return max($this->height, $this->pdf->getStringHeight($this->width[$column], $name, true));
+    }
+
+    private function writeNameCell($column, $name, $rowHeight)
+    {
+        $this->pdf->MultiCell($this->width[$column], $rowHeight, $name, 0, 'L', 0, 0);
+    }
+
+    public function newList($rowHeight = 0)
+    {
+        $pageBottom = $this->pdf->getPageHeight() - $this->pdf->getBreakMargin();
+        if ($this->pdf->getY() >= 185 || $this->pdf->getY() + $rowHeight > $pageBottom) {
+            $this->pdf->AddPage();
+            $this->pdf->Cell(0, 5, $this->department_str.' '.'ЛИСТ ' . $this->page, 0, 1, 'C');
             $this->pdf = PDFService::getHeaderPdf($this->pdf, $this->header1, $this->header2, $this->width);
             $this->page++;
         }

@@ -572,7 +572,15 @@ label:has(> input.compact-search) > span,
 .plan-page .catalog-table th { padding-left: 8px; padding-right: 8px; }
 .plan-page .catalog-table td:nth-child(2) { white-space: nowrap; }
 .plan-page .catalog-table td:nth-child(3) { min-width: 10rem; overflow-wrap: anywhere; }
-.plan-page .catalog-table .catalog-button { white-space: nowrap; }
+.plan-page .catalog-table .plan-applicability-column,
+.plan-page .catalog-table .plan-sender-section-column { width: 1%; white-space: nowrap; }
+.plan-page .catalog-table .plan-actions-column { width: 1%; padding-inline: 4px; }
+.plan-page .catalog-table .plan-actions-column .catalog-button {
+    min-height: 32px;
+    padding: 4px 6px;
+    font-size: 14px;
+    white-space: nowrap;
+}
 .plan-page .catalog-panel .catalog-button { min-height: 36px; padding: 6px 12px; font-size: 14px; }
 
 .plan-designation-picker > div > div {

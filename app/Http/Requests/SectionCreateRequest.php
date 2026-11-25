@@ -23,7 +23,8 @@ class SectionCreateRequest extends FormRequest
     {
         return [
             'number' => 'required|unique:sections,number',
-            'chief_last_name' => 'required'
+            'chief_user_id' => ['required', 'integer', 'exists:users,id'],
+            'department_id' => ['required', 'integer', 'exists:departments,id'],
         ];
     }
 
@@ -32,5 +33,10 @@ class SectionCreateRequest extends FormRequest
         return [
             'number.unique' => 'Така ділянка вже є в довіднику',
         ];
+    }
+
+    public function attributes(): array
+    {
+        return ['department_id' => 'цех', 'chief_user_id' => 'начальник ділянки'];
     }
 }

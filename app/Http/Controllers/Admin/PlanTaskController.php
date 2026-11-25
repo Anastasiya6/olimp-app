@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlanTaskCreateRequest;
+use App\Http\Requests\PlanTaskReportRequest;
 use App\Models\Department;
 use App\Models\OrderName;
 use App\Models\PlanTask;
+use App\Models\Section;
 use App\Services\PlanTask\PlanTaskService;
 use App\Services\Reports\PlanTaskSpecificationNormService;
 use App\Services\Reports\ReportPlanTaskService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PlanTaskController extends Controller
 {
@@ -52,6 +55,7 @@ class PlanTaskController extends Controller
             'sender_department_id' => $sender_department_id,
             'receiver_department_id' => $receiver_department_id,
             'departments' => Department::orderBy('number')->get(),
+            'sections' => Section::where('department_id', $sender_department_id)->orderBy('number')->get(['id', 'number']),
             'order_number' => $order_number,
             'sender_department' => Department::where('id', $sender_department_id)->first()->number,
             'receiver_department' => Department::where('id', $receiver_department_id)->first()?->number ?? '',
@@ -84,6 +88,7 @@ class PlanTaskController extends Controller
     {
        return view('administrator::include.plan-tasks.edit',[
             'item' => $plan_task,
+            'sections' => Section::where('department_id', $plan_task->sender_department_id)->orderBy('number')->get(['id', 'number']),
             'order_name_id' => $plan_task->order_name_id,
             'sender_department_id' => $plan_task->sender_department_id,
             'receiver_department_id' => $plan_task->receiver_department_id,
@@ -99,6 +104,16 @@ class PlanTaskController extends Controller
      */
     public function update(Request $request, PlanTask $planTask, PlanTaskService $service)
     {
+        $validated = $request->validate([
+            'section_id' => ['nullable', 'integer', Rule::exists('sections', 'id')
+                ->where('department_id', $planTask->sender_department_id)],
+        ], [
+            'section_id.integer' => 'Виберіть ділянку цеху відправника.',
+            'section_id.exists' => 'Виберіть ділянку цеху відправника.',
+        ]);
+        if (array_key_exists('section_id', $validated)) {
+            $planTask->section_id = $validated['section_id'];
+        }
         $service->update($planTask,$request);
 
         session(['order_name_id' => $request->order_name_id,'sender_department_id' => $request->sender_department_id,'receiver_department_id' => $request->receiver_department_id]);
@@ -113,14 +128,14 @@ class PlanTaskController extends Controller
 
     }
 
-    public function planTaskPdf($order_name_id,$sender_department,$receiver_department,ReportPlanTaskService $service)
+    public function planTaskPdf($order_name_id,$sender_department,$receiver_department,ReportPlanTaskService $service, PlanTaskReportRequest $request)
     {
-        $service->plan_task($order_name_id,$sender_department,$receiver_department);
+        $service->plan_task($order_name_id, $sender_department, $receiver_department, $request->sectionId());
     }
 
-    public function exportExcel($order_name_id,$sender_department_id, PlanTaskSpecificationNormService $service)
+    public function exportExcel($order_name_id,$sender_department_id, PlanTaskSpecificationNormService $service, PlanTaskReportRequest $request)
     {
-        $fileName = $service->exportExcel($order_name_id,$sender_department_id);
+        $fileName = $service->specificationNorm($order_name_id, $sender_department_id, $request->integer('receiver_department'), 'Excel', 0, 0, $request->sectionId());
 
         // Возврат файла для скачивания (опционально)
         return response()->download($fileName)->deleteFileAfterSend(true);

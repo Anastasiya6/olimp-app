@@ -35,7 +35,7 @@ class ReportPlanTaskService
 
     public $pdf = null;
 
-    public function plan_task($order_name_id,$sender_department,$receiver_department)
+    public function plan_task($order_name_id, $sender_department, $receiver_department, ?int $sectionId = null)
     {
         $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'План');
 
@@ -45,6 +45,7 @@ class ReportPlanTaskService
             ->when($receiver_department!= 0, function ($query) use ($receiver_department) {
                 return $query->where('receiver_department_id', $receiver_department);
             })
+            ->when($sectionId !== null, fn ($query) => $query->where('section_id', $sectionId))
             ->with('designationEntry')
             ->orderBy('order_designationEntry')
             ->orderBy('order_designationEntry_letters')

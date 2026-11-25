@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Department;
 use App\Models\Section;
+use App\Models\User;
 use Livewire\Component;
 
 class SectionIndex extends Component
@@ -31,6 +33,10 @@ class SectionIndex extends Component
 
     public function render()
     {
-        return view('livewire.section-index', ['items' => Section::all()]);
+        return view('livewire.section-index', [
+            'items' => Section::with('department', 'chief')->get(),
+            'departments' => Department::orderBy('number')->get(['id', 'number']),
+            'users' => User::orderBy('name')->get(['id', 'name']),
+        ]);
     }
 }

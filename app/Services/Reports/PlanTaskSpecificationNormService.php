@@ -76,7 +76,7 @@ class PlanTaskSpecificationNormService
 
     }
 
-    public function specificationNorm($order_name_id,$sender_department_id,$receiver_department_id,$type_report_in,$with_purchased,$with_material_purchased)
+    public function specificationNorm($order_name_id,$sender_department_id,$receiver_department_id,$type_report_in,$with_purchased,$with_material_purchased, ?int $sectionId = null)
     {
         $this->sender_department_id = $sender_department_id;
 
@@ -88,7 +88,7 @@ class PlanTaskSpecificationNormService
 
         $this->receiver_department_number = $this->departmentRepository->getByDepartmentIdFirst($this->receiver_department_id)?->number;
 
-        $records = $this->planTaskRepository->getByOrderDepartments($this->order_name_id,$this->sender_department_id,$this->receiver_department_id);
+        $records = $this->planTaskRepository->getByOrderDepartments($this->order_name_id,$this->sender_department_id,$this->receiver_department_id,$sectionId);
 
         if($with_purchased == 1 || $with_material_purchased == 1){
             $records = $records->map(function ($task) use($with_purchased,$with_material_purchased){

@@ -28,6 +28,7 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        @include('admin.include.plan-tasks.section-field')
                         <div class="mb-4">
                             <label class="block">
                                 <span class="text-gray-700">Цех отримувач</span>

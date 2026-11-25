@@ -58,6 +58,7 @@
                             <div class="text-sm text-red-600">{{ $message }}</div>
                             @enderror
                         </div>
+                        @include('admin.include.plan-tasks.section-field')
                         <input type="hidden" name="receiver_department_id" value="{{ $receiver_department_id }}">
                         <div class="mb-4">
                             <label class="block">

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 //use App\Http\Requests\DesignationCreateRequest;
 use App\Http\Requests\SectionCreateRequest;
+use App\Models\Department;
 use App\Models\Section;
+use App\Models\User;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\DB;
 
@@ -30,6 +32,8 @@ class SectionController extends Controller
     public function create()
     {
         return view('administrator::include.sections.create',[
+            'departments' => Department::orderBy('number')->get(['id', 'number']),
+            'users' => User::orderBy('name')->get(['id', 'name']),
             'route' => $this->route ]);
     }
 
@@ -40,7 +44,8 @@ class SectionController extends Controller
     {
         $section = new Section();
         $section->number = $request->number;
-        $section->chief_last_name = $request->chief_last_name;
+        $section->chief_user_id = $request->validated('chief_user_id');
+        $section->department_id = $request->validated('department_id');
         $section->save();
 
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
@@ -62,6 +67,8 @@ class SectionController extends Controller
     {
         return view('administrator::include.sections.edit',[
             'item' => $section,
+            'departments' => Department::orderBy('number')->get(['id', 'number']),
+            'users' => User::orderBy('name')->get(['id', 'name']),
         ]);
 
     }
@@ -71,8 +78,14 @@ class SectionController extends Controller
      */
     public function update(Request $request, Section $section)
     {
+        $validated = $request->validate([
+            'department_id' => ['required', 'integer', 'exists:departments,id'],
+            'chief_user_id' => ['required', 'integer', 'exists:users,id'],
+        ], [], ['department_id' => 'цех', 'chief_user_id' => 'начальник ділянки']);
+
         $section->number = $request->number;
-        $section->chief_last_name = $request->chief_last_name;
+        $section->chief_user_id = $validated['chief_user_id'];
+        $section->department_id = $validated['department_id'];
         $section->save();
         return redirect()->route($this->route.'.index')->with('status', 'Дані успішно збережено');
 

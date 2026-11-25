@@ -17,6 +17,7 @@ class PlanTask extends Model
         'category_code',
         'designation_id',
         'sender_department_id',
+        'section_id',
         'receiver_department_id',
         'order_name_id',
         'order_designationEntry',
@@ -64,5 +65,10 @@ class PlanTask extends Model
     public function receiverDepartment()
     {
         return $this->belongsTo(Department::class, 'receiver_department_id');
+    }
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
     }
 }

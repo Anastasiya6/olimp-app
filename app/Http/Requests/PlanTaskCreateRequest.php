@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PlanTaskCreateRequest extends FormRequest
 {
@@ -19,12 +20,17 @@ class PlanTaskCreateRequest extends FormRequest
             // 'category_code' => ['required'],
             'designation_designation' => ['required'],
             'receiver_department_id' => ['required', 'integer', 'exists:departments,id'],
+            'sender_department_id' => ['required_with:section_id', 'integer'],
+            'section_id' => ['nullable', 'integer', Rule::exists('sections', 'id')
+                ->where('department_id', $this->integer('sender_department_id'))],
         ];
     }
 
     public function messages()
     {
         return [
+            'section_id.integer' => 'Виберіть ділянку цеху відправника.',
+            'section_id.exists' => 'Виберіть ділянку цеху відправника.',
             'order_name_id.required' => 'Виберіть замовлення',
             'quantity_total.required' => 'Введіть кількість деталей',
            // 'category_code.required' => 'Введіть шифр',

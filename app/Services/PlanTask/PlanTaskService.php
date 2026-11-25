@@ -26,6 +26,7 @@ class PlanTaskService
                     'category_code' => $request->category_code??0,
                     'type' => $request->type,
                     'sender_department_id' => $request->sender_department_id,
+                    'section_id' => $request->section_id,
                     'receiver_department_id' => $request->receiver_department_id,
                     'with_purchased' => $request->with_purchased,
                     'comment' => $request->comment,

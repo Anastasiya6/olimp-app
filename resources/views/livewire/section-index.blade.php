@@ -13,21 +13,23 @@
         <x-slot:head>
             <tr>
                 <th scope="col">Номер</th>
-                <th scope="col">Прізвище начальника ділянки</th>
+                <th scope="col">Цех</th>
+                <th scope="col">Начальник ділянки</th>
                 <th scope="col">Дії</th>
             </tr>
         </x-slot:head>
         @forelse($items as $item)
             <tr wire:key="section-row-{{ $item->id }}">
                 <td class="break-words">{{ $item->number ?? '—' }}</td>
-                <td class="break-words">{{ $item->chief_last_name ?? '—' }}</td>
+                <td class="break-words">{{ $item->department?->number ?? '—' }}</td>
+                <td class="break-words">{{ $item->chief?->name ?? '—' }}</td>
                 <td>
                     <x-catalog.button wire:click="editSection({{ $item->id }})" wire:loading.attr="disabled" wire:target="editSection" aria-haspopup="dialog">Редагувати</x-catalog.button>
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="3" class="py-10 text-center text-base font-normal text-slate-700">
+                <td colspan="4" class="py-10 text-center text-base font-normal text-slate-700">
                     Записів поки немає.
                 </td>
             </tr>

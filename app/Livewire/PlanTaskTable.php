@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Order;
 use App\Models\OrderName;
 use App\Models\ReportApplicationStatement;
+use App\Models\Section;
 use App\Services\HelpService\NoMaterialService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Session;
@@ -57,6 +58,8 @@ class PlanTaskTable extends Component
 
     #[Session]
     public $sender_department_id;
+
+    public string $senderSectionId = '';
 
     #[Session]
     public $receiver_department_id;
@@ -134,6 +137,17 @@ class PlanTaskTable extends Component
     public function viewConfirmFromOrder()
     {
         $this->dispatch('open-modal',name:'viewOrderFromOrder');
+    }
+
+    public function updatedSenderDepartmentId(): void
+    {
+        $this->senderSectionId = '';
+        $this->updateSearch();
+    }
+
+    public function updatedSenderSectionId(): void
+    {
+        $this->updateSearch();
     }
 
     public function updateSearch()
@@ -261,40 +275,21 @@ class PlanTaskTable extends Component
 
     protected function getPlanTasks()
     {
-        $searchTerm = '%' . trim($this->searchTerm) . '%';
+        $searchTerm = trim((string) $this->searchTerm);
 
-        if ($searchTerm == '%%') {
-            return PlanTask
-                ::where('order_name_id', $this->selectedOrder)
-                ->where('sender_department_id', $this->sender_department_id)
-                ->when($this->receiver_department_id != 0, function ($query) {
-                    return $query->where('receiver_department_id', $this->receiver_department_id);
-                })
-                ->with('designationEntry')
-                ->orderBy('updated_at','desc')
-                ->orderBy('order_designationEntry_letters')
-                ->orderBy('order_designationEntry')
-                //->get();
-                ->paginate(25);
-
-        }else{
-            return PlanTask
-                ::where('order_name_id', $this->selectedOrder)
-                ->where('sender_department_id', $this->sender_department_id)
-                ->when($this->receiver_department_id != 0, function ($query) {
-                    return $query->where('receiver_department_id', $this->receiver_department_id);
-                })
-                ->whereHas('designation', function ($query) use ($searchTerm) {
-                    $query->where('designation', 'like', $searchTerm)
-                        ->orderByRaw("CAST(designation AS SIGNED)");
-                })
-                ->with('designationEntry')
-                ->orderBy('updated_at','desc')
-                ->orderBy('order_designationEntry_letters')
-                ->orderBy('order_designationEntry')
-                //->get();
-                ->paginate(25);
-        }
+        return PlanTask::where('order_name_id', $this->selectedOrder)
+            ->where('sender_department_id', $this->sender_department_id)
+            ->when($this->senderSectionId !== '', fn ($query) => $query->where('section_id', $this->senderSectionId))
+            ->when($this->receiver_department_id != 0, fn ($query) => $query->where('receiver_department_id', $this->receiver_department_id))
+            ->when($searchTerm !== '', fn ($query) => $query->whereHas('designation', function ($query) use ($searchTerm) {
+                $query->where('designation', 'like', '%'.$searchTerm.'%')
+                    ->orderByRaw('CAST(designation AS SIGNED)');
+            }))
+            ->with('designationEntry', 'section')
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('order_designationEntry_letters')
+            ->orderBy('order_designationEntry')
+            ->paginate(25);
     }
 
     public function render()
@@ -302,6 +297,10 @@ class PlanTaskTable extends Component
         return view('livewire.plan-task-table',[
             'order_names'=> OrderName::where('is_order', 1)->orderBy('name')->get(),
             'departments' => Department::all(),
+            'senderSections' => Section::where('department_id', $this->sender_department_id)->orderBy('number')->get(['id', 'number']),
+            'sections' => $this->planFormLoaded
+                ? Section::where('department_id', $this->planFormData['sender_department_id'])->orderBy('number')->get(['id', 'number'])
+                : collect(),
             'items' => $this->planTasks(),
             ]);
     }

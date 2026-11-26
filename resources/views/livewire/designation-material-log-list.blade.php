@@ -77,6 +77,7 @@
                         <th scope="col">
                             Зміни
                         </th>
+                        <th scope="col">Хто змінив</th>
 
                     </tr>
                     </thead>
@@ -97,6 +98,7 @@
                                 <td class="align-top">
                                     {!! $log['message'] !!}
                                 </td>
+                                <td class="align-top">{{ $log->user?->name ?? '—' }}</td>
                             </tr>
                         @endforeach
                     @endif

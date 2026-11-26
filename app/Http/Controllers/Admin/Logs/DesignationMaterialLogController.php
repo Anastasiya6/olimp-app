@@ -16,7 +16,7 @@ class DesignationMaterialLogController extends Controller
     public function index()
     {
         return view('administrator::include.designation-material-logs.index', [
-            'items' => DesignationMaterialLog::orderBy('updated_at','desc')->paginate(25),
+            'items' => DesignationMaterialLog::with('user:id,name')->orderBy('updated_at','desc')->paginate(25),
             'route' => $this->route,
             'title' => 'Зміни у нормах']);
     }

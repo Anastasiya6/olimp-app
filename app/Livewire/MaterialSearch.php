@@ -55,7 +55,7 @@ class MaterialSearch extends Component
         $searchTerm = '%' . trim($this->searchTerm) . '%';
         return Material::where('name', 'like', $searchTerm)->orderBy('updated_at','desc')
             ->orWhere('code', 'like', '%' . $searchTerm . '%')
-            ->with('unit')
+            ->with(['unit', 'creator:id,name', 'updater:id,name'])
             ->paginate(15);
     }
     public function render()

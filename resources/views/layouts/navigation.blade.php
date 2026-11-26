@@ -47,30 +47,53 @@
         return request()->routeIs(str_replace('.index', '.*', $item['route']))
             && (!isset($item['parameters']['type']) || request()->route('type') === $item['parameters']['type']);
     };
-    $navigationButton = 'inline-flex min-h-[44px] items-center justify-between gap-2 rounded-lg border px-3 py-2 text-base font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2';
+    $navigationButton = 'inline-flex min-h-[44px] items-center justify-between gap-1.5 whitespace-nowrap rounded-lg border px-2 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2';
 @endphp
 
 <nav x-data="{ mobileOpen: false }" aria-label="Головна навігація"
     class="relative z-40 border-b-2 border-[#b9d8d3] bg-[#f4faf8] shadow-sm">
-    <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap items-center gap-3">
+    <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 xl:px-8">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 xl:flex-nowrap">
             <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif
-                class="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg border border-[#c4dcd7] bg-white px-3 py-2 text-base font-bold text-[#245b53] shadow-sm hover:bg-[#e3f1ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
+                class="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-[#c4dcd7] bg-white px-2 py-2 text-sm font-bold text-[#245b53] shadow-sm hover:bg-[#e3f1ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
                 <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9" />
                 </svg>
                 На головну
             </a>
+            @auth
+                <div class="relative min-w-0 flex-1 xl:order-last xl:flex-none" x-data="{ open: false }"
+                    x-on:click.outside="open = false"
+                    x-on:keydown.escape.stop="if (open) { open = false; $refs.accountButton.focus(); }">
+                    <button type="button" x-ref="accountButton" x-on:click="open = !open"
+                        :aria-expanded="open.toString()" aria-controls="account-actions"
+                        class="inline-flex min-h-[44px] max-w-full items-center gap-1.5 rounded-md px-2 text-sm font-semibold text-[#245b53] hover:bg-[#e3f1ee] focus-visible:ring-2 focus-visible:ring-teal-600">
+                        <span class="min-w-0 max-w-[10rem] truncate" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
+                        <svg aria-hidden="true" class="h-3.5 w-3.5 shrink-0" :class="open ? 'rotate-180' : ''"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                        </svg>
+                    </button>
+                    <form id="account-actions" method="POST" action="{{ route('logout') }}" x-show="open"
+                        style="display: none;" class="absolute right-0 z-50 mt-1 w-28 rounded-lg border border-[#bfd8d1] bg-white p-1 shadow-md">
+                        @csrf
+                        <button type="submit" name="switch_user" value="1"
+                            class="block min-h-[36px] w-full rounded-md px-2 text-left text-sm font-medium text-slate-800 hover:bg-[#e3f1ee] focus-visible:ring-2 focus-visible:ring-teal-600">
+                            Вийти
+                        </button>
+                    </form>
+                </div>
+            @endauth
             <button type="button" x-on:click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen.toString()"
                 aria-controls="main-navigation-links"
-                class="ml-auto inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[#b9d8d3] bg-white px-4 py-2 text-base font-semibold text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 lg:hidden">
+                class="ml-auto inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-lg border border-[#b9d8d3] bg-white px-2 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 xl:hidden">
                 <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
                     <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
                 Меню
             </button>
             <div id="main-navigation-links" :class="mobileOpen ? 'flex' : 'hidden'"
-                class="hidden w-full flex-col gap-1 border-t border-[#d4e5e0] pt-3 lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:flex-wrap lg:items-center lg:justify-end lg:border-0 lg:pt-0">
+                class="hidden w-full flex-col gap-1 border-t border-[#d4e5e0] pt-3 xl:flex xl:w-auto xl:flex-1 xl:flex-row xl:flex-nowrap xl:items-center xl:justify-end xl:border-0 xl:pt-0">
                 @foreach($navigation as $index => $section)
                     @php
                         $sectionActive = isset($section['items'])
@@ -86,7 +109,7 @@
                             x-on:keydown.escape.stop="if (expanded) { expanded = false; $refs.trigger.focus(); }">
                             <button type="button" x-ref="trigger" x-on:click="expanded = !expanded"
                                 :aria-expanded="expanded.toString()" aria-controls="main-navigation-section-{{ $index }}"
-                                class="{{ $navigationButton }} {{ $sectionStyle }} w-full lg:w-auto">
+                                class="{{ $navigationButton }} {{ $sectionStyle }} w-full xl:w-auto">
                                 {{ $section['label'] }}
                                 <svg aria-hidden="true" class="h-4 w-4 shrink-0 transition-transform" :class="expanded ? 'rotate-180' : ''"
                                     fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -95,7 +118,7 @@
                             </button>
                             <div id="main-navigation-section-{{ $index }}" x-show="expanded" style="display: none;"
                                 x-transition.opacity.duration.150ms
-                                class="z-50 mt-2 w-full rounded-xl border border-[#bfd8d1] bg-white p-2 shadow-lg lg:absolute lg:right-0 lg:w-80">
+                                class="z-50 mt-2 w-full rounded-xl border border-[#bfd8d1] bg-white p-2 shadow-lg xl:absolute xl:right-0 xl:w-80">
                                 @foreach($section['items'] as $link)
                                     @php($linkActive = $isNavigationActive($link))
                                     <a wire:navigate href="{{ route($link['route'], $link['parameters'] ?? []) }}"
@@ -115,13 +138,9 @@
                         </a>
                     @endif
                 @endforeach
-                <div class="mt-2 flex flex-wrap gap-2 border-t border-[#d4e5e0] pt-3 lg:hidden">
+                <div class="mt-2 flex flex-wrap gap-2 border-t border-[#d4e5e0] pt-3 xl:hidden">
                     <a href="{{ route('dashboard') }}" class="rounded-md px-3 py-2 text-base text-slate-800 hover:bg-[#e3f1ee]">Dashboard</a>
                     <a href="{{ route('profile.edit') }}" class="rounded-md px-3 py-2 text-base text-slate-800 hover:bg-[#e3f1ee]">Профіль</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="rounded-md px-3 py-2 text-base text-slate-800 hover:bg-[#e3f1ee]">Вийти</button>
-                    </form>
                 </div>
             </div>
         </div>

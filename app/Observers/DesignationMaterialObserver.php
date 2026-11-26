@@ -82,6 +82,7 @@ class DesignationMaterialObserver
     public function addLog(DesignationMaterial $designationMaterial,$message)
     {
         DesignationMaterialLog::create([
+            'user_id' => auth()->id(),
             'designation_id' => $designationMaterial->designation_id,
             'designation_number' => $designationMaterial->designation->designation,
             'designation' => $designationMaterial->designation->name,

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Material extends Model
 {
@@ -14,6 +15,30 @@ class Material extends Model
         'type_unit_id',
         'code_1c'
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $material) {
+            $material->created_by = auth()->id();
+            $material->updated_by = auth()->id();
+        });
+
+        static::updating(function (self $material) {
+            if (auth()->check() && $material->isDirty(['name', 'type_unit_id', 'code_1c'])) {
+                $material->updated_by = auth()->id();
+            }
+        });
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 
     public function unit()
     {

@@ -43,6 +43,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return $request->boolean('switch_user') ? redirect()->route('login') : redirect('/');
     }
 }

@@ -24,12 +24,11 @@ class DesignationMaterialLogList extends Component
 
     public function viewLog($id,$designation_number){
 
-        $this->designation_id = $id;
-
         $this->designation_number = $designation_number;
 
         $this->selectedLog = DesignationMaterialLog
-            ::where('designation_id',$id)
+            ::with('user:id,name')
+            ->where('designation_id',$id)
             ->orderBy('created_at', 'desc')
             ->get();
 

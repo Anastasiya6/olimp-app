@@ -60,10 +60,8 @@
             <tr>
                 <th scope="col">№</th>
                 <th scope="col" class="text-left">Дата створення</th>
-                {{--
                 <th scope="col" class="text-left document-author-column">Створив</th>
                 <th scope="col" class="text-left document-author-column">Остання<br>зміна</th>
-                --}}
                 <th scope="col" class="text-left">Цех</th>
                 <th scope="col" class="text-left">Артикул</th>
                 <th scope="col" class="text-left">Матеріал</th>
@@ -78,10 +76,8 @@
             <tr wire:key="material-return-{{ $return->id }}">
                 <td>{{ $return->id }}</td>
                 <td>{{ $return->created_at?->format('d.m.Y H:i') }}</td>
-                {{--
-                <td class="document-author-column">{{ $return->creator?->name ?? '' }}</td>
-                <td class="document-author-column">{{ $return->updater?->name ?? '' }}</td>
-                --}}
+                <td class="document-author-column">{{ $return->creator?->name ?? '—' }}</td>
+                <td class="document-author-column">{{ $return->updater?->name ?? '—' }}</td>
                 <td>{{ $return->department?->number ?? '—' }}</td>
                 <td class="font-bold">{{ $return->material?->article ?? '—' }}</td>
                 <td>{{ $return->material?->name ?? '—' }}</td>
@@ -107,7 +103,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="10" class="px-4 py-10 text-center text-slate-700">Повернень матеріалів поки немає.</td>
+                <td colspan="12" class="px-4 py-10 text-center text-slate-700">Повернень матеріалів поки немає.</td>
             </tr>
         @endforelse
     </x-catalog.table>

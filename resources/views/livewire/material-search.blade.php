@@ -29,6 +29,8 @@
                         <th scope="col" class=" text-left font-bold">Назва матеріалу</th>
                         <th scope="col" class="whitespace-nowrap  text-center font-bold">Одиниця виміру</th>
                         <th scope="col" class="whitespace-nowrap  text-left font-bold">Код 1С</th>
+                        <th scope="col" class="text-left font-bold document-author-column">Створив</th>
+                        <th scope="col" class="text-left font-bold document-author-column">Остання<br>зміна</th>
                         <th scope="col" class=" text-left font-bold">Дії</th>
                     </tr>
                         </x-slot:head>
@@ -39,19 +41,21 @@
                             </td>
                             <td class="whitespace-nowrap  text-center">{{ $item->unit->unit ?? '—' }}</td>
                             <td class="whitespace-nowrap  tabular-nums">{{ $item->code_1c ?? '—' }}</td>
+                            <td class="document-author-column">{{ $item->creator?->name ?? '—' }}</td>
+                            <td class="document-author-column">{{ $item->updater?->name ?? '—' }}</td>
                             <td>
-                                <div class="flex flex-wrap gap-2">
+                                <div class="flex w-max items-center gap-1 whitespace-nowrap">
                                     <button type="button" wire:click="editMaterial({{ $item->id }})" wire:loading.attr="disabled" wire:target="editMaterial" aria-haspopup="dialog"
-                                        class="inline-flex min-h-[44px] items-center rounded-md border border-[#a8c8c5] bg-white px-3 py-2 text-base font-semibold text-[#245b53] hover:bg-[#edf6f3] focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50">Редагувати</button>
+                                        class="inline-flex min-h-[32px] items-center rounded-md border border-[#a8c8c5] bg-white px-2 py-1 text-sm font-semibold text-[#245b53] hover:bg-[#edf6f3] focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50">Редагувати</button>
                                     <button type="button" :disabled="deleting"
                                         x-on:click="deleteId = {{ $item->id }}; deleteName = @js($item->name); deleteError = ''; $dispatch('open-modal', 'delete-material')"
-                                        class="inline-flex min-h-[44px] items-center rounded-md border border-red-200 bg-white px-3 py-2 text-base font-semibold text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500">Видалити</button>
+                                        class="inline-flex min-h-[32px] items-center rounded-md border border-red-200 bg-white px-2 py-1 text-sm font-semibold text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500">Видалити</button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-4 py-10 text-center text-base text-slate-700">
+                            <td colspan="6" class="px-4 py-10 text-center text-base text-slate-700">
                                 {{ trim($searchTerm ?? '') !== '' ? 'За вашим запитом матеріалів не знайдено.' : 'Матеріалів поки немає.' }}
                             </td>
                         </tr>

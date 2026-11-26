@@ -152,7 +152,7 @@ class IssuanceMaterialPage extends Component
     public function removeMaterial($materialId)
     {
         $query = MaterialIssuanceItem::where('material_issuance_id', $this->materialIssuanceId);
-
+ 
         if (preg_match('/^(\d+)p(\d+)$/', (string) $materialId, $matches)) {
             $query->where('designation_id', $matches[1])->where('purchase_id', $matches[2]);
         } elseif (is_numeric($materialId)) {
@@ -167,7 +167,6 @@ class IssuanceMaterialPage extends Component
             $document = MaterialIssuance::lockForUpdate()->findOrFail($this->materialIssuanceId);
             abort_unless($document->status === 'draft', 403);
             if ($query->delete()) {
-                // $document->updated_by = auth()->id();
                 $document->touch();
             }
         });

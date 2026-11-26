@@ -132,16 +132,18 @@
                 <table class="catalog-table">
                     <thead>
                     <tr>
-                        <th scope="col" class="issuance-id-column">ID</th>
+                        <th scope="col" class="issuance-id-column">№</th>
                         <th scope="col" class="issuance-date-column">Дата</th>
-                        <th scope="col">Замовлення</th>
+                        <th scope="col" class="issuance-author-column">Створив</th>
+                        <th scope="col" class="issuance-author-column">Остання<br>зміна</th>
+                        <th scope="col" class="issuance-order-column">Замовл.</th>
                         <th scope="col">Цех</th>
                         <th scope="col">Отримав</th>
                         <th scope="col">Матеріал</th>
                         <th scope="col">Кількість</th>
                         <th scope="col">Дії</th>
-                        <th scope="col">Проведення</th>
-                        <th scope="col">Видалити</th>
+                        <th scope="col" class="issuance-posting-column">Прове<br>дення</th>
+                        <th scope="col">Дії</th>
 
                         <th scope="col">Звіт</th>
                     </tr>
@@ -155,7 +157,9 @@
                                 <span class="block whitespace-nowrap">{{ $item->created_at?->format('d.m.Y') }}</span>
                                 <span class="block whitespace-nowrap">{{ $item->created_at?->format('H:i:s') }}</span>
                             </td>
-                            <td>{{ $item->order_name?->name ?? '—' }}</td>
+                            <td class="issuance-author-column">{{ $item->creator?->name ?? '' }}</td>
+                            <td class="issuance-author-column">{{ $item->updater?->name ?? '' }}</td>
+                            <td class="issuance-order-column">{{ $item->order_name?->name ?? '—' }}</td>
                             <td>{{ $item->department?->number ?? '—' }}</td>
                             <td>{{$item->receivedByUser->name}}</td>
                             <td>
@@ -197,7 +201,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="11" class="p-4 text-center">
+                            <td colspan="13" class="p-4 text-center">
                                 Немає документів
                             </td>
                         </tr>

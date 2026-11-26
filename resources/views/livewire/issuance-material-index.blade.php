@@ -218,17 +218,19 @@
                     <thead>
                     <tr>
                         <th scope="col">На друк</th>
-                        <th scope="col" class="issuance-id-column">ID</th>
+                        <th scope="col" class="issuance-id-column">№</th>
                         <th scope="col" class="issuance-date-column">Дата</th>
+                        <th scope="col" class="issuance-author-column">Створив</th>
+                        <th scope="col" class="issuance-author-column">Остання<br>зміна</th>
                         <th scope="col">Отримав</th>
-                        <th scope="col">Замовлення</th>
+                        <th scope="col" class="issuance-order-column">Замовл.</th>
                         <th scope="col">Цех</th>
                         <th scope="col" class="issuance-detail-column">Деталь з плану</th>
                         <th scope="col" class="issuance-detail-column">Деталь (на що брали)</th>
-                        <th scope="col">Деталі</th>
+                        <th scope="col" class="issuance-details-column">Деталі</th>
                         <th scope="col">Дії</th>
-                        <th scope="col">Проведення</th>
-                        <th scope="col">Видалення</th>
+                        <th scope="col" class="issuance-posting-column">Прове<br>дення</th>
+                        <th scope="col">Дії</th>
                         <th scope="col">Звіт</th>
                     </tr>
                     </thead>
@@ -247,12 +249,14 @@
                                 <span class="block whitespace-nowrap">{{ $item->created_at?->format('d.m.Y') }}</span>
                                 <span class="block whitespace-nowrap">{{ $item->created_at?->format('H:i:s') }}</span>
                             </td>
+                            <td class="issuance-author-column">{{ $item->creator?->name ?? '' }}</td>
+                            <td class="issuance-author-column">{{ $item->updater?->name ?? '' }}</td>
                             <td>{{$item->receivedByUser?->name ?? '-'}}</td>
-                            <td>{{$item->order_name->name}}</td>
+                            <td class="issuance-order-column">{{$item->order_name->name}}</td>
                             <td>{{ $item->department?->number ?? '—' }}</td>
                             <td class="issuance-detail-column">{{$item->planTaskDesignation?->designation}}</td>
                             <td class="issuance-detail-column">{{$item->designation->designation}}</td>
-                            <td class="text-sm">
+                            <td class="text-sm issuance-details-column">
                                 {{ collect($item->items ?? [])->pluck('details')->filter()->implode(', ') }}
                             </td>
                             <td>
@@ -300,7 +304,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="13" class="p-4 text-center">
+                            <td colspan="15" class="p-4 text-center">
                                 @if($filterOrder !== '' || trim($filterPlanDesignation) !== '')
                                     За вказаними умовами документів не знайдено.
                                 @else

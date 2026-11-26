@@ -11,7 +11,6 @@ class MaterialIssuance extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /*
     protected static function booted(): void
     {
         static::creating(function (self $document) {
@@ -19,7 +18,11 @@ class MaterialIssuance extends Model
             $document->updated_by = auth()->id();
         });
 
-        static::updating(function (self $document) {
+        static::saving(function (self $document) {
+            if (!$document->exists) {
+                return;
+            }
+
             // The creator is retained even when another user edits the document.
             $document->created_by = $document->getOriginal('created_by');
             if (auth()->check()) {
@@ -27,7 +30,6 @@ class MaterialIssuance extends Model
             }
         });
     }
-    */
 
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

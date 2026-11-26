@@ -141,7 +141,7 @@ class ManualIssuanceMaterialIndex extends Component
         return view('livewire.manual-issuance-material-index', [
             'order_names' => OrderName::where('is_order', 1)->orderBy('name')->get(),
             'departments' => Department::orderBy('number')->get(),
-            'items' => MaterialIssuance::with(['items.importMaterial', 'order_name', 'department', 'receivedByUser'])
+            'items' => MaterialIssuance::with(['creator', 'updater', 'items.importMaterial', 'order_name', 'department', 'receivedByUser'])
                 ->manual()
                 ->whereHas('items')
                 ->when($this->filterOrder !== '', function ($query) {

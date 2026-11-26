@@ -129,7 +129,6 @@ class MaterialTakeModal extends Component
             } else {
                 MaterialIssuanceItem::create($data);
             }
-            $document->updated_by = auth()->id();
             $document->touch();
         });
         $this->editingId = null;

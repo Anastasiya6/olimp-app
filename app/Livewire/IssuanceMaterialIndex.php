@@ -83,7 +83,8 @@ class IssuanceMaterialIndex extends Component
 
     public function postDocument($id)
     {
-        $doc = MaterialIssuance::findOrFail($id);
+        DB::transaction(function () use ($id) {
+        $doc = MaterialIssuance::lockForUpdate()->findOrFail($id);
 
         if ($doc->status === 'posted') {
             return;
@@ -107,6 +108,7 @@ class IssuanceMaterialIndex extends Component
         $doc->update([
             'status' => 'posted'
         ]);
+        });
     }
 
     public function unpostDocument($id)
@@ -174,7 +176,7 @@ class IssuanceMaterialIndex extends Component
             'order_names'=> $order_names,
             'departments' => Department::orderBy('number')->get(),
             'recipients' => User::orderBy('name')->get(['id', 'name']),
-            'items' => MaterialIssuance::with('items', 'receivedByUser', 'order_name', 'department', 'planTaskDesignation', 'designation')
+            'items' => MaterialIssuance::with('creator', 'updater', 'items', 'receivedByUser', 'order_name', 'department', 'planTaskDesignation', 'designation')
                 ->byDesignation()
                 ->whereHas('items')
                 ->when($this->filterOrder !== '', function ($query) {

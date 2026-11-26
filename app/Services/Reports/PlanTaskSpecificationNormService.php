@@ -186,7 +186,8 @@ class PlanTaskSpecificationNormService
 
         // Сохраните файл
         $writer = new Xlsx($spreadsheet);
-        $fileName = "plan_$order_number->name.xlsx";
+        $orderFileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $order_number->name);
+        $fileName = "plan_{$orderFileName}.xlsx";
         $writer->save($fileName);
         return $fileName;
     }

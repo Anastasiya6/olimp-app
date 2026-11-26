@@ -19,6 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'login',
         'email',
         'password',
     ];
@@ -43,7 +44,13 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function groups() : BelongsToMany {
+    public function setLoginAttribute($value): void
+    {
+        $this->attributes['login'] = $value === null || trim($value) === ''
+            ? null : strtolower(trim($value));
+    }
+
+    public function groups() : \Illuminate\Database\Eloquent\Relations\BelongsToMany {
         return $this->belongsToMany(Group::class);
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Services\Reports;
-use App\Models\Designation;
+use App\Models\Department;
+use App\Models\OrderName;
 use App\Models\PlanTask;
 use App\Services\HelpService\NoMaterialService;
 use App\Services\HelpService\PDFService;
@@ -37,7 +38,13 @@ class ReportPlanTaskService
 
     public function plan_task($order_name_id, $sender_department, $receiver_department, ?int $sectionId = null)
     {
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'План');
+        $heading = PlanTaskReportHeading::make(
+            OrderName::findOrFail($order_name_id)->name,
+            Department::findOrFail($sender_department)->number,
+            $receiver_department == 0 ? null : Department::findOrFail($receiver_department)->number,
+            $sectionId,
+        );
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'План', $heading);
 
         $plan_tasks = PlanTask
             ::where('order_name_id', $order_name_id)

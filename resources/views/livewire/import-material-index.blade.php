@@ -17,21 +17,26 @@
                 </div>
             </x-catalog.panel>
             <x-catalog.table :items="$items">
-                <x-slot:head><tr><th>Код 1С</th><th>Артикул</th><th>Назва матеріалу</th><th>Од. вимірювання</th></tr></x-slot:head>
+                <x-slot:head><tr><th>Код 1С</th><th>Артикул</th><th>Назва матеріалу</th><th>Од. вимірювання</th><th>Дії</th></tr></x-slot:head>
                 @forelse($items as $item)
                     <tr wire:key="import-material-{{ $item->id }}">
                         <td>{{ $item->code ?? '—' }}</td><td>{{ $item->article ?? '—' }}</td>
                         <td>{{ $item->name }}</td><td>{{ $item->unit?->unit ?? '—' }}</td>
+                        <td>
+                            <x-catalog.button wire:click="openEdit({{ $item->id }})" aria-haspopup="dialog">Редагувати</x-catalog.button>
+                        </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="py-8 text-center">Матеріалів не знайдено.</td></tr>
+                    <tr><td colspan="5" class="py-8 text-center">Матеріалів не знайдено.</td></tr>
                 @endforelse
             </x-catalog.table>
         </div>
     </div>
     <x-modal name="create-import-material" maxWidth="2xl" focusable>
         <form wire:submit="save" class="space-y-4 p-6" aria-labelledby="create-import-material-title">
-            <h3 id="create-import-material-title" class="text-xl font-bold text-[#174a47]">Додати матеріал 1С</h3>
+            <h3 id="create-import-material-title" class="text-xl font-bold text-[#174a47]">
+                {{ $editingMaterialId === null ? 'Додати матеріал 1С' : 'Редагувати матеріал 1С' }}
+            </h3>
             @foreach(['name' => 'Назва матеріалу', 'code' => 'Код 1С', 'article' => 'Артикул'] as $field => $label)
                 <label class="block">
                     <span>{{ $label }}{{ $field === 'name' ? ' *' : '' }}</span>
@@ -40,8 +45,8 @@
                 </label>
             @endforeach
             <label class="block">
-                <span>Одиниця вимірювання *</span>
-                <select wire:model="type_unit_id" required class="mt-1 block w-full rounded-md border-gray-300">
+                <span>Одиниця вимірювання{{ $editingMaterialId === null ? ' *' : '' }}</span>
+                <select wire:model="type_unit_id" @required($editingMaterialId === null) class="mt-1 block w-full rounded-md border-gray-300">
                     <option value="">Оберіть одиницю вимірювання</option>
                     @foreach($units as $unit)<option value="{{ $unit->id }}">{{ $unit->unit }}</option>@endforeach
                 </select>

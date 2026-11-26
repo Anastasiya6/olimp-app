@@ -2,7 +2,7 @@
     $editing = isset($employee);
     $formPrefix = $editing ? 'edit-employee' : 'create-employee';
     $restoreInput = !($inModal ?? false) || ($editing ? (string) old('_employee_edit') === (string) $employee->id : (bool) old('_employee_create'));
-    $fields = ['name' => 'ПІБ'];
+    $fields = ['name' => 'ПІБ', 'login' => 'Логін'];
 @endphp
 <form method="POST" action="{{ $editing ? route('users.update', $employee->id) : route('users.store') }}" class="catalog-form">
     @csrf
@@ -19,11 +19,26 @@
                 <input id="{{ $formPrefix }}-{{ $field }}" type="text" name="{{ $field }}"
                     value="{{ $restoreInput ? old($field, $editing ? $employee->{$field} : '') : ($editing ? $employee->{$field} : '') }}"
                     class="catalog-input" />
+                @if($field === 'login')
+                    <p class="mt-1 text-sm text-slate-600">Унікальний логін для входу. Якщо співробітнику не потрібен доступ, залиште порожнім.</p>
+                @endif
                 @if($restoreInput)
                     @error($field) <p class="mt-2 text-base text-red-700">{{ $message }}</p> @enderror
                 @endif
             </div>
         @endforeach
+        <div>
+            <label for="{{ $formPrefix }}-password" class="catalog-label">Пароль</label>
+            <input id="{{ $formPrefix }}-password" name="password" type="password" autocomplete="new-password" class="catalog-input" />
+            <p class="mt-1 text-sm text-slate-600">Мінімум 8 символів. {{ $editing ? 'Залиште порожнім, щоб не змінювати поточний пароль.' : 'Заповніть, якщо вказали логін.' }}</p>
+            @if($restoreInput)
+                @error('password') <p class="mt-2 text-base text-red-700">{{ $message }}</p> @enderror
+            @endif
+        </div>
+        <div>
+            <label for="{{ $formPrefix }}-password-confirmation" class="catalog-label">Підтвердження пароля</label>
+            <input id="{{ $formPrefix }}-password-confirmation" name="password_confirmation" type="password" autocomplete="new-password" class="catalog-input" />
+        </div>
     </div>
     <div class="mt-6 flex flex-wrap justify-end gap-3 border-t border-[#d4e5e0] pt-5">
         @if($inModal ?? false)

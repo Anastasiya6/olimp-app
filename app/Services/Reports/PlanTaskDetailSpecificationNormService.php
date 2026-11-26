@@ -91,16 +91,17 @@ class PlanTaskDetailSpecificationNormService
 
         if($type_report_in === 'Pdf'){
 
-            $this->getPdf($records);
+            $this->getPdf($records, $sectionId);
 
         }
     }
 
-    private function getPdf($materials)
+    private function getPdf($materials, ?int $sectionId)
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
+        $heading = PlanTaskReportHeading::make($order_number->name, $this->sender_department_number, $this->receiver_department_number, $sectionId);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',$heading);
 
         foreach ($materials as $material=>$group) {
 

@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Livewire\Livewire::addPersistentMiddleware([\App\Http\Middleware\Authenticate::class]);
         $this->app['view']->addNamespace('administrator', base_path() . '/resources/views/admin');
         $this->app['view']->addNamespace('public', base_path() . '/resources/views/public');
         Specification::observe(SpecificationObserver::class);

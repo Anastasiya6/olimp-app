@@ -102,23 +102,22 @@ class PlanTaskSpecificationNormService
 
         if($type_report_in === 'Pdf'){
 
-            $this->getPdf($records);
+            $this->getPdf($records, $sectionId);
 
         }elseif($type_report_in === 'Excel'){
 
-            return $this->getExcel($records);
+            return $this->getExcel($records, $sectionId);
 
         }
 
     }
 
-    private function getPdf($materials)
+    private function getPdf($materials, ?int $sectionId)
     {
         $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'ПОДЕТАЛЬНО-СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
-
-        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',' З цеха '.$this->sender_department_number.' у цех '.$this->receiver_department_number.' ЗАМОВЛЕННЯ №'.$order_number->name);
+        $heading = PlanTaskReportHeading::make($order_number->name, $this->sender_department_number, $this->receiver_department_number, $sectionId);
+        $this->pdf = PDFService::getPdf($this->header1,$this->header2,$this->width,'СПЕЦИФІКОВАНІ НОРМИ ВИТРАТ МАТЕРІАЛІВ НА ВИРІБ',$heading);
 
         foreach ($materials as $item) {
 
@@ -142,22 +141,27 @@ class PlanTaskSpecificationNormService
         $this->pdf->Output('specification_norm_'.$order_number->name.'.pdf', 'I');
     }
 
-    private function getExcel($materials)
+    private function getExcel($materials, ?int $sectionId)
     {
         // Новый объект Spreadsheet
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
+        $heading = PlanTaskReportHeading::make($order_number->name, $this->sender_department_number, $this->receiver_department_number, $sectionId);
+        $sheet->mergeCells('A1:F1');
+        $sheet->setCellValue('A1', $heading);
+
 
         // Заголовки
-        $sheet->setCellValue('A1', $this->headerExcel[0]);
-        $sheet->setCellValue('B1', $this->headerExcel[1]);
-        $sheet->setCellValue('C1', $this->headerExcel[2]);
-        $sheet->setCellValue('D1', $this->headerExcel[3]);
-        $sheet->setCellValue('E1', $this->headerExcel[4]);
-        $sheet->setCellValue('F1', $this->headerExcel[5]);
+        $sheet->setCellValue('A2', $this->headerExcel[0]);
+        $sheet->setCellValue('B2', $this->headerExcel[1]);
+        $sheet->setCellValue('C2', $this->headerExcel[2]);
+        $sheet->setCellValue('D2', $this->headerExcel[3]);
+        $sheet->setCellValue('E2', $this->headerExcel[4]);
+        $sheet->setCellValue('F2', $this->headerExcel[5]);
 
         // Устанавливаем стили для заголовков
-        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:F2')->getFont()->setBold(true);
 
 
         $sheet->getColumnDimension('A')->setWidth($this->widthExcel[0]);
@@ -168,7 +172,7 @@ class PlanTaskSpecificationNormService
         $sheet->getColumnDimension('F')->setWidth($this->widthExcel[5]);
 
         // Заполнение данными
-        $row = 2; // Начинаем с 2 строки, так как 1-я строка занята заголовками
+        $row = 3;
         foreach ($materials as $item) {
 
             $sheet->setCellValue('A' . $row, $item['code_1c']);
@@ -179,7 +183,6 @@ class PlanTaskSpecificationNormService
             $sheet->setCellValue('F' . $row, $this->sender_department_number);
             $row++;
         }
-        $order_number = $this->orderNameRepository->getByOrderFirst($this->order_name_id);
 
         // Сохраните файл
         $writer = new Xlsx($spreadsheet);
